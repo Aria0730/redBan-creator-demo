@@ -1721,6 +1721,9 @@ function lumiPolish() {
 
   const polish = polishMap[curAccIdx] || polishMap[0];
 
+  // 标题纯文字（去掉markdown）
+  const cleanTitles = polish.titleSugs.map(s => s.replace(/\*\*(.*?)\*\*/g,'$1').replace(/^「.*?」→ 试试：/, '').replace(/^或者：/, '').trim());
+
   resultDiv.innerHTML = `
     <div style="background:white;border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);animation:fadeUp 0.3s ease;">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
@@ -1729,8 +1732,12 @@ function lumiPolish() {
       </div>
 
       <div style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;">✏️ 标题建议</div>
-        ${polish.titleSugs.map(s=>`<div style="background:#FFF0F3;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:var(--gray1);line-height:1.6;">${s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`).join('')}
+        <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;">✏️ 选一个标题（点击选定）</div>
+        ${cleanTitles.map((s,i)=>`
+          <div id="title-opt-${i}" onclick="selectPolishTitle(${i})"
+            style="background:#FFF0F3;border:2px solid transparent;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:var(--gray1);line-height:1.6;cursor:pointer;transition:all 0.15s;">
+            ${s}
+          </div>`).join('')}
       </div>
 
       <div style="margin-bottom:12px;">
@@ -1738,27 +1745,148 @@ function lumiPolish() {
         <div style="background:#F8F8F8;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--gray2);line-height:1.8;">${polish.framework.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>
       </div>
 
-      <div style="background:rgba(255,36,66,0.06);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--red);">
+      <div style="background:rgba(255,36,66,0.06);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--red);margin-bottom:12px;">
         💡 ${polish.tip}
       </div>
 
-      <button onclick="usePolishedResult()" style="width:100%;margin-top:12px;background:var(--red);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">用这个框架写 ›</button>
+      <button id="use-polish-btn" onclick="usePolishedResult()" disabled
+        style="width:100%;background:#E0E0E0;color:#999;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:not-allowed;transition:all 0.2s;">
+        选一个标题后填入笔记
+      </button>
     </div>
   `;
 
-  lastResult = { topic, polish };
+  lastResult = { topic, polish, cleanTitles, selectedTitle: null };
   resultDiv.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-function usePolishedResult() {
+function selectPolishTitle(i) {
   if(!lastResult) return;
-  // 把结果填入笔记编辑区并进入编辑模式
-  const noteTitle = document.getElementById('note-title');
-  const noteBody  = document.getElementById('note-body');
-  if(noteTitle) noteTitle.textContent = lastResult.topic;
-  if(noteBody)  noteBody.textContent  = lastResult.polish.framework.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\n/g,'\n');
-  toggleEdit();
-  noteTitle?.scrollIntoView({ behavior:'smooth', block:'start' });
+  lastResult.selectedTitle = lastResult.cleanTitles[i];
+  // 高亮选中，取消其他
+  lastResult.cleanTitles.forEach((_,j)=>{
+    const el = document.getElementById(`title-opt-${j}`);
+    if(!el) return;
+    if(j===i) {
+      el.style.borderColor = 'var(--red)';
+      el.style.background  = '#FFE0E6';
+    } else {
+      el.style.borderColor = 'transparent';
+      el.style.background  = '#FFF0F3';
+    }
+  });
+  // 激活按钮
+  const btn = document.getElementById('use-polish-btn');
+  if(btn) { btn.disabled=false; btn.style.background='var(--red)'; btn.style.color='white'; btn.style.cursor='pointer'; btn.textContent='用这个框架写 →'; }
+}
+
+function usePolishedResult() {
+  if(!lastResult || !lastResult.selectedTitle) return;
+
+  // 封面图：根据账号垂类选合适的图片关键词
+  const coverKws = ['fashion','beauty','lifestyle'];
+  const kw = coverKws[curAccIdx] || 'fashion';
+  const coverUrl = `https://source.unsplash.com/600x800/?${kw}&sig=${Date.now()}`;
+  const fallbackBg = ['linear-gradient(135deg,#FFE4E8,#FFC2CC)','linear-gradient(135deg,#E8F0FF,#C2D4FF)','linear-gradient(135deg,#FFF3E0,#FFD180)'][curAccIdx];
+
+  // 内容框架：去掉**markdown**
+  const bodyText = lastResult.polish.framework.replace(/\*\*(.*?)\*\*/g,'$1');
+
+  // 话题：从框架里提取#话题，或用默认
+  const tagMatch = bodyText.match(/#[^\n]+/);
+  const tagText = tagMatch ? tagMatch[0].trim() : ['#日常穿搭 #显瘦穿搭','#穿搭分享 #显瘦穿搭','#美妆测评 #成分党'][curAccIdx];
+
+  // 找到笔记区的预览（showResult里已存在），如果没有先触发一个默认模板
+  const resultDiv = document.getElementById('create-result');
+  const ct = createTemplates[curAccIdx];
+
+  // 直接重写笔记卡片（复用showResult的结构，但用润色内容）
+  const acc = accounts[curAccIdx];
+  lastResult._noteData = { title: lastResult.selectedTitle, body: bodyText, tag: tagText, coverUrl, fallbackBg };
+
+  resultDiv.innerHTML = `
+  <div style="animation:fadeUp 0.3s ease;">
+    <div style="padding:0 16px 8px;display:flex;align-items:center;gap:6px;">
+      <div style="width:3px;height:14px;background:var(--red);border-radius:2px;"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray1);">Lumi帮你写好了，可以直接改</div>
+    </div>
+    <div style="margin:0 16px;background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+      <!-- 封面图（可换） -->
+      <div style="height:220px;position:relative;overflow:hidden;background:#F0F0F0;" id="cover-wrap">
+        <img id="cover-img" src="${coverUrl}" style="width:100%;height:100%;object-fit:cover;display:block;"
+          onerror="this.style.display='none';document.getElementById('cover-wrap').style.background='${fallbackBg}'"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.35) 100%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:14px;left:14px;right:14px;">
+          <div id="cover-text" contenteditable="true"
+            style="font-size:18px;font-weight:800;color:white;line-height:1.3;text-shadow:0 1px 6px rgba(0,0,0,0.4);outline:none;min-height:24px;"
+            >${lastResult.selectedTitle}</div>
+        </div>
+        <!-- 换封面按钮 -->
+        <div onclick="refreshCover()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);color:white;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;backdrop-filter:blur(4px);">🔄 换封面</div>
+      </div>
+      <!-- 笔记内容 -->
+      <div style="padding:14px 14px 0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:var(--red-pale);display:flex;align-items:center;justify-content:center;font-size:14px;">${acc.emoji}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--gray1);">${acc.name}</div>
+          <div style="margin-left:auto;background:var(--red-pale);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;">+ 关注</div>
+        </div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:8px;">所有内容均可点击修改 ✏️</div>
+        <!-- 标题（可编辑） -->
+        <div id="note-title" contenteditable="true"
+          style="font-size:15px;font-weight:800;color:var(--gray1);line-height:1.5;outline:none;border-radius:8px;padding:6px 8px;margin:-4px -6px 6px;background:#FFF0F2;cursor:text;"
+          >${lastResult.selectedTitle}</div>
+        <!-- 正文（可编辑） -->
+        <div id="note-body" contenteditable="true"
+          style="font-size:13px;color:var(--gray2);line-height:1.8;outline:none;border-radius:8px;padding:6px 8px;margin:-4px -6px 8px;background:#F5F5F5;cursor:text;min-height:80px;"
+          >${bodyText.replace(/\n/g,'<br>')}</div>
+        <!-- 话题（可编辑） -->
+        <div id="note-tag" contenteditable="true"
+          style="font-size:12px;color:var(--blue);margin-bottom:10px;outline:none;border-radius:6px;padding:4px 6px;margin-left:-4px;background:#EEF6FF;cursor:text;"
+          >${tagText}</div>
+        <!-- 发布时间 -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="font-size:11px;color:var(--gray3);flex-shrink:0;">⏰ 建议发布时间</div>
+          <select style="background:var(--gray5);border:none;border-radius:8px;padding:6px 4px;font-size:12px;font-weight:700;color:#1A1A1A;width:100%;outline:none;">
+            <option selected>今晚 20:30</option>
+            <option>今晚 21:00</option>
+            <option>明天 12:30</option>
+            <option>明天 20:30</option>
+            <option>后天 20:00</option>
+            <option>周末 10:00</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--gray5);">
+          <div style="display:flex;gap:18px;">
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);">❤️ 0</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);">⭐ 0</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);">💬 0</div>
+          </div>
+          <div style="font-size:11px;color:var(--gray4);">预览效果</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 16px 0;display:flex;gap:8px;">
+      <div style="flex:1;background:var(--gray5);border:1.5px solid var(--gray4);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:var(--gray2);"
+        onclick="askShubaAboutNote()">问Lumi细化</div>
+      <div style="flex:1.2;background:var(--red);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:white;"
+        onclick="goPublish()">去发布这篇笔记 →</div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>`;
+
+  resultDiv.style.display = 'block';
+  // 滚到笔记区
+  setTimeout(()=> resultDiv.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+let _coverSig = Date.now();
+function refreshCover() {
+  _coverSig = Math.floor(Math.random()*9999);
+  const kws = ['fashion','beauty','lifestyle'];
+  const kw  = kws[curAccIdx] || 'fashion';
+  const img = document.getElementById('cover-img');
+  if(img) { img.style.display='block'; img.src = `https://source.unsplash.com/600x800/?${kw}&sig=${_coverSig}`; }
 }
 
 // ═══ 洞察展开 ═══
