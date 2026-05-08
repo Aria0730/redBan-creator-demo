@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOL合作投放报告 · 山楂饼家 · 聚光</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'PingFang SC',system-ui,sans-serif;background:#f8f8f8;color:#1a1a1a;min-height:100vh}
+/* NAV */
+.nav{display:flex;align-items:center;gap:16px;padding:0 32px;height:60px;background:#fff;border-bottom:1px solid #f0f0f0;position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:#FF2442}
+.nav-logo-icon{width:32px;height:32px;background:#FF2442;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-sep{color:#e0e0e0;font-size:18px}
+.nav-title{font-size:16px;font-weight:700;color:#1a1a1a}
+.nav-brand{font-size:14px;color:#888}
+.nav-badge{padding:4px 10px;background:#FFF0F2;color:#FF2442;border-radius:20px;font-size:12px;font-weight:600}
+.nav-date{font-size:13px;color:#aaa;margin-left:auto}
+.export-btn{padding:8px 18px;background:#FF2442;color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+/* CONTENT */
+.page{max-width:1000px;margin:0 auto;padding:28px 24px 60px}
+/* CAMPAIGN OVERVIEW */
+.campaign-banner{background:#f8f8f8;border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid #f0f0f0}
+.campaign-name{font-size:20px;font-weight:700;margin-bottom:8px}
+.campaign-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.c-tag{padding:4px 12px;border-radius:20px;background:#fff;border:1px solid #e8e8e8;font-size:12px;color:#666}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.metric-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #f0f0f0}
+.metric-val{font-size:24px;font-weight:800;color:#1a1a1a;margin-bottom:2px}
+.metric-key{font-size:12px;color:#aaa;margin-bottom:6px}
+.metric-sub{font-size:12px;color:#888}
+.metric-up{color:#06D6A0;font-weight:600}
+/* SECTION CARD */
+.section-card{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;border:1px solid #f0f0f0}
+.section-title{font-size:17px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+/* CHART */
+.chart-wrap{overflow-x:auto}
+.chart-legend{display:flex;align-items:center;gap:6px;font-size:12px;color:#888;margin-bottom:8px;justify-content:flex-end}
+.legend-line{width:24px;height:2px;background:#4361EE;border-radius:1px;display:inline-block}
+/* NOTES TABLE */
+.note-row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #f8f8f8}
+.note-row:last-child{border-bottom:none}
+.note-info{min-width:180px}
+.note-title{font-size:14px;font-weight:600;margin-bottom:3px;line-height:1.3}
+.note-author{font-size:12px;color:#aaa}
+.note-bars{flex:1}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.bar-label{font-size:11px;color:#888;min-width:40px;text-align:right}
+.bar-track{flex:1;height:8px;background:#f5f5f5;border-radius:4px;overflow:hidden}
+.bar-fill-blue{height:100%;background:#4361EE;border-radius:4px;transition:width .5s}
+.bar-fill-green{height:100%;background:#06D6A0;border-radius:4px;transition:width .5s}
+.bar-pct{font-size:12px;color:#555;font-weight:600;min-width:36px}
+.note-metrics{display:flex;flex-direction:column;gap:4px;text-align:right;min-width:90px}
+.note-metric-row{font-size:11px;color:#888}
+.note-metric-row strong{color:#1a1a1a}
+.health-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#E8FFF5;color:#06D6A0;border-radius:8px;font-size:12px;font-weight:700}
+/* AUDIENCE */
+.audience-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.audience-col-title{font-size:14px;font-weight:700;margin-bottom:12px;color:#555}
+.aud-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.aud-bar-label{font-size:13px;color:#555;min-width:100px}
+.aud-bar-track{flex:1;height:10px;background:#f5f5f5;border-radius:5px;overflow:hidden}
+.aud-bar-fill{height:100%;border-radius:5px;background:#4361EE}
+.aud-bar-fill.green{background:#06D6A0}
+.aud-bar-pct{font-size:13px;font-weight:700;color:#1a1a1a;min-width:36px;text-align:right}
+.aud-target{display:inline-block;margin-left:4px;font-size:11px;color:#06D6A0;font-weight:700}
+/* QUADRANT */
+.quadrant-wrap{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.quadrant-legend{flex:1;min-width:200px}
+.quadrant-item{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 12px;border-radius:10px;background:#fafafa}
+.q-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.q-info-name{font-size:13px;font-weight:600}
+.q-info-sub{font-size:11px;color:#aaa;margin-top:2px}
+/* PUGU TABLE */
+.pugu-card{background:#FFF8F9;border-radius:16px;padding:24px;margin-bottom:20px;border:1px solid #FFD8DF}
+.pugu-title{font-size:17px;font-weight:700;color:#FF2442;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.pugu-table{width:100%;border-collapse:collapse;font-size:14px}
+.pugu-table th{background:#FFF0F2;padding:10px 14px;text-align:left;font-size:12px;color:#999;font-weight:600;border-bottom:1px solid #FFD8DF}
+.pugu-table td{padding:12px 14px;border-bottom:1px solid #fff}
+.pugu-table tr:last-child td{border-bottom:none}
+.pugu-table tbody tr:hover{background:#FFFBFC}
+.result-pass{color:#06D6A0;font-weight:700}
+.pugu-conclusion{margin-top:14px;padding:12px 16px;background:#fff;border-radius:10px;font-size:14px;color:#555;line-height:1.6;border-left:3px solid #FF2442}
+/* ADVICE */
+.advice-list{display:flex;flex-direction:column;gap:12px}
+.advice-card{background:#fff;border:1.5px solid #f0f0f0;border-radius:12px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.advice-num{width:28px;height:28px;border-radius:50%;background:#FFF0F2;color:#FF2442;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.advice-text{font-size:14px;color:#444;line-height:1.6}
+/* BOTTOM */
+.bottom-bar{text-align:center;margin-top:32px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:2px solid #FF2442;color:#FF2442;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;background:#fff;font-family:inherit;transition:all .2s}
+.back-btn:hover{background:#FF2442;color:#fff}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" style="display:flex;align-items:center;gap:6px"><svg width="26" height="26" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="15" r="3" fill="#FF2442"/><g stroke="#FF2442" stroke-linecap="round"><line x1="15" y1="1.5" x2="15" y2="8" stroke-width="2.5"/><line x1="15" y1="22" x2="15" y2="28.5" stroke-width="2.5"/><line x1="1.5" y1="15" x2="8" y2="15" stroke-width="2.5"/><line x1="22" y1="15" x2="28.5" y2="15" stroke-width="2.5"/><line x1="5.5" y1="5.5" x2="10.5" y2="10.5" stroke-width="2"/><line x1="19.5" y1="19.5" x2="24.5" y2="24.5" stroke-width="2"/><line x1="24.5" y1="5.5" x2="19.5" y2="10.5" stroke-width="2"/><line x1="10.5" y1="19.5" x2="5.5" y2="24.5" stroke-width="2"/></g></svg><span style="font-size:17px;font-weight:700;color:#FF2442">小红书聚光</span></div>
+  <div class="nav-sep">|</div>
+  <div class="nav-title">KOL合作投放报告</div>
+  <div class="nav-brand">山楂饼家</div>
+  <div class="nav-badge">由蒲蒲智配发起</div>
+  <div class="nav-date">2026-05-01 ~ 2026-05-07</div>
+  <button class="export-btn" onclick="window.print()">导出PDF</button>
+</nav>
+
+<div class="page">
+
+  <!-- CAMPAIGN OVERVIEW -->
+  <div class="campaign-banner">
+    <div class="campaign-name">蒲蒲智配·母亲节零食礼盒种草计划</div>
+    <div class="campaign-tags">
+      <span class="c-tag">减脂零食</span>
+      <span class="c-tag">母亲节礼物</span>
+      <span class="c-tag">国货好物</span>
+      <span class="c-tag">下午茶场景</span>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-val">482万</div>
+        <div class="metric-key">总曝光量</div>
+        <div class="metric-sub"><span class="metric-up">↑18%</span> vs 预测</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">187万</div>
+        <div class="metric-key">总触达UV</div>
+        <div class="metric-sub">触达率 38.8%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">15.3万</div>
+        <div class="metric-key">总点击数</div>
+        <div class="metric-sub">综合 CTR 3.2%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">31.6万</div>
+        <div class="metric-key">总互动量</div>
+        <div class="metric-sub">互动率 6.8%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">4,280单</div>
+        <div class="metric-key">预估转化</div>
+        <div class="metric-sub">CVR 2.8% · GMV ¥128.4万</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val">¥25,300</div>
+        <div class="metric-key">总成本</div>
+        <div class="metric-sub">CPM ¥52.5 · CPC ¥1.65 · ROI 1:12.4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREND CHART -->
+  <div class="section-card">
+    <div class="section-title">📈 7天互动量趋势</div>
+    <div class="chart-legend">
+      <div class="legend-line"></div>
+      <span>互动量</span>
+    </div>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 800 220" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block">
+        <!-- Grid lines -->
+        <line x1="60" y1="20" x2="60" y2="175" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="20" x2="780" y2="20" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="57" x2="780" y2="57" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="95" x2="780" y2="95" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="132" x2="780" y2="132" stroke="#f0f0f0" stroke-width="1"/>
+        <line x1="60" y1="175" x2="780" y2="175" stroke="#e8e8e8" stroke-width="1"/>
+
+        <!-- Y axis labels -->
+        <text x="52" y="24" text-anchor="end" font-size="11" fill="#aaa">4万</text>
+        <text x="52" y="61" text-anchor="end" font-size="11" fill="#aaa">3万</text>
+        <text x="52" y="99" text-anchor="end" font-size="11" fill="#aaa">2万</text>
+        <text x="52" y="136" text-anchor="end" font-size="11" fill="#aaa">1万</text>
+        <text x="52" y="178" text-anchor="end" font-size="11" fill="#aaa">0</text>
+
+        <!-- Data: [8200, 15300, 42100, 38700, 29400, 21600, 18800] -->
+        <!-- Scale: max=42100, range=42100, height=155 (20 to 175) -->
+        <!-- y = 175 - (val/42100)*155 -->
+        <!-- x positions: 60 + step*120, step=0..6, total width=720, step=720/6=120 -->
+        <!-- x: 60,180,300,420,540,660,780 -->
+        <!-- y values: 8200->175-(8200/42100*155)=145; 15300->118; 42100->20; 38700->35; 29400->66; 21600->100; 18800->106 -->
+
+        <!-- Filled area -->
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4361EE" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#4361EE" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="60,145 180,118 300,20 420,35 540,66 660,100 780,106 780,175 60,175" fill="url(#areaGrad)"/>
+
+        <!-- Line -->
+        <polyline points="60,145 180,118 300,20 420,35 540,66 660,100 780,106"
+          fill="none" stroke="#4361EE" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+
+        <!-- Data points -->
+        <circle cx="60" cy="145" r="4" fill="#4361EE"/>
+        <circle cx="180" cy="118" r="4" fill="#4361EE"/>
+        <circle cx="300" cy="20" r="6" fill="#FF2442"/>
+        <circle cx="420" cy="35" r="4" fill="#4361EE"/>
+        <circle cx="540" cy="66" r="4" fill="#4361EE"/>
+        <circle cx="660" cy="100" r="4" fill="#4361EE"/>
+        <circle cx="780" cy="106" r="4" fill="#4361EE"/>
+
+        <!-- Peak annotation -->
+        <text x="300" y="12" text-anchor="middle" font-size="12" fill="#FF2442" font-weight="700">42,100</text>
+
+        <!-- Mother's Day vertical line -->
+        <line x1="300" y1="175" x2="300" y2="20" stroke="#FF2442" stroke-width="1.5" stroke-dasharray="5,4"/>
+        <text x="308" y="168" font-size="11" fill="#FF2442" font-weight="600">🌹 母亲节</text>
+
+        <!-- X axis labels -->
+        <text x="60" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/01</text>
+        <text x="180" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/02</text>
+        <text x="300" y="193" text-anchor="middle" font-size="11" fill="#FF2442" font-weight="700">5/03</text>
+        <text x="420" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/04</text>
+        <text x="540" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/05</text>
+        <text x="660" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/06</text>
+        <text x="780" y="193" text-anchor="middle" font-size="11" fill="#aaa">5/07</text>
+
+        <!-- Legend -->
+        <line x1="660" y1="14" x2="690" y2="14" stroke="#4361EE" stroke-width="2.5"/>
+        <circle cx="675" cy="14" r="3" fill="#4361EE"/>
+        <text x="695" y="18" font-size="11" fill="#888">互动量</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- NOTES PERFORMANCE -->
+  <div class="section-card">
+    <div class="section-title">📝 笔记表现拆解</div>
+
+    <!-- Note 1 -->
+    <div class="note-row">
+      <svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+        <defs><radialGradient id="nr1"><stop offset="0%" stop-color="#FFD4DC"/><stop offset="100%" stop-color="#FF8FA3"/></radialGradient></defs>
+        <circle cx="30" cy="30" r="30" fill="url(#nr1)"/>
+        <ellipse cx="30" cy="28" rx="14" ry="15" fill="#FDDCB5"/>
+        <ellipse cx="24" cy="27" rx="3" ry="3.5" fill="#2C1810"/>
+        <ellipse cx="36" cy="27" rx="3" ry="3.5" fill="#2C1810"/>
+        <path d="M25 35 Q30 39 35 35" stroke="#CC6677" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="note-info">
+        <div class="note-title">减脂7天这些零食我真的戒不掉</div>
+        <div class="note-author">小胖子爱吃不胖</div>
+      </div>
+      <div class="note-bars">
+        <div class="bar-row">
+          <span class="bar-label">CTR</span>
+          <div class="bar-track"><div class="bar-fill-blue" style="width:83%"></div></div>
+          <span class="bar-pct">8.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">互动率</span>
+          <div class="bar-track"><div class="bar-fill-green" style="width:71%"></div></div>
+          <span class="bar-pct">7.1%</span>
+        </div>
+      </div>
+      <div class="note-metrics">
+        <div class="note-metric-row">CPM <strong>¥38.2</strong></div>
+        <div class="note-metric-row">CPC <strong>¥1.42</strong></div>
+        <div class="note-metric-row">CVR <strong>3.1%</strong></div>
+        <div class="health-badge" style="display:flex;align-items:center;gap:3px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px"><rect width="16" height="16" rx="4" fill="#06D6A0"/><polyline points="3,8 6.5,11.5 13,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>92</div>
+      </div>
+    </div>
+
+    <!-- Note 2 -->
+    <div class="note-row">
+      <svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+        <defs><radialGradient id="nr3"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="#FFAB76"/></radialGradient></defs>
+        <circle cx="30" cy="30" r="30" fill="url(#nr3)"/>
+        <ellipse cx="30" cy="29" rx="13" ry="14" fill="#FCDBA8"/>
+        <ellipse cx="24" cy="28" rx="2.5" ry="3" fill="#3D1C00"/>
+        <ellipse cx="36" cy="28" rx="2.5" ry="3" fill="#3D1C00"/>
+        <path d="M25 36 Q30 40 35 36" stroke="#C06070" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="note-info">
+        <div class="note-title">晚晚的母亲节礼物清单 🌹</div>
+        <div class="note-author">晚晚的治愈下午茶</div>
+        <div style="margin-top:3px"><span style="background:#FFF0F2;color:#FF2442;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:600">节点爆发 🌹</span></div>
+      </div>
+      <div class="note-bars">
+        <div class="bar-row">
+          <span class="bar-label">CTR</span>
+          <div class="bar-track"><div class="bar-fill-blue" style="width:68%"></div></div>
+          <span class="bar-pct">6.8%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">互动率</span>
+          <div class="bar-track"><div class="bar-fill-green" style="width:92%"></div></div>
+          <span class="bar-pct">9.2%</span>
+        </div>
+      </div>
+      <div class="note-metrics">
+        <div class="note-metric-row">CPM <strong>¥44.1</strong></div>
+        <div class="note-metric-row">CPC <strong>¥1.88</strong></div>
+        <div class="note-metric-row">CVR <strong>2.4%</strong></div>
+        <div class="health-badge" style="display:flex;align-items:center;gap:3px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px"><rect width="16" height="16" rx="4" fill="#06D6A0"/><polyline points="3,8 6.5,11.5 13,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>88</div>
+      </div>
+    </div>
+
+    <!-- Note 3 -->
+    <div class="note-row">
+      <svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+        <defs><radialGradient id="nr4"><stop offset="0%" stop-color="#C8F0D8"/><stop offset="100%" stop-color="#5DC886"/></radialGradient></defs>
+        <circle cx="30" cy="30" r="30" fill="url(#nr4)"/>
+        <ellipse cx="30" cy="28" rx="13" ry="14" fill="#F0C890"/>
+        <ellipse cx="24" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+        <ellipse cx="36" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+        <path d="M26 35 Q30 39 34 35" stroke="#A05060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="note-info">
+        <div class="note-title">山楂怎么吃最健康</div>
+        <div class="note-author">我不是营养师但我会吃</div>
+      </div>
+      <div class="note-bars">
+        <div class="bar-row">
+          <span class="bar-label">CTR</span>
+          <div class="bar-track"><div class="bar-fill-blue" style="width:51%"></div></div>
+          <span class="bar-pct">5.1%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">互动率</span>
+          <div class="bar-track"><div class="bar-fill-green" style="width:84%"></div></div>
+          <span class="bar-pct">8.4%</span>
+        </div>
+      </div>
+      <div class="note-metrics">
+        <div class="note-metric-row">CPM <strong>¥29.8</strong></div>
+        <div class="note-metric-row">CPC <strong>¥1.21</strong></div>
+        <div class="note-metric-row">CVR <strong>2.2%</strong></div>
+        <div class="health-badge" style="display:flex;align-items:center;gap:3px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px"><rect width="16" height="16" rx="4" fill="#06D6A0"/><polyline points="3,8 6.5,11.5 13,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>85</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIENCE ANALYSIS -->
+  <div class="section-card">
+    <div class="section-title">👥 人群触达分析</div>
+    <div class="audience-grid">
+      <div>
+        <div class="audience-col-title">核心人群触达</div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">18-24岁女性</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill green" style="width:76%"></div></div>
+          <span class="aud-bar-pct">38%</span>
+          <span class="aud-target" style="display:inline-flex;align-items:center;gap:2px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px"><rect width="16" height="16" rx="4" fill="#06D6A0"/><polyline points="3,8 6.5,11.5 13,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>目标</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">25-30岁女性</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill green" style="width:58%"></div></div>
+          <span class="aud-bar-pct">29%</span>
+          <span class="aud-target">✅ 目标</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">31-35岁女性</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:28%"></div></div>
+          <span class="aud-bar-pct">14%</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">其他</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:38%;background:#e0e0e0"></div></div>
+          <span class="aud-bar-pct">19%</span>
+        </div>
+      </div>
+      <div>
+        <div class="audience-col-title">场景渗透</div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">下午茶场景</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:100%"></div></div>
+          <span class="aud-bar-pct">62%</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">母亲节送礼</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:77%"></div></div>
+          <span class="aud-bar-pct">48%</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">减脂健康</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:66%"></div></div>
+          <span class="aud-bar-pct">41%</span>
+        </div>
+        <div class="aud-bar-row">
+          <span class="aud-bar-label">日常零食</span>
+          <div class="aud-bar-track"><div class="aud-bar-fill" style="width:56%"></div></div>
+          <span class="aud-bar-pct">35%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUADRANT CHART -->
+  <div class="section-card">
+    <div class="section-title" style="display:flex;align-items:center"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:6px"><circle cx="9" cy="9" r="8" stroke="#FF2442" stroke-width="1.5"/><circle cx="9" cy="9" r="5" stroke="#FF2442" stroke-width="1.5"/><circle cx="9" cy="9" r="2.5" fill="#FF2442"/></svg>内容健康四象限分析</div>
+    <div class="quadrant-wrap">
+      <svg viewBox="0 0 350 280" width="350" height="280" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;border:1px solid #f0f0f0;border-radius:12px;background:#fafafa">
+        <!-- Background quadrants -->
+        <rect x="0" y="0" width="175" height="140" fill="#F0FFF8" rx="0"/>
+        <rect x="175" y="0" width="175" height="140" fill="#E8F3FF" rx="0"/>
+        <rect x="0" y="140" width="175" height="140" fill="#FFF8F0" rx="0"/>
+        <rect x="175" y="140" width="175" height="140" fill="#FFF0F0" rx="0"/>
+
+        <!-- Axes -->
+        <line x1="175" y1="0" x2="175" y2="280" stroke="#e0e0e0" stroke-width="1.5"/>
+        <line x1="0" y1="140" x2="350" y2="140" stroke="#e0e0e0" stroke-width="1.5"/>
+
+        <!-- Axis labels -->
+        <text x="175" y="272" text-anchor="middle" font-size="10" fill="#aaa">效果 →</text>
+        <text x="8" y="140" text-anchor="start" font-size="10" fill="#aaa" transform="rotate(-90 8 140)" dy="10">体验健康度 →</text>
+
+        <!-- Quadrant labels -->
+        <text x="88" y="20" text-anchor="middle" font-size="10" fill="#06D6A0" font-weight="600">体验优·效果弱</text>
+        <text x="263" y="20" text-anchor="middle" font-size="10" fill="#4361EE" font-weight="600">优质标杆</text>
+        <text x="88" y="270" text-anchor="middle" font-size="10" fill="#aaa">低效</text>
+        <text x="263" y="270" text-anchor="middle" font-size="10" fill="#FF2442">体验预警</text>
+
+        <!-- Note 1: right-top, green dot -->
+        <circle cx="290" cy="45" r="12" fill="#06D6A0" opacity="0.9"/>
+        <text x="290" y="49" text-anchor="middle" font-size="10" fill="white" font-weight="700">1</text>
+        <text x="290" y="35" text-anchor="middle" font-size="9" fill="#06D6A0" font-weight="700">优质标杆 ★</text>
+
+        <!-- Note 2: right slightly below top, blue dot -->
+        <circle cx="255" cy="85" r="12" fill="#4361EE" opacity="0.9"/>
+        <text x="255" y="89" text-anchor="middle" font-size="10" fill="white" font-weight="700">2</text>
+        <text x="255" y="75" text-anchor="middle" font-size="9" fill="#4361EE" font-weight="700">节点利器 🌹</text>
+
+        <!-- Note 3: center-right, orange dot -->
+        <circle cx="215" cy="110" r="12" fill="#FF9A3C" opacity="0.9"/>
+        <text x="215" y="114" text-anchor="middle" font-size="10" fill="white" font-weight="700">3</text>
+        <text x="215" y="100" text-anchor="middle" font-size="9" fill="#FF9A3C" font-weight="700">稳定出圈 📈</text>
+      </svg>
+
+      <div class="quadrant-legend" style="padding:8px 0">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#555">笔记分布说明</div>
+        <div class="quadrant-item">
+          <div class="q-dot" style="background:#06D6A0"></div>
+          <div>
+            <div class="q-info-name">① 减脂7天这些零食我真的戒不掉</div>
+            <div class="q-info-sub">小胖子爱吃不胖 · CTR 8.3% · 健康分92 · 优质标杆</div>
+          </div>
+        </div>
+        <div class="quadrant-item">
+          <div class="q-dot" style="background:#4361EE"></div>
+          <div>
+            <div class="q-info-name">② 晚晚的母亲节礼物清单</div>
+            <div class="q-info-sub">晚晚的治愈下午茶 · CTR 6.8% · 健康分88 · 节点利器</div>
+          </div>
+        </div>
+        <div class="quadrant-item">
+          <div class="q-dot" style="background:#FF9A3C"></div>
+          <div>
+            <div class="q-info-name">③ 山楂怎么吃最健康</div>
+            <div class="q-info-sub">我不是营养师 · CTR 5.1% · 健康分85 · 稳定出圈</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUGU VERIFICATION -->
+  <div class="pugu-card">
+    <div class="pugu-title" style="display:flex;align-items:center"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><circle cx="9" cy="9" r="3.2" fill="#8B5E3C"/><g><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(45 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(90 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(135 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(180 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(225 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(270 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(315 9 9)"/></g></svg>蒲蒲智配 · 结果验证</div>
+    <table class="pugu-table">
+      <thead>
+        <tr>
+          <th>博主</th>
+          <th>蒲蒲匹配分</th>
+          <th>预测互动率</th>
+          <th>实际互动率</th>
+          <th>验证结果</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>小胖子爱吃不胖</td>
+          <td><strong>96分</strong></td>
+          <td>6.5%+</td>
+          <td><strong>7.1%</strong></td>
+          <td class="result-pass" style="display:flex;align-items:center;gap:3px"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px"><rect width="16" height="16" rx="4" fill="#06D6A0"/><polyline points="3,8 6.5,11.5 13,5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>超出预测</td>
+        </tr>
+        <tr>
+          <td>晚晚的治愈下午茶</td>
+          <td><strong>88分</strong></td>
+          <td>8%+</td>
+          <td><strong>9.2%</strong></td>
+          <td class="result-pass">✅ 超出预测</td>
+        </tr>
+        <tr>
+          <td>我不是营养师但我会吃</td>
+          <td><strong>82分</strong></td>
+          <td>7%+</td>
+          <td><strong>8.4%</strong></td>
+          <td class="result-pass">✅ 超出预测</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pugu-conclusion">
+      本次3位博主实际效果均超出蒲蒲预测，整体 ROI 1:12.4，超出行业基准 2.1 倍 🎉
+    </div>
+  </div>
+
+  <!-- ADVICE -->
+  <div class="section-card">
+    <div class="section-title" style="display:flex;align-items:center"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><circle cx="9" cy="9" r="3.2" fill="#8B5E3C"/><g><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(45 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(90 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(135 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(180 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(225 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(270 9 9)"/><ellipse cx="9" cy="2.5" rx="1.6" ry="2.8" fill="#FFCC00" transform="rotate(315 9 9)"/></g></svg>蒲蒲投后建议</div>
+    <div class="advice-list">
+      <div class="advice-card">
+        <div class="advice-num">1</div>
+        <div class="advice-text">笔记①进入内容衰退期，建议2周内启动接棒内容，可复用「治愈减脂」创意框架，延续已沉淀的内容势能。</div>
+      </div>
+      <div class="advice-card">
+        <div class="advice-num">2</div>
+        <div class="advice-text">母亲节节点效应已过，下一期建议切换「职场下午茶」常规场景，预计可保持 4-6% 互动率，维持品牌持续曝光。</div>
+      </div>
+      <div class="advice-card">
+        <div class="advice-num">3</div>
+        <div class="advice-text">三位博主数据均表现超预期，建议加入品牌长期合作池，后续 campaign 优先触达，降低沟通成本并保持内容质量稳定性。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="bottom-bar">
+    <button class="back-btn" onclick="window.location.href='index.html'">← 返回蒲公英，发起下一轮智配</button>
+  </div>
+
+</div>
+
+</body>
+</html>
