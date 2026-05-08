@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>芽芽 · 创作者成长顾问</title>
+<title>Lumi · 创作者成长顾问</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 :root {
@@ -208,21 +208,22 @@ body {
   border:none; cursor:pointer; white-space:nowrap;
 }
 
-/* 芽芽入口卡（内容区底部）*/
+/* Lumi入口卡（内容区底部）*/
 .shuba-entry {
   margin:0 16px 20px;
-  background:linear-gradient(135deg,#FF2442 0%,#FF6B81 100%);
+  background:#FFF0F3;
+  border:1.5px solid #FFD6DE;
   border-radius:16px; padding:14px 16px;
   display:flex; align-items:center; gap:12px;
   cursor:pointer; transition:transform 0.15s;
-  box-shadow:0 4px 16px rgba(255,36,66,0.3);
+  box-shadow:0 2px 8px rgba(255,36,66,0.08);
 }
 .shuba-entry:active{transform:scale(0.98);}
 .shuba-entry-av{font-size:28px;}
 .shuba-entry-text{flex:1;}
-.shuba-entry-title{font-size:15px;font-weight:800;color:white;margin-bottom:2px;}
-.shuba-entry-sub{font-size:12px;color:rgba(255,255,255,0.8);}
-.shuba-entry-arrow{font-size:20px;color:rgba(255,255,255,0.7);}
+.shuba-entry-title{font-size:15px;font-weight:800;color:var(--red);margin-bottom:2px;}
+.shuba-entry-sub{font-size:12px;color:var(--gray3);}
+.shuba-entry-arrow{font-size:20px;color:var(--red);}
 
 /* 底部Tab */
 .bottom-tab {
@@ -344,9 +345,15 @@ body {
 
 <!-- ═══ PAGE: 账号选择 ═══ -->
 <div class="page" id="page-select" style="background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 24px 24px;">
-  <div style="width:72px;height:72px;margin:0 auto 16px;"><svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
-  <div style="font-size:22px;font-weight:800;color:var(--gray1);margin-bottom:6px;">芽芽</div>
-  <div style="font-size:14px;color:var(--gray3);margin-bottom:40px;">选择你要管理的账号</div>
+  <div style="width:72px;height:72px;margin:0 auto 16px;border-radius:50%;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);"><img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:100%;height:100%;object-fit:cover;" /></div>
+  <div style="font-size:22px;font-weight:800;color:var(--gray1);margin-bottom:6px;">Hi，我是 Lumi 噜咪 👋</div>
+  <div style="font-size:14px;color:var(--gray3);margin-bottom:16px;text-align:center;line-height:1.6;">你在小红书的成长搭子<br>用数据陪你从0到变现，一路撸米</div>
+  <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;justify-content:center;">
+    <span style="background:#FFF0F3;color:var(--red);font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;">📊 账号健康诊断</span>
+    <span style="background:#FFF0F3;color:var(--red);font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;">🎯 成长路径规划</span>
+    <span style="background:#FFF0F3;color:var(--red);font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;">💰 变现策略建议</span>
+  </div>
+  <div style="font-size:13px;font-weight:700;color:var(--gray2);margin-bottom:12px;width:100%;">选择你的创作账号</div>
   <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
     <div style="background:var(--gray5);border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;box-shadow:0 2px 12px rgba(0,0,0,0.06);" onclick="selectAccount(0)" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''">
       <div style="font-size:32px;">🌱</div>
@@ -409,7 +416,7 @@ body {
     </div>
     <div class="tab-item" id="tab-chat" onclick="openChat('tab')">
       <div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div>
-      <div class="tab-label">芽芽</div>
+      <div class="tab-label">Lumi</div>
     </div>
   </div>
 </div>
@@ -429,7 +436,7 @@ body {
     <div class="tab-item" onclick="switchTab('map')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18 L8 10 L13 14 L18 6"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg></div><div class="tab-label">成长地图</div></div>
     <div class="tab-item" id="tab-data2" onclick="switchTab('data')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="12" width="4" height="7" rx="1"/><rect x="9" y="7" width="4" height="12" rx="1"/><rect x="15" y="4" width="4" height="15" rx="1"/></svg></div><div class="tab-label">数据</div></div>
     <div class="tab-item" onclick="switchTab('create')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4l4 4-9 9H5v-4l9-9z"/></svg></div><div class="tab-label">创作</div></div>
-    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">芽芽</div></div>
+    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">Lumi</div></div>
   </div>
 </div>
 
@@ -448,7 +455,7 @@ body {
     <div class="tab-item" onclick="switchTab('map')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18 L8 10 L13 14 L18 6"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg></div><div class="tab-label">成长地图</div></div>
     <div class="tab-item" onclick="switchTab('data')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="12" width="4" height="7" rx="1"/><rect x="9" y="7" width="4" height="12" rx="1"/><rect x="15" y="4" width="4" height="15" rx="1"/></svg></div><div class="tab-label">数据</div></div>
     <div class="tab-item" id="tab-create2" onclick="switchTab('create')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4l4 4-9 9H5v-4l9-9z"/></svg></div><div class="tab-label">创作</div></div>
-    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">芽芽</div></div>
+    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">Lumi</div></div>
   </div>
 </div>
 
@@ -461,17 +468,17 @@ body {
       <div></div><div></div>
     </div>
     <div class="chat-bot-row">
-      <div class="chat-bot-av"><svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
+      <div class="chat-bot-av"><img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;" /></div>
       <div>
-        <div class="chat-bot-name">芽芽</div>
-        <div class="chat-bot-sub"><span class="online-dot"></span>只属于你的创作成长顾问</div>
+        <div class="chat-bot-name">Lumi</div>
+        <div class="chat-bot-sub"><span class="online-dot"></span>你的创作搭子，帮你边涨粉边撸米 ✨</div>
       </div>
     </div>
   </div>
   <div class="chat-msgs" id="chat-msgs"></div>
   <div class="quick-qs" id="quick-qs"></div>
   <div class="chat-input-row">
-    <textarea class="chat-input" id="chat-input" rows="1" placeholder="问芽芽任何问题…"
+    <textarea class="chat-input" id="chat-input" rows="1" placeholder="问Lumi任何问题…"
       oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
     <button class="send-btn" onclick="sendMsg()">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -485,7 +492,7 @@ body {
 </div><!-- phone-shell -->
 
 <script>
-// 芽芽头像 SVG（小红书AI助手形象）
+// Lumi头像 SVG（小红书AI助手形象）
 const SHUBA_AVATAR = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="16" cy="16" r="16" fill="url(#sbg)"/>
   <defs>
@@ -549,7 +556,7 @@ const accounts = [
   ],
   milestone:{
     title:"让第一篇笔记被品牌发现",
-    desc:"好内容无门槛门槛进入合作广场，获得授权分成",
+    desc:"只要内容够好，品牌就会主动找你，获得授权分成",
     bars:[
       {label:"内容垂类稳定度",pct:20,hint:"当前：散，目标：聚焦单垂类",color:"#FF6D00"},
       {label:"单篇最高互动量",pct:26,hint:"当前128，目标500+",color:"#2979FF"},
@@ -637,7 +644,7 @@ const chatAnswers = {
 "我该聚焦哪个垂类":{
   q:"我该聚焦哪个垂类方向？",
   ans:`根据你近30天的数据，我强烈建议聚焦<strong>「日常穿搭」</strong>，理由很具体：`,
-  data:{title:"📊 芽芽数据诊断",body:"你的穿搭类2篇：平均获赞64，平均评论11条\n你的美食类3篇：平均获赞19，平均评论3条\n你的日常vlog类2篇：平均获赞22，平均评论4条\n\n穿搭内容互动效率是其他类目2.1倍。系统已经在给你发信号了。"},
+  data:{title:"📊 Lumi数据诊断",body:"你的穿搭类2篇：平均获赞64，平均评论11条\n你的美食类3篇：平均获赞19，平均评论3条\n你的日常vlog类2篇：平均获赞22，平均评论4条\n\n穿搭内容互动效率是其他类目2.1倍。系统已经在给你发信号了。"},
   suggest:{title:"💡 下一步行动",body:"这周起的3篇全部做穿搭，不发其他内容。连续3篇垂类一致后，系统会开始给你贴「穿搭」标签，之后的内容会进入穿搭流量池，自然曝光会提升。"}
 },
 "封面要怎么改才对":{
@@ -765,7 +772,7 @@ function buildGrowth(idx) {
       <div class="account-hero-avatar" style="background:${acc.bg}">${acc.emoji}</div>
       <div class="account-hero-info">
         <div class="account-hero-name">${acc.name}</div>
-        <div class="account-hero-sub">芽芽陪你一起成长 · 当前${acc.stage}</div>
+        <div class="account-hero-sub">Lumi陪你一起成长 · 当前${acc.stage}</div>
         <div class="account-hero-stats">
           <div class="hero-stat"><div class="hero-stat-num">${acc.fans}</div><div class="hero-stat-label">粉丝</div></div>
           <div class="hero-stat"><div class="hero-stat-num">${acc.posts}</div><div class="hero-stat-label">近30天</div></div>
@@ -854,8 +861,8 @@ function buildGrowth(idx) {
 
   let milestoneHTML = `
     <div class="milestone-section">
-      ${acc.stageIdx>0 ? `<div style="font-size:12px;background:#FFF0F2;color:var(--red);border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:10px;font-weight:600;">${acc.stageIdx===1?'🎉 恭喜你进入合作广场！':'🌟 恭喜你成功入驻蒲公英！'}</div>` : ''}
-      <div class="milestone-eyebrow">🎯 下一个里程碑</div>
+      ${acc.stageIdx>0 ? `<div style="font-size:12px;background:#FFF0F2;color:var(--red);border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:10px;font-weight:600;">${acc.stageIdx===1?'🎉 你已进入合作广场，开始有收益了！':'🌟 你已入驻蒲公英，接单赚钱加速中！'}</div>` : ''}
+      <div class="milestone-eyebrow" style="display:flex;align-items:center;gap:5px;"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg> 下一个里程碑</div>
       <div class="milestone-title">${acc.milestone.title}</div>
       <div class="milestone-desc">${acc.milestone.desc}</div>
       <div class="milestone-bars">${barsHTML}</div>
@@ -884,7 +891,7 @@ function buildGrowth(idx) {
   // 行动建议
   let actionsHTML = `
     <div class="action-section">
-      <div class="section-title-label"><span style="display:inline-flex;align-items:center;gap:5px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 芽芽本周行动建议</span></div>
+      <div class="section-title-label"><span style="display:inline-flex;align-items:center;gap:5px;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Lumi本周行动建议</span></div>
       ${acc.actions.map((a,i)=>`
         <div class="action-item" onclick="openChat('${a.ctx}', false, 'map')">
           <div class="action-num">${i+1}</div>
@@ -894,16 +901,16 @@ function buildGrowth(idx) {
           </div>
           <div class="action-right">
             <span class="action-tag tag-${a.tag}">${{urgent:'优先',important:'重要',suggest:'建议'}[a.tag]}</span>
-            <button class="ask-btn" onclick="event.stopPropagation();openChat('${a.ctx}', false, 'map')">问芽芽</button>
+            <button class="ask-btn" onclick="event.stopPropagation();openChat('${a.ctx}', false, 'map')">问Lumi</button>
           </div>
         </div>`).join('')}
     </div>`;
 
   const shubaEntryHTML = `
     <div class="shuba-entry" onclick="openChat(null, false, 'map')">
-      <div class="shuba-entry-av"><svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
+      <div class="shuba-entry-av"><img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" /></div>
       <div class="shuba-entry-text">
-        <div class="shuba-entry-title">和芽芽聊聊</div>
+        <div class="shuba-entry-title">和Lumi聊聊</div>
         <div class="shuba-entry-sub">随时问我，封面/标题/发布时间都能帮你看</div>
       </div>
       <div class="shuba-entry-arrow">›</div>
@@ -1005,7 +1012,7 @@ function openHealthReport() {
 
   // 分段评语
   const comments = {
-    2: "账号刚起步，潜力是有的，现在最重要的是先把垂类方向定下来，系统才能知道你是谁。别着急，跟着芽芽一步一步来～",
+    2: "账号刚起步，潜力是有的，现在最重要的是先把垂类方向定下来，系统才能知道你是谁。别着急，跟着Lumi一步一步来～",
     3: "已经有了一定基础，但还有几个关键点没到位。攻破互动率这个短板，涨粉速度会明显提升。",
     4: "整体已经在良性运转，现在要做的是把你最强的那个优势继续放大，同时保持稳定更新节奏。",
     5: "账号状态非常好！你现在要做的是把变现效率提上来，让每一个粉丝都产生更高的价值。",
@@ -1067,7 +1074,7 @@ function openHealthReport() {
 
         <!-- 评语 -->
         <div style="background:var(--red-pale);border-radius:12px;padding:12px;margin-bottom:12px;">
-          <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 芽芽点评</div>
+          <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Lumi点评</div>
           <div style="font-size:13px;color:var(--gray1);line-height:1.65;">${commentText}</div>
         </div>
 
@@ -1135,7 +1142,7 @@ function buildChat(ctx, fromNote=false, source=null) {
   // greeting根据来源(source)定制，不再单独插第二条上下文消息
   const greetingsBySource = {
     map: [
-      `嗨～我看到你刚在成长地图转了一圈 👀\n\n你距离下一个里程碑还差一点点，有3条行动建议我觉得你应该先看。要从哪个开始？`,
+      `嗨～我看到你刚在成长地图转了一圈 👀\n\n你距离下一个里程碑还差一步，我整理了3条最值得先做的事。从哪条开始？`,
       `「<strong>${acc.name}</strong>」你好～看到你刚看了成长地图 ✨\n\n你离合作广场只差一步了，有几个很具体的方向可以快速破局——你想先聊哪块？`,
       `Coco 你好～你刚看了成长地图 💎\n\n你已经在变现期了，接下来要做的是提报价、提接单量。我来跟你说说怎么做？`
     ],
@@ -1165,7 +1172,7 @@ function buildChat(ctx, fromNote=false, source=null) {
       showTyping(()=>{
         addBotMsg(
           `看了一下，这篇整体方向是对的，有几个小地方可以再打磨一下 👇`,
-          {title:"📝 芽芽的优化建议",
+          {title:"📝 Lumi的优化建议",
            body:`标题：「${lastResult.title}」目前已经有结果词，再加一个数字会更强，比如改成「${lastResult.title.replace('，',`（3套），`)}」\n\n开头：前两句话是钩子，决定用户要不要继续看。建议改成直接抛出最强的那个点，不要先自我介绍\n\n话题标签：${lastResult.tag} 已经不错，建议再加一个垂类大标签，比如「#穿搭」增加曝光池`},
           {title:"⏰ 发布提醒",
            body:`记得${lastResult.time}发布，这个时间段你的目标用户活跃度最高。发完后在评论区回一条「你们最想看哪类穿搭？」引导互动～`}
@@ -1203,7 +1210,7 @@ function addBotMsg(text, data, suggest) {
   d.className = 'bubble-wrap';
   let dataHTML = data ? `<div class="data-block"><div class="data-block-title">${data.title}</div><div class="data-block-body">${data.body.replace(/\n/g,'<br>')}</div></div>` : '';
   let sugHTML = suggest ? `<div class="action-suggest"><div class="action-suggest-title">${suggest.title}</div><div class="action-suggest-body">${suggest.body.replace(/\n/g,'<br>')}</div></div>` : '';
-  d.innerHTML = `<div class="bav bot"><svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div><div class="bubble bot">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}${dataHTML}${sugHTML}</div>`;
+  d.innerHTML = `<div class="bav bot"><img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;" /></div><div class="bubble bot">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}${dataHTML}${sugHTML}</div>`;
   msgs.appendChild(d);
   scrollMsgs();
 }
@@ -1212,7 +1219,7 @@ function showTyping(cb) {
   const msgs = document.getElementById('chat-msgs');
   const d = document.createElement('div');
   d.className='bubble-wrap'; d.id='typing';
-  d.innerHTML=`<div class="bav bot"><svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div><div class="bubble bot"><div class="typing"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>`;
+  d.innerHTML=`<div class="bav bot"><img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;" /></div><div class="bubble bot"><div class="typing"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>`;
   msgs.appendChild(d);
   scrollMsgs();
   setTimeout(()=>{ const t=document.getElementById('typing'); if(t)t.remove(); cb(); },1500);
@@ -1341,7 +1348,7 @@ const dataConfig = [
           title:"你的用户什么时候最活跃？",
           body:"你账号粉丝的活跃时段分析：\n\n工作日晚8-10点：活跃占比31%\n周末全天：活跃占比42%（远高于工作日同时段）\n周五晚上：是工作日+周末的交叉黄金点\n\n你目前3篇在上午发布，平均互动14次；4篇在晚上发布，平均互动31次。\n\n一个操作就能提升：把所有笔记的发布时间改到晚上20:30，预计互动率提升30-40%。",
           suggest:"立刻把下一篇的发布时间改到周五晚上20:30，不用改任何内容。发布后对比这篇和之前的互动量——我预测会有30%以上的提升。这是你现在能做的成本最低、见效最快的一步。",
-          action:"问芽芽更多",
+          action:"问Lumi更多",
           actionFn:"openChat('怎么提升互动率')"
         }
       },
@@ -1369,7 +1376,7 @@ const dataConfig = [
           title:"发布时间的影响有多大？",
           body:"你近12篇的发布时间 vs 互动量对比：\n\n上午9-11点（6篇）：平均互动82次\n下午12-14点（3篇）：平均互动118次  \n晚上20-22点（2篇）：平均互动210次\n\n差距来自你的目标用户（18-28岁女性）的活跃规律——她们晚上才刷手机。早上发帖等于在她们睡觉的时候开门。\n\n只改时间，不改内容，预计互动提升35-40%。这是成本最低见效最快的一个改动。",
           suggest:"从今天起，把所有笔记改到晚上20:30发布。不需要改内容，不需要改封面，只改时间。坚持2周，对比数据变化——这是你现在能做的成本最低、见效最快的一件事。",
-          action:"问芽芽发布策略",
+          action:"问Lumi发布策略",
           actionFn:"openChat('我的发布时间有什么问题')"
         }
       },
@@ -1397,7 +1404,7 @@ const dataConfig = [
           title:"我的报价空间还有多少？",
           body:"你当前蒲公英报价：3,500元/篇\n同量级美妆创作者市场均值：5,000元/篇\n\n你的互动率3.8%，高于同量级均值（约2.5%），这是报价溢价的核心依据。品牌采购时会计算CPE（每次互动成本），你的CPE比均值低，理论上值更高的报价。\n\n分步提价方案：\n本月→4,200元（先小涨，观察接单量变化）\n下月→5,000元（如果接单量没有明显下降就稳住）",
           suggest:"本月先把报价从3,500调到4,200，在蒲公英后台直接修改。如果接下来2周内接单量没有明显下降，下个月再调到5,000。不要一次跳太多，温水加热，品牌适应你的价格。",
-          action:"问芽芽报价策略",
+          action:"问Lumi报价策略",
           actionFn:"openChat('我的报价策略有什么问题')"
         }
       },
@@ -1408,7 +1415,7 @@ const dataConfig = [
           title:"评论少会有什么影响？",
           body:"你近30天数据：\n点赞率：3.8%（很好）\n收藏率：2.1%（不错）\n评论率：0.15%（明显偏低，均值0.4%）\n\n评论在小红书算法里权重很高——有讨论的笔记会被系统判定为「引发共鸣」，给更多推流。而且品牌在挑创作者时会看评论区的真实性和互动质量。\n\n提升评论率的方法：在正文结尾问一个具体问题，比如「你们觉得哪款更适合夏天？」；在发布后30分钟内主动回复前5条评论，触发更多人参与。",
           suggest:"下一篇结尾加一句：「你们觉得这两种成分哪个更适合夏天？评论告诉我～」发布后30分钟内主动回复前5条评论。这两步同时做，评论率通常能提升到0.3%以上。",
-          action:"问芽芽怎么提升",
+          action:"问Lumi怎么提升",
           actionFn:"openChat('怎么提升互动率')"
         }
       },
@@ -1506,9 +1513,9 @@ function buildData(idx) {
       </div>
     </div>
 
-    <!-- 芽芽洞察 -->
+    <!-- Lumi洞察 -->
     <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:12px;">芽芽看到了什么</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:12px;">Lumi 发现了这些</div>
       ${dc.insights.map((ins,i)=>`
         <div id="insight-wrap-${i}" style="margin-bottom:8px;">
           <div style="display:flex;gap:10px;padding:11px 12px;background:${ins.color};border-radius:12px;cursor:pointer;transition:all 0.15s;align-items:flex-start;"
@@ -1626,7 +1633,7 @@ function buildCreate(idx) {
   body.innerHTML = `
     <div style="padding:16px 16px 0;">
       <div style="font-size:18px;font-weight:800;color:var(--gray1);">今天发什么？</div>
-      <div style="font-size:13px;color:var(--gray3);margin-top:4px;">芽芽根据你的账号数据，帮你想好了</div>
+      <div style="font-size:13px;color:var(--gray3);margin-top:4px;">Lumi根据你的账号数据，帮你想好了</div>
     </div>
 
     <!-- 热门选题 -->
@@ -1685,7 +1692,7 @@ function toggleInsight(i) {
       : ins.detail.actionFn;
     const btnHTML = `<div style="display:flex;gap:8px;">
        <div style="flex:1.2;background:var(--red-pale);border:1.5px solid rgba(255,36,66,0.2);border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:var(--red);cursor:pointer;line-height:1.3;white-space:nowrap;" onclick="${leftFn}">${leftLabel}</div>
-       <div style="flex:1;background:var(--red);border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:white;cursor:pointer;white-space:nowrap;" onclick="openChat('data')">问芽芽</div>
+       <div style="flex:1;background:var(--red);border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:white;cursor:pointer;white-space:nowrap;" onclick="openChat('data')">问Lumi</div>
      </div>`;
     detail.innerHTML = `
       <div style="font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:8px;">${ins.detail.title}</div>
@@ -1708,7 +1715,7 @@ function showResult(topicIdx) {
     <!-- 标签 -->
     <div style="padding:0 16px 8px;display:flex;align-items:center;gap:6px;">
       <div style="width:3px;height:14px;background:var(--red);border-radius:2px;"></div>
-      <div style="font-size:13px;font-weight:700;color:var(--gray1);">芽芽帮你写好了，预览一下</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray1);">Lumi帮你写好了，预览一下</div>
     </div>
 
     <!-- 小红书笔记卡片 -->
@@ -1737,7 +1744,7 @@ function showResult(topicIdx) {
         </div>
         <!-- 编辑按钮 -->
         <div id="edit-toggle-bar" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div style="font-size:11px;color:var(--gray4);">芽芽生成的内容草稿</div>
+          <div style="font-size:11px;color:var(--gray4);">Lumi生成的内容草稿</div>
           <div id="edit-toggle-btn" style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--red);background:var(--red-pale);padding:4px 10px;border-radius:10px;cursor:pointer;" onclick="toggleEditMode()">
             <span>✏️</span><span id="edit-btn-label">编辑</span>
           </div>
@@ -1783,7 +1790,7 @@ function showResult(topicIdx) {
     <div style="padding:12px 16px 0;display:flex;gap:8px;">
       <div style="flex:1;background:var(--gray5);border:1.5px solid var(--gray4);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:var(--gray2);transition:all 0.15s;"
         onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''"
-        onclick="askShubaAboutNote()">问芽芽细化</div>
+        onclick="askShubaAboutNote()">问Lumi细化</div>
       <div style="flex:1.2;background:var(--red);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:white;transition:all 0.15s;"
         onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''"
         onclick="goPublish()">去发布这篇笔记 →</div>
@@ -1856,7 +1863,7 @@ function showPublishModal() {
     <div style="background:white;border-radius:24px 24px 0 0;width:100%;padding:20px 20px 40px;animation:slideUp 0.3s ease;">
       <div style="width:36px;height:4px;background:var(--gray4);border-radius:2px;margin:0 auto 16px;"></div>
       <div style="font-size:17px;font-weight:800;color:var(--gray1);margin-bottom:4px;">准备发布这篇笔记</div>
-      <div style="font-size:13px;color:var(--gray3);margin-bottom:20px;">芽芽帮你安排好了发布计划</div>
+      <div style="font-size:13px;color:var(--gray3);margin-bottom:20px;">Lumi帮你安排好了发布计划</div>
       <div style="background:var(--gray5);border-radius:14px;padding:14px;margin-bottom:16px;">
         <div style="font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:8px;">${r.title}</div>
         <div style="display:flex;gap:8px;font-size:12px;color:var(--gray3);">
@@ -1878,7 +1885,7 @@ function confirmPublish() {
     <div style="background:white;border-radius:24px 24px 0 0;width:100%;padding:40px 20px;text-align:center;animation:fadeUp 0.3s ease;">
       <div style="font-size:52px;margin-bottom:12px;">🎉</div>
       <div style="font-size:18px;font-weight:800;color:var(--gray1);margin-bottom:8px;">发布成功！</div>
-      <div style="font-size:13px;color:var(--gray3);margin-bottom:24px;">芽芽会在24小时后帮你复盘这篇笔记的数据表现～</div>
+      <div style="font-size:13px;color:var(--gray3);margin-bottom:24px;">Lumi会在24小时后帮你复盘这篇笔记的数据表现～</div>
       <div style="background:var(--red);border-radius:12px;padding:14px;font-size:14px;font-weight:700;color:white;cursor:pointer;" onclick="document.getElementById('publish-overlay').style.display='none';switchTab('data')">查看数据表现 →</div>
     </div>`;
 }
@@ -1888,7 +1895,7 @@ function openInsightChat(idx) {
   const ins = curDataInsights && curDataInsights[idx];
   openChat(null, false, 'data');
   if(!ins) return;
-  // 进入对话后直接抛出用户问题+芽芽针对性回答
+  // 进入对话后直接抛出用户问题+Lumi针对性回答
   setTimeout(()=>{
     addUserMsg(`我想深入了解：${ins.detail.title}`);
     scrollMsgs();
@@ -1898,7 +1905,7 @@ function openInsightChat(idx) {
       addBotMsg(
         `这个数据背后的逻辑我来帮你拆解一下 👇`,
         { title:`📊 ${ins.detail.title}`, body: ins.detail.body },
-        { title:'✅ 芽芽建议', body: suggestText }
+        { title:'✅ Lumi建议', body: suggestText }
       );
       scrollMsgs();
     });
