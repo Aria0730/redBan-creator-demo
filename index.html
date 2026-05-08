@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>薯伴 · 创作者成长顾问</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --red:#FF2442; --red-light:#FF6B81; --red-pale:#FFF0F2;
+  --gray1:#1A1A1A; --gray2:#4A4A4A; --gray3:#8A8A8A;
+  --gray4:#D0D0D0; --gray5:#F5F5F5; --white:#FFFFFF;
+  --green:#00C853; --orange:#FF6D00; --blue:#2979FF; --gold:#FFB300;
+}
+body {
+  font-family:-apple-system,'PingFang SC','Helvetica Neue',sans-serif;
+  background:#E8E8E8;
+  display:flex; justify-content:center; align-items:flex-start;
+  min-height:100vh; padding:24px 0;
+}
+.phone-shell {
+  width:390px; background:#111; border-radius:52px;
+  padding:12px; box-shadow:0 48px 96px rgba(0,0,0,0.45);
+}
+.phone-screen {
+  width:100%; background:var(--white);
+  border-radius:42px; overflow:hidden;
+  height:844px; position:relative;
+}
+
+/* 页面切换 */
+.page {
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  background:var(--white);
+  display:flex; flex-direction:column;
+}
+.page.out-left  { transform:translateX(-100%); pointer-events:none; }
+.page.out-right { transform:translateX(100%);  pointer-events:none; }
+
+/* 状态栏 */
+.status-bar {
+  height:44px; padding:14px 20px 0;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-shrink:0; position:sticky; top:0; z-index:10; background:inherit;
+}
+.status-bar .time { font-size:15px; font-weight:700; color:var(--gray1); }
+.status-icons { font-size:12px; color:var(--gray1); }
+
+/* 导航 */
+.nav-bar {
+  height:48px; padding:0 16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-back {
+  width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; color:var(--gray1); cursor:pointer;
+}
+.nav-back:active { background:var(--gray5); }
+.nav-title { font-size:17px; font-weight:700; color:var(--gray1); }
+.nav-action { font-size:14px; color:var(--red); font-weight:600; cursor:pointer; }
+
+/* ═══ 账号切换器 ═══ */
+.account-switcher {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 16px 8px;
+  overflow-x:auto; scrollbar-width:none;
+  border-bottom:1px solid var(--gray5);
+  background:var(--white);
+  position:sticky; top:44px; z-index:9;
+}
+.account-switcher::-webkit-scrollbar { display:none; }
+.switcher-chip {
+  display:flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:20px;
+  border:1.5px solid var(--gray4);
+  cursor:pointer; flex-shrink:0;
+  transition:all 0.18s;
+  font-size:13px; color:var(--gray2); font-weight:500;
+}
+.switcher-chip.active {
+  border-color:var(--red); background:var(--red-pale); color:var(--red); font-weight:700;
+}
+.switcher-avatar { font-size:16px; }
+
+/* ═══ PAGE: 成长地图 ═══ */
+#page-growth { background:#F7F3EE; }
+
+/* 顶部账号卡 */
+.account-hero {
+  background:var(--white);
+  padding:14px 16px 16px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--gray5);
+}
+.account-hero-avatar {
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+  flex-shrink:0;
+}
+.account-hero-info { flex:1; }
+.account-hero-name { font-size:17px; font-weight:800; color:var(--gray1); margin-bottom:2px; }
+.account-hero-sub { font-size:12px; color:var(--gray3); }
+.account-hero-stats { display:flex; gap:16px; margin-top:8px; }
+.hero-stat { text-align:center; }
+.hero-stat-num { font-size:16px; font-weight:800; color:var(--gray1); }
+.hero-stat-label { font-size:10px; color:var(--gray3); }
+
+/* 地图容器 */
+.map-section {
+  margin:12px 16px;
+  background:var(--white);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,0.07);
+}
+.map-section-header {
+  padding:14px 16px 0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.map-section-title {
+  font-size:14px; font-weight:800; color:var(--gray1);
+  display:flex; align-items:center; gap:6px;
+}
+
+/* SVG地图 */
+.map-svg-wrap {
+  padding:8px 8px 12px;
+  overflow:hidden;
+}
+
+/* 里程碑卡 */
+.milestone-section {
+  margin:0 16px 12px;
+  background:white;
+  border-radius:20px; padding:16px;
+  color:var(--gray1);
+  box-shadow:0 2px 16px rgba(0,0,0,0.06);
+  border:1.5px solid #FFE0E6;
+}
+.milestone-eyebrow {
+  font-size:11px; color:var(--red);
+  font-weight:700; letter-spacing:0.5px; margin-bottom:6px;
+}
+.milestone-title { font-size:17px; font-weight:800; margin-bottom:4px; color:var(--gray1); }
+.milestone-desc { font-size:12px; color:var(--gray3); margin-bottom:14px; }
+.milestone-bars {}
+.m-bar-row { margin-bottom:10px; }
+.m-bar-top {
+  display:flex; justify-content:space-between;
+  font-size:12px; margin-bottom:5px;
+}
+.m-bar-label { color:var(--gray2); font-weight:600; }
+.m-bar-val { color:var(--gray3); }
+.m-bar-track { height:5px; background:var(--gray5); border-radius:3px; overflow:hidden; }
+.m-bar-fill { height:100%; border-radius:3px; transition:width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+/* 健康度 */
+.health-section {
+  margin:0 16px 12px;
+  background:var(--white); border-radius:20px;
+  box-shadow:0 2px 16px rgba(0,0,0,0.07);
+  padding:14px 14px 14px;
+}
+.health-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.health-item {
+  background:var(--gray5); border-radius:14px; padding:12px;
+}
+.health-item-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.health-name { font-size:12px; color:var(--gray2); font-weight:600; }
+.health-score { font-size:20px; font-weight:800; }
+.health-bar { height:4px; background:var(--gray4); border-radius:2px; overflow:hidden; margin-bottom:5px; }
+.health-fill { height:100%; border-radius:2px; transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
+.health-hint { font-size:10px; color:var(--gray3); }
+
+/* 行动建议 */
+.action-section {
+  margin:0 16px 16px;
+  background:var(--white); border-radius:20px;
+  box-shadow:0 2px 16px rgba(0,0,0,0.07);
+  padding:14px;
+}
+.action-item {
+  display:flex; gap:10px; padding:12px;
+  background:var(--gray5); border-radius:14px; margin-top:8px;
+  cursor:pointer; transition:transform 0.15s;
+}
+.action-item:active { transform:scale(0.98); }
+.action-num {
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); color:white;
+  font-size:12px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.action-body { flex:1; }
+.action-title { font-size:13px; font-weight:700; color:var(--gray1); margin-bottom:3px; }
+.action-desc { font-size:12px; color:var(--gray3); line-height:1.5; }
+.action-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+.action-tag { font-size:10px; padding:2px 7px; border-radius:8px; font-weight:600; white-space:nowrap; }
+.tag-urgent { background:#FFEBEE; color:var(--red); }
+.tag-important { background:#FFF3E0; color:var(--orange); }
+.tag-suggest { background:#E8F5E9; color:var(--green); }
+.ask-btn {
+  font-size:11px; color:var(--red); font-weight:700;
+  background:var(--red-pale); padding:4px 8px; border-radius:8px;
+  border:none; cursor:pointer; white-space:nowrap;
+}
+
+/* 薯伴入口卡（内容区底部）*/
+.shuba-entry {
+  margin:0 16px 20px;
+  background:linear-gradient(135deg,#FF2442 0%,#FF6B81 100%);
+  border-radius:16px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:transform 0.15s;
+  box-shadow:0 4px 16px rgba(255,36,66,0.3);
+}
+.shuba-entry:active{transform:scale(0.98);}
+.shuba-entry-av{font-size:28px;}
+.shuba-entry-text{flex:1;}
+.shuba-entry-title{font-size:15px;font-weight:800;color:white;margin-bottom:2px;}
+.shuba-entry-sub{font-size:12px;color:rgba(255,255,255,0.8);}
+.shuba-entry-arrow{font-size:20px;color:rgba(255,255,255,0.7);}
+
+/* 底部Tab */
+.bottom-tab {
+  flex-shrink:0;
+  height:80px; background:var(--white);
+  border-top:1px solid var(--gray5);
+  display:flex; align-items:flex-start; padding-top:6px;
+  border-radius:0 0 42px 42px;
+  z-index:20;
+}
+.tab-item {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; gap:2px; cursor:pointer; padding-top:2px;
+}
+.tab-icon { display:flex; align-items:center; justify-content:center; width:22px; height:22px; color:var(--gray3); }
+.tab-label { font-size:10px; color:var(--gray3); font-weight:500; }
+.tab-item.active .tab-label { color:var(--red); }
+.tab-item.active .tab-icon { color:var(--red); }
+.tab-dot { width:4px; height:4px; background:var(--red); border-radius:50%; margin-top:1px; }
+
+/* ═══ PAGE: 对话 ═══ */
+#page-chat { display:flex; flex-direction:column; }
+.chat-header-wrap { flex-shrink:0; background:var(--white); border-bottom:1px solid var(--gray5); }
+.chat-bot-row {
+  display:flex; align-items:center; gap:10px; padding:6px 16px 14px;
+}
+.chat-bot-av {
+  width:42px; height:42px; border-radius:50%;
+  background:linear-gradient(135deg,var(--red),var(--red-light));
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.chat-bot-name { font-size:15px; font-weight:700; color:var(--gray1); }
+.chat-bot-sub { font-size:11px; color:var(--gray3); }
+.online-dot { display:inline-block; width:6px; height:6px; background:var(--green); border-radius:50%; margin-right:3px; }
+
+.chat-msgs { flex:1; overflow-y:auto; padding:16px; scrollbar-width:none; }
+.chat-msgs::-webkit-scrollbar { display:none; }
+
+.bubble-wrap { display:flex; gap:8px; margin-bottom:14px; animation:fadeUp 0.28s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);} }
+.bubble-wrap.me { flex-direction:row-reverse; }
+.bav { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; margin-top:2px; }
+.bav.bot { background:linear-gradient(135deg,var(--red),var(--red-light)); }
+.bav.me { background:var(--gray5); }
+.bubble {
+  max-width:76%; padding:11px 14px; border-radius:18px;
+  font-size:13.5px; line-height:1.65; color:var(--gray1);
+}
+.bubble.bot { background:var(--gray5); border-bottom-left-radius:4px; }
+.bubble.me { background:var(--red); color:white; border-bottom-right-radius:4px; }
+.bubble strong { font-weight:800; }
+.data-block {
+  background:var(--white); border-radius:10px; padding:10px 12px;
+  margin-top:8px; border-left:3px solid var(--red);
+}
+.data-block-title { font-size:11px; color:var(--red); font-weight:700; margin-bottom:5px; }
+.data-block-body { font-size:12.5px; color:var(--gray1); line-height:1.6; }
+.action-suggest {
+  background:var(--red-pale); border-radius:10px; padding:10px 12px; margin-top:8px;
+}
+.action-suggest-title { font-size:11px; color:var(--red); font-weight:700; margin-bottom:5px; }
+.action-suggest-body { font-size:12.5px; color:var(--gray1); line-height:1.6; }
+
+.typing { display:flex; gap:4px; padding:4px 2px; }
+.t-dot {
+  width:7px; height:7px; background:var(--gray3); border-radius:50%;
+  animation:tdot 1.2s infinite;
+}
+.t-dot:nth-child(2){animation-delay:.2s;}
+.t-dot:nth-child(3){animation-delay:.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(0.7);opacity:.5;}40%{transform:scale(1.1);opacity:1;}}
+
+.quick-qs {
+  padding:10px 16px; overflow-x:auto; white-space:nowrap;
+  scrollbar-width:none; flex-shrink:0;
+}
+.quick-qs::-webkit-scrollbar{display:none;}
+.quick-q {
+  display:inline-block; padding:7px 13px;
+  background:var(--red-pale); color:var(--red);
+  border:1px solid rgba(255,36,66,0.2); border-radius:20px;
+  font-size:12.5px; font-weight:600; margin-right:8px;
+  cursor:pointer; white-space:nowrap; transition:all 0.15s;
+}
+.quick-q:active { background:var(--red); color:white; }
+
+.chat-input-row {
+  padding:10px 14px 28px; border-top:1px solid var(--gray5);
+  display:flex; gap:10px; align-items:flex-end; flex-shrink:0;
+  background:var(--white);
+}
+.chat-input {
+  flex:1; background:var(--gray5); border-radius:22px;
+  padding:10px 16px; font-size:14px; color:var(--gray1);
+  border:none; outline:none; resize:none;
+  font-family:inherit; line-height:1.5; max-height:80px;
+}
+.send-btn {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--red); border:none;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; flex-shrink:0; transition:transform 0.15s;
+}
+.send-btn:active{transform:scale(0.9);}
+
+/* 通用 */
+.section-title-label {
+  font-size:14px; font-weight:800; color:var(--gray1);
+  display:flex; align-items:center; gap:5px;
+}
+@keyframes slideUp {
+  from{transform:translateY(100%);}to{transform:translateY(0);}
+}
+</style>
+</head>
+<body>
+<div class="phone-shell">
+<div class="phone-screen">
+
+<!-- ═══ PAGE: 账号选择 ═══ -->
+<div class="page" id="page-select" style="background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 24px 24px;">
+  <div style="width:72px;height:72px;margin:0 auto 16px;"><svg width="72" height="72" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
+  <div style="font-size:22px;font-weight:800;color:var(--gray1);margin-bottom:6px;">薯伴</div>
+  <div style="font-size:14px;color:var(--gray3);margin-bottom:40px;">选择你要管理的账号</div>
+  <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+    <div style="background:var(--gray5);border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;box-shadow:0 2px 12px rgba(0,0,0,0.06);" onclick="selectAccount(0)" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''">
+      <div style="font-size:32px;">🌱</div>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:800;color:var(--gray1);">甜甜的小确幸</div>
+        <div style="font-size:12px;color:var(--gray3);margin-top:2px;">300 粉丝</div>
+      </div>
+      <div style="background:#FF6B81;color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">新手期</div>
+    </div>
+    <div style="background:var(--gray5);border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;box-shadow:0 2px 12px rgba(0,0,0,0.06);" onclick="selectAccount(1)" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''">
+      <div style="font-size:32px;">✨</div>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:800;color:var(--gray1);">LUNA的穿搭日记</div>
+        <div style="font-size:12px;color:var(--gray3);margin-top:2px;">5,200 粉丝</div>
+      </div>
+      <div style="background:#FF9500;color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">成长期</div>
+    </div>
+    <div style="background:var(--gray5);border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;box-shadow:0 2px 12px rgba(0,0,0,0.06);" onclick="selectAccount(2)" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''">
+      <div style="font-size:32px;">💎</div>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:800;color:var(--gray1);">美妆研究所Coco</div>
+        <div style="font-size:12px;color:var(--gray3);margin-top:2px;">2.1万 粉丝</div>
+      </div>
+      <div style="background:#00C853;color:white;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">变现期</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: 成长地图 ═══ -->
+<div class="page out-right" id="page-growth">
+  <div class="status-bar" style="background:#F7F3EE;">
+    <span class="time">16:32</span>
+    <span class="status-icons">●●● WiFi 🔋</span>
+  </div>
+
+  <!-- 账号信息栏 -->
+  <div id="growth-account-bar" style="display:flex;align-items:center;padding:8px 16px;background:#F7F3EE;border-bottom:1px solid var(--gray5);gap:8px;">
+    <span id="growth-acc-emoji" style="font-size:18px;">🌱</span>
+    <span id="growth-acc-name" style="font-size:14px;font-weight:700;color:var(--gray1);flex:1;">甜甜的小确幸</span>
+    <span style="font-size:12px;color:var(--red);font-weight:600;cursor:pointer;" onclick="goSelectAccount()">切换账号</span>
+  </div>
+
+  <!-- 动态内容区（可滚动） -->
+  <div id="growth-body" style="flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:16px;"></div>
+
+  <!-- 底部Tab -->
+  <div class="bottom-tab">
+    <div class="tab-item active" id="tab-map">
+      <div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18 L8 10 L13 14 L18 6"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg></div>
+      <div class="tab-label">成长地图</div>
+      <div class="tab-dot"></div>
+    </div>
+    <div class="tab-item" id="tab-data" onclick="switchTab('data')">
+      <div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="12" width="4" height="7" rx="1"/><rect x="9" y="7" width="4" height="12" rx="1"/><rect x="15" y="4" width="4" height="15" rx="1"/></svg></div>
+      <div class="tab-label">数据</div>
+    </div>
+    <div class="tab-item" id="tab-create" onclick="switchTab('create')">
+      <div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4l4 4-9 9H5v-4l9-9z"/></svg></div>
+      <div class="tab-label">创作</div>
+    </div>
+    <div class="tab-item" id="tab-chat" onclick="openChat('tab')">
+      <div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div>
+      <div class="tab-label">薯伴</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: 数据分析 ═══ -->
+<div class="page out-right" id="page-data">
+  <div class="status-bar" style="background:#F7F3EE;">
+    <span class="time">16:50</span><span class="status-icons">●●● WiFi 🔋</span>
+  </div>
+  <div id="data-account-bar" style="display:flex;align-items:center;padding:8px 16px;background:#F7F3EE;border-bottom:1px solid var(--gray5);gap:8px;">
+    <span id="data-acc-emoji" style="font-size:18px;">🌱</span>
+    <span id="data-acc-name" style="font-size:14px;font-weight:700;color:var(--gray1);flex:1;">甜甜的小确幸</span>
+    <span style="font-size:12px;color:var(--red);font-weight:600;cursor:pointer;" onclick="goSelectAccount()">切换账号</span>
+  </div>
+  <div id="data-body" style="flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:16px;"></div>
+  <div class="bottom-tab">
+    <div class="tab-item" onclick="switchTab('map')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18 L8 10 L13 14 L18 6"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg></div><div class="tab-label">成长地图</div></div>
+    <div class="tab-item" id="tab-data2" onclick="switchTab('data')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="12" width="4" height="7" rx="1"/><rect x="9" y="7" width="4" height="12" rx="1"/><rect x="15" y="4" width="4" height="15" rx="1"/></svg></div><div class="tab-label">数据</div></div>
+    <div class="tab-item" onclick="switchTab('create')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4l4 4-9 9H5v-4l9-9z"/></svg></div><div class="tab-label">创作</div></div>
+    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">薯伴</div></div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: 创作助手 ═══ -->
+<div class="page out-right" id="page-create">
+  <div class="status-bar" style="background:#F7F3EE;">
+    <span class="time">16:50</span><span class="status-icons">●●● WiFi 🔋</span>
+  </div>
+  <div id="create-account-bar" style="display:flex;align-items:center;padding:8px 16px;background:#F7F3EE;border-bottom:1px solid var(--gray5);gap:8px;">
+    <span id="create-acc-emoji" style="font-size:18px;">🌱</span>
+    <span id="create-acc-name" style="font-size:14px;font-weight:700;color:var(--gray1);flex:1;">甜甜的小确幸</span>
+    <span style="font-size:12px;color:var(--red);font-weight:600;cursor:pointer;" onclick="goSelectAccount()">切换账号</span>
+  </div>
+  <div id="create-body" style="flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:16px;"></div>
+  <div class="bottom-tab">
+    <div class="tab-item" onclick="switchTab('map')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18 L8 10 L13 14 L18 6"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/><circle cx="13" cy="14" r="1.5" fill="currentColor"/><circle cx="18" cy="6" r="1.5" fill="currentColor"/></svg></div><div class="tab-label">成长地图</div></div>
+    <div class="tab-item" onclick="switchTab('data')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="12" width="4" height="7" rx="1"/><rect x="9" y="7" width="4" height="12" rx="1"/><rect x="15" y="4" width="4" height="15" rx="1"/></svg></div><div class="tab-label">数据</div></div>
+    <div class="tab-item" id="tab-create2" onclick="switchTab('create')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 4l4 4-9 9H5v-4l9-9z"/></svg></div><div class="tab-label">创作</div></div>
+    <div class="tab-item" onclick="openChat('tab')"><div class="tab-icon"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h14a2 2 0 012 2v8a2 2 0 01-2 2H8l-4 3V6a2 2 0 012-2z"/></svg></div><div class="tab-label">薯伴</div></div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: 对话 ═══ -->
+<div class="page out-right" id="page-chat" style="display:flex;flex-direction:column;">
+  <div class="status-bar"><span class="time">16:32</span><span class="status-icons">●●● WiFi 🔋</span></div>
+  <div class="chat-header-wrap">
+    <div class="nav-bar">
+      <div class="nav-back" onclick="closeChat()">‹</div>
+      <div></div><div></div>
+    </div>
+    <div class="chat-bot-row">
+      <div class="chat-bot-av"><svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
+      <div>
+        <div class="chat-bot-name">薯伴</div>
+        <div class="chat-bot-sub"><span class="online-dot"></span>只属于你的创作成长顾问</div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="quick-qs" id="quick-qs"></div>
+  <div class="chat-input-row">
+    <textarea class="chat-input" id="chat-input" rows="1" placeholder="问薯伴任何问题…"
+      oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+    <button class="send-btn" onclick="sendMsg()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+</div><!-- phone-screen -->
+</div><!-- phone-shell -->
+
+<script>
+// 薯伴头像 SVG（小红书AI助手形象）
+const SHUBA_AVATAR = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="16" cy="16" r="16" fill="url(#sbg)"/>
+  <defs>
+    <radialGradient id="sbg" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FF6B8A"/>
+      <stop offset="100%" stop-color="#FF2442"/>
+    </radialGradient>
+  </defs>
+  <!-- 耳朵 -->
+  <ellipse cx="9" cy="10" rx="4" ry="5" fill="#FF2442"/>
+  <ellipse cx="9" cy="10" rx="2.2" ry="3" fill="#FFB3C1"/>
+  <ellipse cx="23" cy="10" rx="4" ry="5" fill="#FF2442"/>
+  <ellipse cx="23" cy="10" rx="2.2" ry="3" fill="#FFB3C1"/>
+  <!-- 脸 -->
+  <ellipse cx="16" cy="18" rx="10" ry="9" fill="#FFF0F2"/>
+  <!-- 眼睛 -->
+  <ellipse cx="12.5" cy="16" rx="1.8" ry="2" fill="#1A1A1A"/>
+  <ellipse cx="19.5" cy="16" rx="1.8" ry="2" fill="#1A1A1A"/>
+  <circle cx="13.1" cy="15.4" r="0.6" fill="white"/>
+  <circle cx="20.1" cy="15.4" r="0.6" fill="white"/>
+  <!-- 腮红 -->
+  <ellipse cx="10.5" cy="19.5" rx="2.2" ry="1.2" fill="#FFB3C1" opacity="0.7"/>
+  <ellipse cx="21.5" cy="19.5" rx="2.2" ry="1.2" fill="#FFB3C1" opacity="0.7"/>
+  <!-- 嘴 -->
+  <path d="M13.5 21 Q16 23 18.5 21" stroke="#FF2442" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <!-- 额头薯字 -->
+  <text x="16" y="13" text-anchor="middle" font-size="5" fill="#FF2442" font-weight="900" font-family="PingFang SC,sans-serif">薯</text>
+</svg>`;
+
+const SHUBA_AVATAR_SM = `<svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="16" cy="16" r="16" fill="url(#sbg2)"/>
+  <defs><radialGradient id="sbg2" cx="40%" cy="30%" r="70%"><stop offset="0%" stop-color="#FF6B8A"/><stop offset="100%" stop-color="#FF2442"/></radialGradient></defs>
+  <ellipse cx="9" cy="10" rx="4" ry="5" fill="#FF2442"/>
+  <ellipse cx="9" cy="10" rx="2.2" ry="3" fill="#FFB3C1"/>
+  <ellipse cx="23" cy="10" rx="4" ry="5" fill="#FF2442"/>
+  <ellipse cx="23" cy="10" rx="2.2" ry="3" fill="#FFB3C1"/>
+  <ellipse cx="16" cy="18" rx="10" ry="9" fill="#FFF0F2"/>
+  <ellipse cx="12.5" cy="16" rx="1.8" ry="2" fill="#1A1A1A"/>
+  <ellipse cx="19.5" cy="16" rx="1.8" ry="2" fill="#1A1A1A"/>
+  <circle cx="13.1" cy="15.4" r="0.6" fill="white"/>
+  <circle cx="20.1" cy="15.4" r="0.6" fill="white"/>
+  <ellipse cx="10.5" cy="19.5" rx="2.2" ry="1.2" fill="#FFB3C1" opacity="0.7"/>
+  <ellipse cx="21.5" cy="19.5" rx="2.2" ry="1.2" fill="#FFB3C1" opacity="0.7"/>
+  <path d="M13.5 21 Q16 23 18.5 21" stroke="#FF2442" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <text x="16" y="13" text-anchor="middle" font-size="5" fill="#FF2442" font-weight="900" font-family="PingFang SC,sans-serif">薯</text>
+</svg>`;
+
+// ═══════════════════════════════════
+// 数据
+// ═══════════════════════════════════
+const accounts = [
+{
+  name:"甜甜的小确幸", emoji:"🌱", bg:"#FFF0F2",
+  stage:"新手期", stageIdx:0,
+  fans:"300", posts:"4篇", likes:"128",
+  health:[
+    {name:"内容质量",score:42,color:"#FF6D00",hint:"垂类分散，缺乏辨识度"},
+    {name:"互动活跃",score:35,color:"#FF2442",hint:"点赞率0.8%，低于均值"},
+    {name:"粉丝健康",score:65,color:"#00C853",hint:"真实粉丝占比较高"},
+    {name:"垂类影响",score:18,color:"#FF2442",hint:"尚未建立赛道认知"},
+  ],
+  milestone:{
+    title:"让第一篇笔记被品牌发现",
+    desc:"好内容无门槛门槛进入合作广场，获得授权分成",
+    bars:[
+      {label:"内容垂类稳定度",pct:20,hint:"当前：散，目标：聚焦单垂类",color:"#FF6D00"},
+      {label:"单篇最高互动量",pct:26,hint:"当前128，目标500+",color:"#2979FF"},
+    ]
+  },
+  actions:[
+    {title:"本周只做「日常穿搭」，停掉其他类目",
+     desc:"你近30天发布了美食3篇、穿搭2篇、日常vlog2篇。系统无法给你贴赛道标签，导致你的内容进不了垂类流量池。穿搭赛道你的2篇平均互动是其他类目的2.1倍，信号已经很清楚了。",
+     tag:"urgent", ctx:"我该聚焦哪个垂类"},
+    {title:"用「结果词+场景词」重写封面文字",
+     desc:"你近4篇封面全是无文字纯图。穿搭赛道TOP笔记中83%有封面文字钩子，手机列表页缩略图尺寸约120×160px，纯图根本无法传递信息。建议：主图全身出镜，左上角白色加粗「显瘦20斤的穿搭公式」，字号≥60px，加黑色描边确保可读。",
+     tag:"urgent", ctx:"封面要怎么改才对"},
+    {title:"参与「初夏穿搭」话题，蹭本周热点冷启动",
+     desc:"该话题本周曝光增速+156%，新号在热点话题下更容易获得系统初始推流。带话题发布后，系统会把你的笔记推到话题广场，比直接发获得约3倍初始曝光。发布时间选晚上20:00-21:00，不要在上午发。",
+     tag:"suggest", ctx:"怎么借势热点话题"},
+  ],
+  quickQs:["我该聚焦哪个垂类","封面要怎么改才对","怎么借势热点话题","新号怎么快速涨粉"],
+},
+{
+  name:"LUNA的穿搭日记", emoji:"✨", bg:"#E8F5E9",
+  stage:"成长期", stageIdx:1,
+  fans:"5,200", posts:"12篇", likes:"3.8K",
+  health:[
+    {name:"内容质量",score:74,color:"#00C853",hint:"垂类清晰，内容稳定"},
+    {name:"互动活跃",score:45,color:"#FF6D00",hint:"点赞率1.2%，均值2.8%"},
+    {name:"粉丝健康",score:82,color:"#00C853",hint:"精准粉丝，质量高"},
+    {name:"垂类影响",score:67,color:"#00C853",hint:"穿搭赛道认知建立中"},
+  ],
+  milestone:{
+    title:"提升合作广场授权分成收入",
+    desc:"你已可被品牌发现，目标是让更多笔记被品牌主动选中",
+    bars:[
+      {label:"笔记授权率",pct:15,hint:"当前1/7篇被选中，目标3/7",color:"#FF6D00"},
+      {label:"互动率达标",pct:43,hint:"当前1.2%→目标2.8%",color:"#2979FF"},
+    ]
+  },
+  actions:[
+    {title:"立刻把发布时间改到晚上20:30",
+     desc:"你近12篇有9篇在工作日上午9-11点发布。你的目标用户是18-28岁女性，她们的小红书活跃高峰是晚上20-22点（占全天活跃量的38%），上午9-11点仅占11%。你现在等于在她们睡觉时摆摊。只改发布时间，初始曝光预计提升35-40%，不需要改任何内容。",
+     tag:"urgent", ctx:"我的发布时间有什么问题"},
+    {title:"在标题里加「数字+结果词」钩子",
+     desc:"你近12篇标题的点击率平均0.9%，同垂类均值1.8%。分析你的标题：「今日穿搭分享」「这套真的好看」——没有给用户点进来的理由。改法：「3件白T搭出7套通勤look」「显腿长5cm的裤子我终于找到了」。数字让内容可预期，结果词让用户觉得点进去有收获。",
+     tag:"urgent", ctx:"标题怎么写才能提升点击率"},
+    {title:"下一篇做品牌友好型内容，测试授权率",
+     desc:"合作广场后台数据：含「亲测」「好物」「真实体验」关键词的穿搭笔记，品牌选中率是普通穿搭的3.2倍。你目前12篇里0篇有这类关键词。不需要刻意打广告感，自然地写「最近入手了一件XX，穿了3次真的很好搭」就够了。",
+     tag:"important", ctx:"什么样的内容品牌最喜欢选"},
+  ],
+  quickQs:["我的发布时间有什么问题","标题怎么写才能提升点击率","什么样的内容品牌最喜欢选","怎么提升互动率"],
+},
+{
+  name:"美妆研究所Coco", emoji:"💎", bg:"#FFF8E1",
+  stage:"变现期", stageIdx:2,
+  fans:"2.1万", posts:"18篇", likes:"12.4K",
+  health:[
+    {name:"内容质量",score:88,color:"#00C853",hint:"专业强，口碑稳定"},
+    {name:"互动活跃",score:76,color:"#00C853",hint:"互动率3.8%，高于均值"},
+    {name:"粉丝健康",score:91,color:"#00C853",hint:"高黏性，复购型粉丝多"},
+    {name:"垂类影响",score:72,color:"#00C853",hint:"美妆赛道影响力较强"},
+  ],
+  milestone:{
+    title:"蒲公英接单量×2 + 报价提升30%",
+    desc:"你已入驻蒲公英，核心问题是接单效率和定价策略",
+    bars:[
+      {label:"本月接单完成率",pct:60,hint:"3/5单，目标连续5单满约",color:"#FFB300"},
+      {label:"报价vs市场均值",pct:70,hint:"当前低于同量级创作者30%",color:"#FF6D00"},
+    ]
+  },
+  actions:[
+    {title:"主页置顶换成「商单案例展示笔记」",
+     desc:"品牌BD打开你主页的决策路径：置顶笔记（3秒）→ 粉丝数 → 互动率。你当前置顶是日常vlog，BD根本看不出你有商业合作经验。建议置顶一篇结构为：①简介：美妆垂类/2.1万粉/互动率3.8% ②往期商单案例图（数据打码） ③合作方式：蒲公英接单/私信。有此类置顶的创作者，品牌主动联系率提升47%。",
+     tag:"urgent", ctx:"怎么让品牌更容易主动找我"},
+    {title:"把报价提升至市场均值，并上传媒介手册",
+     desc:"你当前报价约3500元/篇，同量级美妆创作者（2万粉+，互动率3%+）市场均值是5000元。你低报价不是在竞争，是在给自己贴「便宜」标签——品牌会怀疑你的质量。媒介手册上传蒲公英后，有手册的创作者平均报价高出28%，因为手册本身就在传递「我是认真做商业的创作者」的信号。",
+     tag:"urgent", ctx:"我的报价策略有什么问题"},
+    {title:"参与蒲公英「夏日美妆」品牌活动",
+     desc:"本月3个美妆品牌正在该活动中主动筛选创作者，你的账号标签匹配度92%（美妆垂类+2万粉+互动率≥3%三项全满足）。活动报名后品牌可主动发起合作，不占用你的主动接单名额。上个月参与同类活动的创作者平均额外增加1.8个品牌合作。",
+     tag:"suggest", ctx:"怎么参与蒲公英品牌活动"},
+  ],
+  quickQs:["怎么让品牌更容易主动找我","我的报价策略有什么问题","怎么参与蒲公英品牌活动","媒介手册要怎么做"],
+},
+];
+
+// ═══ AI对话内容库 ═══
+const chatAnswers = {
+"我该聚焦哪个垂类":{
+  q:"我该聚焦哪个垂类方向？",
+  ans:`根据你近30天的数据，我强烈建议聚焦<strong>「日常穿搭」</strong>，理由很具体：`,
+  data:{title:"📊 薯伴数据诊断",body:"你的穿搭类2篇：平均获赞64，平均评论11条\n你的美食类3篇：平均获赞19，平均评论3条\n你的日常vlog类2篇：平均获赞22，平均评论4条\n\n穿搭内容互动效率是其他类目2.1倍。系统已经在给你发信号了。"},
+  suggest:{title:"💡 下一步行动",body:"这周起的3篇全部做穿搭，不发其他内容。连续3篇垂类一致后，系统会开始给你贴「穿搭」标签，之后的内容会进入穿搭流量池，自然曝光会提升。"}
+},
+"封面要怎么改才对":{
+  q:"封面要怎么改才对？",
+  ans:`你近4篇封面全是无文字纯图，这是最大的问题。在手机信息流里，缩略图只有大约<strong>120×160px</strong>，纯图传达不了任何信息，用户没理由点进来。`,
+  data:{title:"📊 数据对比",body:"你的封面点击率：约0.6%\n穿搭赛道TOP50均值：1.9%\n有文字钩子的笔记点击率：均值1.8%\n无文字纯图笔记点击率：均值0.7%\n\n你和均值的差距，90%来自封面文字缺失。"},
+  suggest:{title:"✏️ 具体改法",body:"① 主图：全身出镜，构图留出左上角空间\n② 文字：「显瘦20斤的穿搭公式」（结果词+数字）\n③ 字体：加粗无衬线体，白色字+黑色描边\n④ 字号：≥60px，保证缩略图里肉眼可读\n\n本周先用这个格式发一篇，看点击率变化。"}
+},
+"怎么借势热点话题":{
+  q:"怎么借势热点话题？",
+  ans:`「初夏穿搭」这个话题本周是真实的流量机会，但借势有技巧，不是随便挂个话题就有用。`,
+  data:{title:"📊 话题数据",body:"「初夏穿搭」本周曝光增速：+156%\n话题广场日均浏览：约240万次\n新号在热点话题下的初始推流：约3倍于无话题发布\n最佳发布窗口：今晚20:00-21:00"},
+  suggest:{title:"💡 正确的借势方式",body:"① 内容要和话题真正相关，不能硬蹭\n② 标题里自然带入话题关键词（不只是打标签）\n③ 发布时间选今晚20:00，不要改在上午\n④ 发完后在评论区回复前几条，提升互动速度\n\n系统判断笔记质量的前2小时非常关键，发完别走，及时互动。"}
+},
+"我的发布时间有什么问题":{
+  q:"我的发布时间有什么问题？",
+  ans:`问题很明确：你在用户<strong>最不活跃的时间</strong>发内容。`,
+  data:{title:"📊 你的用户活跃时段",body:"你的目标用户（18-28岁女性）小红书活跃分布：\n早9-11点：占全天11%（你现在的发布时间）\n午12-13点：占全天18%\n晚20-22点：占全天38% ← 真正的黄金时段\n晚22-24点：占全天21%\n\n你近12篇中9篇在早上发，错过了黄金时段。"},
+  suggest:{title:"✅ 只需做这一件事",body:"从今天起，把所有笔记的发布时间改到晚上20:30。\n\n不需要改内容，不需要改封面，只改时间。预计初始曝光提升35-40%，观察2周数据变化。这是成本最低、见效最快的一个改动。"}
+},
+"标题怎么写才能提升点击率":{
+  q:"标题怎么写才能提升点击率？",
+  ans:`你近12篇标题的点击率平均<strong>0.9%</strong>，同垂类均值1.8%，差距在于标题没有给用户「点进来的理由」。`,
+  data:{title:"📊 你的标题 vs 高点击率标题",body:"你的标题：「今日穿搭」「这套真的好看」「周末出门穿什么」\n高点击率标题模板：\n✅「3件白T搭出7套通勤look」（数字+场景+结果）\n✅「显腿长5cm的裤子，我找到了」（结果+悬念）\n✅「上班穿这个，被夸了一整天」（场景+社交证明）\n\n核心差异：你的标题在描述内容，高点击率标题在承诺结果。"},
+  suggest:{title:"✏️ 改写公式",body:"「数字」+「结果词」+「场景」\n例：「3套」+「显高10cm」+「上班通勤」\n= 「3套显高10cm的通勤穿搭」\n\n下一篇按这个公式写标题，点击率目标提到1.5%。"}
+},
+"什么样的内容品牌最喜欢选":{
+  q:"什么样的内容品牌最喜欢选？",
+  ans:`合作广场的品牌选创作者时，核心看3件事：<strong>内容相关性、互动质量、商业亲和度</strong>。你目前在前两项还可以，第三项几乎是0。`,
+  data:{title:"📊 合作广场品牌选稿偏好",body:"被选中率最高的笔记特征：\n① 含「亲测」「真实使用」「好物推荐」关键词：被选中率3.2倍\n② 内容中有明确产品使用场景：被选中率2.8倍\n③ 评论区有「求链接」「在哪买」：被选中率4.1倍\n\n你近12篇：0篇有以上特征。"},
+  suggest:{title:"💡 不刻意、自然的做法",body:"下一篇穿搭笔记里，自然带入1件具体单品：「最近入手了一件XX品牌的白T，试了3种搭配」\n不需要刻意营销腔，真实体验+具体产品就够了。\n这类内容品牌会主动在合作广场里找到你。"}
+},
+"怎么让品牌更容易主动找我":{
+  q:"怎么让品牌更容易主动找我？",
+  ans:`品牌BD打开你主页，<strong>3秒内看不到商业合作信息</strong>，就会关掉找下一个。你当前置顶是日常vlog，BD不知道你接商单。`,
+  data:{title:"📊 品牌BD的主页判断路径",body:"① 置顶笔记（停留约3秒）→ 判断是否有商业经验\n② 粉丝数 → 判断量级\n③ 最近3篇互动率 → 判断活跃度\n④ 简介 → 判断合作方式\n\n你在第①步就流失了大部分BD。"},
+  suggest:{title:"✅ 置顶笔记结构（直接用）",body:"第一行：美妆垂类 | 2.1万粉 | 互动率3.8%\n中间：2-3张往期商单截图（品牌名打码，保留数据）\n结尾：「接受蒲公英合作 / 品牌可私信」\n\n做完后，在蒲公英个人页也同步更新简介。有置顶商单笔记的创作者，品牌主动联系率+47%。"}
+},
+"我的报价策略有什么问题":{
+  q:"我的报价策略有什么问题？",
+  ans:`你的问题不是报价太高，是<strong>报价太低</strong>。低报价不是竞争优势，是在给自己贴「便宜」的标签。`,
+  data:{title:"📊 市场报价对标",body:"你当前报价：约3,500元/篇\n同量级创作者市场均值（2万粉+，互动率3%+）：\n美妆赛道：4,800-6,000元/篇\n穿搭赛道：3,500-4,500元/篇\n\n你低于美妆均值约30%。品牌内部选创作者时，过低的报价反而会触发「质量存疑」的判断。"},
+  suggest:{title:"💡 提价的正确方式",body:"① 本月起报价调整到5,000元，不要解释，直接改\n② 同步上传媒介手册到蒲公英（手册本身传递专业感）\n③ 在手册里展示你的互动率数据（3.8%远高于均值）\n\n有媒介手册+合理报价的创作者，成单率比低报价无手册高出61%。"}
+},
+"怎么参与蒲公英品牌活动":{
+  q:"怎么参与蒲公英品牌活动？",
+  ans:`「夏日美妆」活动你的匹配度<strong>92%</strong>，三项条件你全满足，现在是主动参与的好时机。`,
+  data:{title:"📊 活动筛选条件 vs 你的账号",body:"条件①：美妆垂类 → ✅ 你满足\n条件②：粉丝≥1万 → ✅ 你2.1万\n条件③：互动率≥3% → ✅ 你3.8%\n\n本月3个品牌在该活动中主动筛选，上月同类活动参与创作者平均额外增加1.8个合作。"},
+  suggest:{title:"✅ 参与步骤",body:"① 打开蒲公英后台 → 活动广场 → 搜「夏日美妆」\n② 点击报名，填写你的内容方向和报价\n③ 活动报名不占用你的主动接单名额\n④ 品牌会在48小时内主动发起合作邀约\n\n建议报名后同步更新主页置顶，增加品牌看到你的概率。"}
+},
+"媒介手册要怎么做":{
+  q:"媒介手册要怎么做？",
+  ans:`媒介手册是你给品牌BD的<strong>「自我介绍PPT」</strong>，让他不用猜就知道你是谁、能做什么、合作多少钱。`,
+  data:{title:"📊 有无媒介手册的数据差异",body:"有媒介手册的创作者：\n品牌主动联系率 +52%\n平均报价比无手册高 28%\n成单周期（从接触到付款）缩短 40%\n\n本质原因：手册减少了品牌的决策成本。"},
+  suggest:{title:"📄 手册必须包含的6项",body:"① 账号基本数据（粉丝/互动率/月更新量）\n② 内容方向和风格定位（1-2句话）\n③ 粉丝画像（年龄/性别/地域，截图后台数据）\n④ 往期商单案例（3-5个，品牌名可打码）\n⑤ 合作方式和报价（写清楚包含什么服务）\n⑥ 联系方式（蒲公英接单/私信/邮箱）\n\n用Canva做，4-6页，不用做得多复杂，数据真实最重要。"}
+},
+"新号怎么快速涨粉":{
+  q:"新号怎么快速涨粉？",
+  ans:`新号冷启动的核心不是「涨粉技巧」，而是<strong>让系统搞清楚你是谁</strong>，才能把你推给对的人。`,
+  data:{title:"📊 新号冷启动规律",body:"小红书系统给新号的初始判断窗口：前5篇内容\n前5篇如果垂类一致：系统贴标签，进入垂类流量池\n前5篇如果垂类混乱：系统无法判断，随机小流量\n\n你现在的问题：前4篇覆盖3个垂类，系统不知道你是谁。"},
+  suggest:{title:"✅ 新号冷启动的正确顺序",body:"① 先确定垂类（就一个，不能变）\n② 连续发5篇同垂类内容\n③ 每篇封面风格统一（系统识别的视觉一致性）\n④ 标题用「结果词+数字」钩子\n⑤ 发布时间固定在晚上20:30\n\n做完这5篇，看后台「内容分析」里的标签是否出现了垂类词。出现了，说明系统已经认识你了。"}
+},
+"怎么提升互动率":{
+  q:"怎么提升互动率？",
+  ans:`互动率=（点赞+收藏+评论）/曝光量。你1.2%的互动率，问题出在<strong>内容本身没有给用户互动的理由</strong>。`,
+  data:{title:"📊 你的互动数据拆解",body:"你的点赞率：约0.9%（均值1.8%）\n你的收藏率：约0.3%（均值0.8%）\n你的评论率：约0.06%（均值0.2%）\n\n三项全低，说明内容消费完了但用户没有动力互动。最好提升的是收藏率——做「干货型」内容，用户自然会收藏备用。"},
+  suggest:{title:"💡 三个立刻能用的方法",body:"① 评论区第一条自己发：「你们平时更喜欢XX还是YY？」引导用户互动\n② 内容结尾加「收藏这条不迷路」「记得收藏备用」\n③ 做「合集型」内容：「10个显瘦穿搭公式」比「一套穿搭」收藏率高4倍\n\n先从收藏率下手，目标从0.3%提到0.7%，比提升点赞率容易。"}
+},
+};
+
+// 地铁地图 SVG 配置
+const mapConfigs = [
+  // stageIdx 0: 新手期
+  {
+    currentStation:0,
+    stations:[
+      {id:0,x:48,y:148,label:"内容起步",sublabel:"你在这里",icon:"🌱",state:"current"},
+      {id:1,x:148,y:82,label:"合作广场",sublabel:"授权分成",icon:"🤝",state:"next"},
+      {id:2,x:248,y:108,label:"蒲公英",sublabel:"主动接单",icon:"🌼",state:"locked"},
+      {id:3,x:320,y:58,label:"头部变现",sublabel:"定制合作",icon:"💎",state:"locked"},
+    ],
+    paths:[
+      {from:0,to:1,active:false},{from:1,to:2,active:false},{from:2,to:3,active:false}
+    ]
+  },
+  // stageIdx 1: 成长期
+  {
+    currentStation:1,
+    stations:[
+      {id:0,x:48,y:148,label:"内容起步",sublabel:"已完成",icon:"✓",state:"done"},
+      {id:1,x:148,y:82,label:"合作广场",sublabel:"你在这里",icon:"🤝",state:"current"},
+      {id:2,x:248,y:102,label:"蒲公英",sublabel:"下一站",icon:"🌼",state:"next"},
+      {id:3,x:320,y:55,label:"头部变现",sublabel:"定制合作",icon:"💎",state:"locked"},
+    ],
+    paths:[
+      {from:0,to:1,active:true},{from:1,to:2,active:false},{from:2,to:3,active:false}
+    ]
+  },
+  // stageIdx 2: 变现期
+  {
+    currentStation:2,
+    stations:[
+      {id:0,x:48,y:148,label:"内容起步",sublabel:"已完成",icon:"✓",state:"done"},
+      {id:1,x:148,y:90,label:"合作广场",sublabel:"已完成",icon:"✓",state:"done"},
+      {id:2,x:245,y:100,label:"蒲公英",sublabel:"你在这里",icon:"🌼",state:"current"},
+      {id:3,x:320,y:50,label:"头部变现",sublabel:"下一站",icon:"💎",state:"next"},
+    ],
+    paths:[
+      {from:0,to:1,active:true},{from:1,to:2,active:true},{from:2,to:3,active:false}
+    ]
+  },
+];
+
+let curAccIdx = 0;
+
+// ═══ 构建成长页 ═══
+function buildGrowth(idx) {
+  const acc = accounts[idx];
+  const mc = mapConfigs[idx];
+  const body = document.getElementById('growth-body');
+
+  // 账号Hero
+  let heroHTML = `
+    <div class="account-hero" style="background:var(--white);">
+      <div class="account-hero-avatar" style="background:${acc.bg}">${acc.emoji}</div>
+      <div class="account-hero-info">
+        <div class="account-hero-name">${acc.name}</div>
+        <div class="account-hero-sub">薯伴陪你一起成长 · 当前${acc.stage}</div>
+        <div class="account-hero-stats">
+          <div class="hero-stat"><div class="hero-stat-num">${acc.fans}</div><div class="hero-stat-label">粉丝</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">${acc.posts}</div><div class="hero-stat-label">近30天</div></div>
+          <div class="hero-stat"><div class="hero-stat-num">${acc.likes}</div><div class="hero-stat-label">获赞</div></div>
+        </div>
+      </div>
+    </div>`;
+
+  // 地图SVG
+  const svgW = 358, svgH = 190;
+  let svgPaths = '';
+  mc.paths.forEach(p => {
+    const f = mc.stations[p.from], t = mc.stations[p.to];
+    const cx = (f.x+t.x)/2, cy = Math.min(f.y,t.y)-30;
+    const color = p.active ? '#00C853' : '#D0D0D0';
+    const dash = p.active ? '' : 'stroke-dasharray="8 5"';
+    svgPaths += `<path d="M${f.x},${f.y} Q${cx},${cy} ${t.x},${t.y}" fill="none" stroke="${color}" stroke-width="2.5" ${dash} stroke-linecap="round"/>`;
+  });
+
+  // 地形背景元素
+  let terrainSVG = `
+    <ellipse cx="100" cy="185" rx="80" ry="22" fill="#E8F5E9" opacity="0.7"/>
+    <ellipse cx="220" cy="165" rx="60" ry="16" fill="#E3F2FD" opacity="0.6"/>
+    <ellipse cx="320" cy="175" rx="55" ry="14" fill="#FFF8E1" opacity="0.7"/>
+    <path d="M30,170 Q60,145 90,155 Q110,160 130,170 Z" fill="#C8E6C9" opacity="0.5"/>
+    <path d="M240,150 Q270,130 295,140 Q315,148 330,158 Z" fill="#BBDEFB" opacity="0.5"/>
+  `;
+
+  let svgStations = '';
+  mc.stations.forEach(s => {
+    const isCurrentNode = s.state === 'current';
+    const isDone = s.state === 'done';
+    const isNext = s.state === 'next';
+    const isLocked = s.state === 'locked';
+    
+    let circleFill = '#E0E0E0';
+    let circleStroke = '#BDBDBD';
+    let strokeW = 2;
+    let textColor = '#9E9E9E';
+    let glowAnim = '';
+
+    if (isDone) { circleFill='#00C853'; circleStroke='#00C853'; textColor='#1A1A1A'; }
+    if (isCurrentNode) { circleFill='#FF2442'; circleStroke='#FF2442'; textColor='#1A1A1A'; strokeW=0; glowAnim=`<circle cx="${s.x}" cy="${s.y}" r="24" fill="none" stroke="#FF2442" stroke-width="2" opacity="0.3"><animate attributeName="r" values="20;28;20" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/></circle>`; }
+    if (isNext) { circleFill='#FFF0F2'; circleStroke='#FF2442'; textColor='#FF2442'; }
+
+    svgStations += `
+      ${glowAnim}
+      <circle cx="${s.x}" cy="${s.y}" r="20" fill="${circleFill}" stroke="${circleStroke}" stroke-width="${strokeW}"/>
+      <text x="${s.x}" y="${s.y+6}" text-anchor="middle" font-size="15">${isDone?'✓':s.icon}</text>
+      <text x="${s.x}" y="${s.y+34}" text-anchor="middle" font-size="10" fill="${textColor}" font-weight="${isCurrentNode?'700':'500'}">${s.label}</text>
+      ${isCurrentNode ? `<text x="${s.x}" y="${s.y-28}" text-anchor="middle" font-size="9" fill="#FF2442" font-weight="700">📍 ${s.sublabel}</text>` : isNext ? `<text x="${s.x}" y="${s.y-28}" text-anchor="middle" font-size="9" fill="#FF2442">→ 下一站</text>` : ''}
+    `;
+  });
+
+  let mapHTML = `
+    <div class="map-section" style="margin:12px 16px;">
+      <div class="map-section-header">
+        <div class="map-section-title">🗺️ 我的成长地图</div>
+        <div style="font-size:12px;color:var(--gray3);">${acc.stage}</div>
+      </div>
+      <div class="map-svg-wrap">
+        <svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          ${terrainSVG}
+          ${svgPaths}
+          ${svgStations}
+        </svg>
+      </div>
+    </div>`;
+
+  // 里程碑
+  let barsHTML = acc.milestone.bars.map(b=>`
+    <div class="m-bar-row">
+      <div class="m-bar-top">
+        <span class="m-bar-label">${b.label}</span>
+        <span class="m-bar-val">${b.hint}</span>
+      </div>
+      <div class="m-bar-track">
+        <div class="m-bar-fill" data-pct="${b.pct}" style="width:0%;background:${b.color}"></div>
+      </div>
+    </div>`).join('');
+
+  let milestoneHTML = `
+    <div class="milestone-section">
+      ${acc.stageIdx>0 ? `<div style="font-size:12px;background:#FFF0F2;color:var(--red);border-radius:8px;padding:5px 10px;display:inline-block;margin-bottom:10px;font-weight:600;">${acc.stageIdx===1?'🎉 恭喜你进入合作广场！':'🌟 恭喜你成功入驻蒲公英！'}</div>` : ''}
+      <div class="milestone-eyebrow">🎯 下一个里程碑</div>
+      <div class="milestone-title">${acc.milestone.title}</div>
+      <div class="milestone-desc">${acc.milestone.desc}</div>
+      <div class="milestone-bars">${barsHTML}</div>
+    </div>`;
+
+  // 健康度
+  let healthHTML = `
+    <div class="health-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="section-title-label">💊 账号健康度</div>
+        <div style="font-size:12px;color:var(--red);cursor:pointer;font-weight:700;" onclick="openHealthReport()">查看分析报告 ›</div>
+      </div>
+      <div class="health-grid">
+        ${acc.health.map(h=>`
+          <div class="health-item">
+            <div class="health-item-top">
+              <div class="health-name">${h.name}</div>
+              <div class="health-score" style="color:${h.color};font-size:13px;">${h.score>=75?'优秀':h.score>=55?'待提升':'需加强'}</div>
+            </div>
+            <div class="health-bar"><div class="health-fill" data-pct="${h.score}" style="width:0%;background:${h.color}"></div></div>
+            <div class="health-hint">${h.hint}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  // 行动建议
+  let actionsHTML = `
+    <div class="action-section">
+      <div class="section-title-label">⚡ 薯伴本周行动建议</div>
+      ${acc.actions.map((a,i)=>`
+        <div class="action-item" onclick="openChat('${a.ctx}', false, 'map')">
+          <div class="action-num">${i+1}</div>
+          <div class="action-body">
+            <div class="action-title">${a.title}</div>
+            <div class="action-desc">${a.desc}</div>
+          </div>
+          <div class="action-right">
+            <span class="action-tag tag-${a.tag}">${{urgent:'⚡优先',important:'⭐重要',suggest:'💡建议'}[a.tag]}</span>
+            <button class="ask-btn" onclick="event.stopPropagation();openChat('${a.ctx}', false, 'map')">问薯伴</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  const shubaEntryHTML = `
+    <div class="shuba-entry" onclick="openChat(null, false, 'map')">
+      <div class="shuba-entry-av"><svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div>
+      <div class="shuba-entry-text">
+        <div class="shuba-entry-title">问问薯伴</div>
+        <div class="shuba-entry-sub">有3条针对你账号的新洞察 · 点击查看</div>
+      </div>
+      <div class="shuba-entry-arrow">›</div>
+    </div>`;
+
+  body.innerHTML = heroHTML + mapHTML + milestoneHTML + healthHTML + actionsHTML + shubaEntryHTML;
+
+  // 进度条动画
+  setTimeout(()=>{
+    document.querySelectorAll('[data-pct]').forEach(el=>{
+      el.style.width = el.dataset.pct + '%';
+    });
+  },200);
+}
+
+function switchAccount(idx, el) {
+  if (idx === curAccIdx) return;
+  curAccIdx = idx;
+  document.querySelectorAll('.switcher-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('growth-body').style.opacity='0';
+  setTimeout(()=>{
+    buildGrowth(idx);
+    document.getElementById('growth-body').style.transition='opacity 0.2s';
+    document.getElementById('growth-body').style.opacity='1';
+  },150);
+}
+
+function selectAccount(idx) {
+  curAccIdx = idx;
+  const acc = accounts[idx];
+  // Update account bars
+  const updateBar = (emojiId, nameId) => {
+    const eEl = document.getElementById(emojiId);
+    const nEl = document.getElementById(nameId);
+    if(eEl) eEl.textContent = acc.emoji;
+    if(nEl) nEl.textContent = acc.name;
+  };
+  updateBar('growth-acc-emoji','growth-acc-name');
+  updateBar('data-acc-emoji','data-acc-name');
+  updateBar('create-acc-emoji','create-acc-name');
+  // select左出，growth从右进
+  const sel = document.getElementById('page-select');
+  const gp  = document.getElementById('page-growth');
+  // 先把growth放到右边（无动画）
+  gp.style.transition = 'none';
+  gp.classList.remove('out-left'); gp.classList.add('out-right');
+  gp.style.transition = '';
+  // 双帧触发动画
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    sel.classList.add('out-left');
+    gp.classList.remove('out-right','out-left');
+  }));
+  curTab = 'map';
+  setActiveTab('map');
+  buildGrowth(idx);
+}
+
+function goSelectAccount() {
+  const curPage = document.getElementById(PAGE_IDS[curTab]);
+  const sel = document.getElementById('page-select');
+  // select先到左边（无动画）
+  sel.style.transition = 'none';
+  sel.classList.remove('out-right'); sel.classList.add('out-left');
+  sel.style.transition = '';
+  // 双帧：当前页右出，select左进
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(curPage) curPage.classList.add('out-right');
+    sel.classList.remove('out-left','out-right');
+  }));
+}
+
+// ═══ 对话 ═══
+function openHealthReport() {
+  const acc = accounts[curAccIdx];
+  const health = acc.health;
+
+  // 雷达图数据 → SVG五边形
+  const cx=80, cy=80, r=60;
+  const angles = [-90, -18, 54, 126, 198]; // 4维度用4点
+  const pts4 = health.map((h,i)=>{
+    const a=(i/4)*Math.PI*2 - Math.PI/2;
+    const rv = h.score/100*r;
+    return `${cx+rv*Math.cos(a)},${cy+rv*Math.sin(a)}`;
+  }).join(' ');
+  const outline = health.map((_,i)=>{
+    const a=(i/4)*Math.PI*2 - Math.PI/2;
+    return `${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`;
+  }).join(' ');
+
+  const scoreTotal = Math.round(health.reduce((s,h)=>s+h.score,0)/health.length);
+  const weakest = health.slice().sort((a,b)=>a.score-b.score)[0];
+  const strongest = health.slice().sort((a,b)=>b.score-a.score)[0];
+
+  // 星级（不直接披露分数）
+  const starCount = scoreTotal < 45 ? 2 : scoreTotal < 65 ? 3 : scoreTotal < 80 ? 4 : 5;
+  const starDisplay = '⭐'.repeat(starCount) + '☆'.repeat(5-starCount);
+  const starLabel = ['','','成长中✨','不错哦🌱','很健康💪','超棒啦🔥'][starCount];
+
+  // 分段评语
+  const comments = {
+    2: "账号刚起步，潜力是有的，现在最重要的是先把垂类方向定下来，系统才能知道你是谁。别着急，跟着薯伴一步一步来～",
+    3: "已经有了一定基础，但还有几个关键点没到位。攻破互动率这个短板，涨粉速度会明显提升。",
+    4: "整体已经在良性运转，现在要做的是把你最强的那个优势继续放大，同时保持稳定更新节奏。",
+    5: "账号状态非常好！你现在要做的是把变现效率提上来，让每一个粉丝都产生更高的价值。",
+  };
+  const commentText = comments[starCount];
+
+  // 打开对话并注入报告
+  ['page-growth','page-data','page-create'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) { el.classList.add('out-left'); el.classList.remove('out-right'); }
+  });
+  document.getElementById('page-chat').classList.remove('out-right','out-left');
+
+  const msgs = document.getElementById('chat-msgs');
+  const qqs = document.getElementById('quick-qs');
+  msgs.innerHTML='';
+  qqs.innerHTML = acc.quickQs.map(q=>`<span class="quick-q" onclick="fireQA('${q}')">${q}</span>`).join('');
+
+  // 开场
+  addBotMsg(`我帮你把「<strong>${acc.name}</strong>」的账号做了一个全面体检 🩺\n\n账号综合评级：<strong style="font-size:17px;">${starDisplay}</strong>  ${starLabel}\n\n来看看具体情况👇`, null, null);
+
+  // 注入可视化报告卡片（独立全宽，不套在bubble里）
+  setTimeout(()=>{
+    const reportCard = document.createElement('div');
+    reportCard.style.cssText = 'margin:0 8px 14px;background:white;border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08);animation:fadeUp 0.3s ease;';
+
+    // 评级词映射
+    const rateLabel = score => score>=75?'优秀':score>=55?'不错':'待提升';
+    const rateLabel2 = score => score>=75?'优秀':score>=55?'不错':score>=40?'待提升':'需加强';
+
+    reportCard.innerHTML = `
+        <!-- 四维雷达 -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <svg width="110" height="110" viewBox="0 0 160 160">
+            <!-- 背景网格 -->
+            ${[0.25,0.5,0.75,1].map(s=>`<polygon points="${health.map((_,i)=>{const a=(i/4)*Math.PI*2-Math.PI/2;const rv=s*r;return `${cx+rv*Math.cos(a)},${cy+rv*Math.sin(a)}`;}).join(' ')}" fill="none" stroke="#E0E0E0" stroke-width="1"/>`).join('')}
+            <!-- 轴线 -->
+            ${health.map((_,i)=>{const a=(i/4)*Math.PI*2-Math.PI/2;return `<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="#E0E0E0" stroke-width="1"/>`;}).join('')}
+            <!-- 数据面 -->
+            <polygon points="${pts4}" fill="rgba(255,36,66,0.15)" stroke="#FF2442" stroke-width="2"/>
+            <!-- 数据点 -->
+            ${health.map((h,i)=>{const a=(i/4)*Math.PI*2-Math.PI/2;const rv=h.score/100*r;return `<circle cx="${cx+rv*Math.cos(a)}" cy="${cy+rv*Math.sin(a)}" r="4" fill="#FF2442"/>`;}).join('')}
+            <!-- 标签 -->
+            ${health.map((h,i)=>{const a=(i/4)*Math.PI*2-Math.PI/2;const lx=cx+(r+16)*Math.cos(a);const ly=cy+(r+16)*Math.sin(a);const anchor=lx<cx-5?'end':lx>cx+5?'start':'middle';return `<text x="${lx}" y="${ly+4}" text-anchor="${anchor}" font-size="9" fill="#8A8A8A" font-family="PingFang SC,sans-serif">${h.name}</text>`;}).join('')}
+          </svg>
+          <div style="flex:1;">
+            ${health.map(h=>`
+              <div style="margin-bottom:10px;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+                  <span style="color:var(--gray2);font-weight:600;">${h.name}</span>
+                  <span style="color:${h.color};font-weight:700;">${rateLabel2(h.score)}</span>
+                </div>
+                <div style="height:4px;background:var(--gray5);border-radius:2px;overflow:hidden;">
+                  <div style="width:${h.score}%;height:100%;background:${h.color};border-radius:2px;transition:width 1.2s;"></div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- 评语 -->
+        <div style="background:var(--red-pale);border-radius:12px;padding:12px;margin-bottom:12px;">
+          <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:4px;">💬 薯伴点评</div>
+          <div style="font-size:13px;color:var(--gray1);line-height:1.65;">${commentText}</div>
+        </div>
+
+        <!-- 最强/最弱 -->
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;background:rgba(0,200,83,0.08);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--green);font-weight:700;margin-bottom:3px;">💪 你的优势</div>
+            <div style="font-size:13px;font-weight:700;color:var(--gray1);">${strongest.name}</div>
+            <div style="font-size:11px;color:var(--gray3);margin-top:2px;">${strongest.hint}</div>
+          </div>
+          <div style="flex:1;background:rgba(255,36,66,0.06);border-radius:10px;padding:10px;">
+            <div style="font-size:10px;color:var(--red);font-weight:700;margin-bottom:3px;">🎯 重点提升</div>
+            <div style="font-size:13px;font-weight:700;color:var(--gray1);">${weakest.name}</div>
+            <div style="font-size:11px;color:var(--gray3);margin-top:2px;">${weakest.hint}</div>
+          </div>
+        </div>`;
+    msgs.appendChild(reportCard);
+    scrollMsgs();
+
+    // 跟进建议
+    setTimeout(()=>{
+      addBotMsg(`${weakest.name}是你现在最值得优先搞定的一个点。\n\n我整理了几个马上能做的具体建议，你想先从哪里开始？👇`, null, null);
+      scrollMsgs();
+    }, 600);
+  }, 800);
+}
+
+function closeChat() {
+  const returnTab = window._prevTab || 'map';
+  slideTo(returnTab);
+}
+
+function buildChat(ctx, fromNote=false, source=null) {
+  const acc = accounts[curAccIdx];
+  const msgs = document.getElementById('chat-msgs');
+  const qqs = document.getElementById('quick-qs');
+  msgs.innerHTML = '';
+
+  // greeting根据来源(source)定制，不再单独插第二条上下文消息
+  const greetingsBySource = {
+    map: [
+      `嗨～我看到你刚在成长地图转了一圈 👀\n\n你距离下一个里程碑还差一点点，有3条行动建议我觉得你应该先看。要从哪个开始？`,
+      `「<strong>${acc.name}</strong>」你好～看到你刚看了成长地图 ✨\n\n你离合作广场只差一步了，有几个很具体的方向可以快速破局——你想先聊哪块？`,
+      `Coco 你好～你刚看了成长地图 💎\n\n你已经在变现期了，接下来要做的是提报价、提接单量。我来跟你说说怎么做？`
+    ],
+    data: [
+      `嗨～我看了你刚才浏览的数据 👀\n\n有几个问题值得深挖——你的内容潜力是有的，但有几个数字在拖后腿。你想先聊哪个？`,
+      `「<strong>${acc.name}</strong>」我扫完你的数据了 📊\n\n互动率1.2%这个数字我有话说——它低不是因为内容差，是有几个可以快速修的问题。你想先看哪个？`,
+      `Coco 你好～数据我看完了 💎\n\n你的内容质量在同赛道算很不错，但有2个数字还没到你应该有的水平，我来跟你拆解？`
+    ],
+    create: [
+      `嗨～你刚在创作台捣鼓 ✏️\n\n有什么想聊的？封面怎么写、标题怎么钩住人、什么时候发——都可以问我。`,
+      `「<strong>${acc.name}</strong>」你好～我看到你在创作 ✨\n\n有什么卡住了？标题/封面/发布时间，还是想聊聊选题方向？`,
+      `Coco 你好～你在做新内容 🎬\n\n需要我帮你看看方向吗？成分党方向现在挺火的，我有一些具体建议。`
+    ],
+    tab: [
+      `嗨～有什么想聊的？ 👀\n\n我已经把你账号近期数据都看过了，随时可以开始。`,
+      `「<strong>${acc.name}</strong>」你好 ✨\n\n随时可以聊——数据、选题、封面、发布策略都行。`,
+      `Coco 你好 💎\n\n有什么想聊的？报价策略、接单量、成分党方向……随时来。`
+    ]
+  };
+  const greetingArr = greetingsBySource[source] || greetingsBySource.tab;
+  addBotMsg(greetingArr[curAccIdx] || greetingArr[0], null, null);
+
+  if(fromNote && lastResult) {
+    // 针对笔记的细化对话
+    setTimeout(()=>{
+      addUserMsg(`我刚写了一篇笔记：「${lastResult.title}」，帮我看看还有什么可以优化的？`);
+      showTyping(()=>{
+        addBotMsg(
+          `看了一下，这篇整体方向是对的，有几个小地方可以再打磨一下 👇`,
+          {title:"📝 薯伴的优化建议",
+           body:`标题：「${lastResult.title}」目前已经有结果词，再加一个数字会更强，比如改成「${lastResult.title.replace('，',`（3套），`)}」\n\n开头：前两句话是钩子，决定用户要不要继续看。建议改成直接抛出最强的那个点，不要先自我介绍\n\n话题标签：${lastResult.tag} 已经不错，建议再加一个垂类大标签，比如「#穿搭」增加曝光池`},
+          {title:"⏰ 发布提醒",
+           body:`记得${lastResult.time}发布，这个时间段你的目标用户活跃度最高。发完后在评论区回一条「你们最想看哪类穿搭？」引导互动～`}
+        );
+      });
+    }, 400);
+  } else if(ctx && chatAnswers[ctx]) {
+    setTimeout(()=>fireQA(ctx), 500);
+  }
+
+  qqs.innerHTML = acc.quickQs.map(q=>`<span class="quick-q" onclick="fireQA('${q}')">${q}</span>`).join('');
+}
+
+function fireQA(q) {
+  const ans = chatAnswers[q];
+  if(!ans) return;
+  addUserMsg(ans.q || q);
+  document.getElementById('quick-qs').style.display='none';
+  showTyping(()=> addBotMsg(ans.ans, ans.data, ans.suggest));
+}
+
+function addUserMsg(text) {
+  const acc = accounts[curAccIdx];
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'bubble-wrap me';
+  d.innerHTML = `<div class="bav me">${acc.emoji}</div><div class="bubble me">${text}</div>`;
+  msgs.appendChild(d);
+  scrollMsgs();
+}
+
+function addBotMsg(text, data, suggest) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'bubble-wrap';
+  let dataHTML = data ? `<div class="data-block"><div class="data-block-title">${data.title}</div><div class="data-block-body">${data.body.replace(/\n/g,'<br>')}</div></div>` : '';
+  let sugHTML = suggest ? `<div class="action-suggest"><div class="action-suggest-title">${suggest.title}</div><div class="action-suggest-body">${suggest.body.replace(/\n/g,'<br>')}</div></div>` : '';
+  d.innerHTML = `<div class="bav bot"><svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div><div class="bubble bot">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}${dataHTML}${sugHTML}</div>`;
+  msgs.appendChild(d);
+  scrollMsgs();
+}
+
+function showTyping(cb) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className='bubble-wrap'; d.id='typing';
+  d.innerHTML=`<div class="bav bot"><svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#FFE4F0"/><ellipse cx="22" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="78" cy="22" rx="13" ry="14" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><ellipse cx="50" cy="57" rx="36" ry="34" fill="white" stroke="#1A1A1A" stroke-width="2.5"/><circle cx="38" cy="52" r="4" fill="#1A1A1A"/><circle cx="62" cy="52" r="4" fill="#1A1A1A"/><ellipse cx="50" cy="62" rx="3.5" ry="2.5" fill="#FFB347"/><line x1="16" y1="60" x2="44" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="16" y1="67" x2="44" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="60" x2="56" y2="63" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><line x1="84" y1="67" x2="56" y2="66" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/><path d="M68 16 L80 10 L78 18 Z" fill="#FF2442"/><path d="M68 16 L80 22 L78 18 Z" fill="#FF6B8A"/><circle cx="68" cy="16" r="3.5" fill="#FF2442"/></svg></div><div class="bubble bot"><div class="typing"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>`;
+  msgs.appendChild(d);
+  scrollMsgs();
+  setTimeout(()=>{ const t=document.getElementById('typing'); if(t)t.remove(); cb(); },1500);
+}
+
+function scrollMsgs() {
+  const m = document.getElementById('chat-msgs');
+  setTimeout(()=>m.scrollTop=m.scrollHeight, 60);
+}
+
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value=''; autoResize(input);
+  addUserMsg(text);
+  document.getElementById('quick-qs').style.display='none';
+  const fallbacks = [
+    `好，我给你3条马上能做的建议：\n\n**① 本周把内容全换成穿搭垂类**（不发其他话题）\n系统识别你账号方向需要3-5篇连续垂类内容，现在杂乱是涨粉慢的主因。\n\n**② 封面加文字钩子**\n主图左上角加一句「结果词」，比如「这套配色显白」，字号≥60px加粗。穿搭Top笔记83%有封面文字。\n\n**③ 发布时间改到今晚20:30**\n你目前在上午发，你的目标用户（18-28岁女生）晚上才活跃，错开了黄金窗口。\n\n从哪条开始？`,
+    `好，我给你3条马上能做的事：\n\n**① 今天起所有笔记改到晚上20:30发布**\n你上午发的笔记平均互动82次，晚上发的均值210次，差了2.5倍。只改时间，不用改内容。\n\n**② 下一篇结尾加互动问句**\n结尾加「你们更喜欢哪种风格？」，评论完留评论，30分钟内自己回复前5条，撬动更多互动。\n\n**③ 下一篇标题加「显瘦」关键词**\n你有1篇带显瘦的笔记点赞是其他篇的3倍，这个方向值得多压几篇测试。\n\n先从①开始，今晚20:30准时发一篇。`,
+    `好，我给你3条高优先级的动作：\n\n**① 本月报价从3500调到4200**\n你的互动率3.8%高于同量级均值，CPE低，品牌其实愿意付更多。直接改蒲公英后台报价，先小涨观察接单量。\n\n**② 主页置顶换成商单展示笔记**\n有置顶商单笔记的创作者品牌主动联系率+47%。截2-3张往期合作截图，打码品牌名，配文「接受蒲公英合作」。\n\n**③ 下一篇做成分党内容**\n你成分类内容互动率5.9% vs 普通内容2.7%，美妆品牌最爱找「有专业感」的创作者，这个方向能带来更优质的商单。`,
+  ];
+  showTyping(()=>{
+    addBotMsg(fallbacks[curAccIdx] || fallbacks[0], null, null);
+  });
+}
+
+function autoResize(el) {
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,80)+'px';
+}
+
+function handleKey(e) {
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+}
+
+// ═══ Tab切换 ═══
+let curTab = 'map';
+// ══ 页面切换引擎（class版，简单可靠）══
+const PAGE_IDS  = {map:'page-growth', data:'page-data', create:'page-create', chat:'page-chat'};
+const TAB_ORDER = ['map','data','create','chat'];
+
+// 用双帧rAF保证reflow，防止class切换被合并
+function slideTo(targetTab) {
+  if(targetTab === curTab) return;
+
+  const fromEl = document.getElementById(PAGE_IDS[curTab]);
+  const toEl   = document.getElementById(PAGE_IDS[targetTab]);
+  if(!fromEl || !toEl) return;
+
+  const goRight = TAB_ORDER.indexOf(targetTab) > TAB_ORDER.indexOf(curTab);
+  const outCls  = goRight ? 'out-left'  : 'out-right';
+  const inCls   = goRight ? 'out-right' : 'out-left';
+
+  // 先把目标页放到起始位置（不加transition，不触发动画）
+  toEl.style.transition = 'none';
+  toEl.classList.remove('out-left','out-right');
+  toEl.classList.add(inCls);
+  toEl.style.transition = '';
+
+  // 下一帧：同时触发两个动画
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fromEl.classList.add(outCls);
+      toEl.classList.remove('out-left','out-right');
+    });
+  });
+
+  curTab = targetTab;
+  setActiveTab(targetTab);
+  if(targetTab === 'data')   buildData(curAccIdx);
+  if(targetTab === 'create') buildCreate(curAccIdx);
+}
+
+// 统一tab高亮
+function setActiveTab(name) {
+  document.querySelectorAll('.tab-item').forEach(t => {
+    const oc = (t.getAttribute('onclick') || '').trim();
+    const id = t.id || '';
+    let tabName = null;
+    if(id==='tab-map'    || oc==="switchTab('map')")    tabName = 'map';
+    else if(id==='tab-data'   || id==='tab-data2'   || oc==="switchTab('data')")   tabName = 'data';
+    else if(id==='tab-create' || id==='tab-create2' || oc==="switchTab('create')") tabName = 'create';
+    else if(id==='tab-chat'   || oc==="openChat('tab')")                            tabName = 'chat';
+    const isActive = (tabName === name);
+    t.classList.toggle('active', isActive);
+    const icon = t.querySelector('.tab-icon');
+    if(icon) icon.style.color = '';
+    if(!isActive) t.querySelector('.tab-dot')?.remove();
+  });
+}
+
+function switchTab(tab) { slideTo(tab); }
+
+// ═══ 数据分析页 ═══
+const dataConfig = [
+  { // 新手期
+    weeklyFans:[8,12,6,15,10,18,22],
+    weeklyPosts:[1,0,1,1,0,1,2],
+    weeklyLikes:[18,25,12,32,20,38,48],
+    insights:[
+      {
+        icon:"📈", color:"#E8F5E9", iconBg:"#00C853",
+        text:"本周涨粉34，比上周多10个，穿搭内容明显比其他类目吸粉",
+        detail:{
+          title:"为什么穿搭内容更吸粉？",
+          body:"你本周2篇穿搭笔记共带来28个新粉，占总涨粉的82%；而美食类3篇只带来6个新粉。\n\n原因很直接：穿搭是小红书第一大垂类，系统流量更充足；你的内容在穿搭赛道里有辨识度，推给对的人就会关注。\n\n建议：接下来3周只发穿搭，不发其他类目，让系统确认你的赛道标签。",
+          action:"去看成长地图",
+          actionFn:"switchTab('map');setTimeout(()=>{document.querySelector('.map-section')?.scrollIntoView({behavior:'smooth',block:'start'})},350)"
+        }
+      },
+      {
+        icon:"⚠️", color:"#FFF3E0", iconBg:"#FF6D00",
+        text:"发布频率有点不稳定，建议固定每周2-3篇，系统喜欢规律更新的账号",
+        detail:{
+          title:"频率不稳定会有什么影响？",
+          body:"你这7天发布节奏：周一✓ 周二✗ 周三✓ 周四✓ 周五✗ 周六✓ 周日✓\n\n小红书系统会给规律更新的账号更稳定的基础推流。断更超过3天，下一篇的初始曝光会比正常低约20-30%。\n\n你现在一周6篇其实有点多，反而不如每周3篇但每篇质量更高。建议固定：周二、周五、周日晚上20:30发布。",
+          action:"去创作下一篇",
+          actionFn:"switchTab('create')"
+        }
+      },
+      {
+        icon:"💡", color:"#FFF0F2", iconBg:"#FF2442",
+        text:"你的互动率在周末明显更高，试试把发布时间移到周五晚上",
+        detail:{
+          title:"你的用户什么时候最活跃？",
+          body:"你账号粉丝的活跃时段分析：\n\n工作日晚8-10点：活跃占比31%\n周末全天：活跃占比42%（远高于工作日同时段）\n周五晚上：是工作日+周末的交叉黄金点\n\n你目前3篇在上午发布，平均互动14次；4篇在晚上发布，平均互动31次。\n\n一个操作就能提升：把所有笔记的发布时间改到晚上20:30，预计互动率提升30-40%。",
+          suggest:"立刻把下一篇的发布时间改到周五晚上20:30，不用改任何内容。发布后对比这篇和之前的互动量——我预测会有30%以上的提升。这是你现在能做的成本最低、见效最快的一步。",
+          action:"问薯伴更多",
+          actionFn:"openChat('怎么提升互动率')"
+        }
+      },
+    ]
+  },
+  { // 成长期
+    weeklyFans:[45,62,38,78,55,89,103],
+    weeklyPosts:[3,2,4,3,3,4,3],
+    weeklyLikes:[280,340,210,420,310,480,510],
+    insights:[
+      {
+        icon:"📈", color:"#E8F5E9", iconBg:"#00C853",
+        text:"近7天涨粉103，但互动率1.2%还是偏低，涨粉是靠曝光量撑的，质量还得提",
+        detail:{
+          title:"涨粉快但互动低，问题在哪？",
+          body:"你本周通过话题广场获得了大量曝光，所以涨粉数字好看；但点击率只有0.9%，进来的人看完就走，没有深度互动。\n\n这会带来一个问题：粉丝增长了，但粉丝质量不高，后续的互动率可能还会继续下降，形成恶性循环。\n\n解法：下一篇笔记要在正文里设计互动钩子——结尾问一个让人想回答的问题，比如「你们更喜欢哪种风格？」",
+          action:"去写下一篇",
+          actionFn:"switchTab('create')"
+        }
+      },
+      {
+        icon:"⏰", color:"#FFF3E0", iconBg:"#FF6D00",
+        text:"你在上午发的6篇，平均互动82；晚上发的2篇，平均互动210。晚上效果是白天的2.5倍",
+        detail:{
+          title:"发布时间的影响有多大？",
+          body:"你近12篇的发布时间 vs 互动量对比：\n\n上午9-11点（6篇）：平均互动82次\n下午12-14点（3篇）：平均互动118次  \n晚上20-22点（2篇）：平均互动210次\n\n差距来自你的目标用户（18-28岁女性）的活跃规律——她们晚上才刷手机。早上发帖等于在她们睡觉的时候开门。\n\n只改时间，不改内容，预计互动提升35-40%。这是成本最低见效最快的一个改动。",
+          suggest:"从今天起，把所有笔记改到晚上20:30发布。不需要改内容，不需要改封面，只改时间。坚持2周，对比数据变化——这是你现在能做的成本最低、见效最快的一件事。",
+          action:"问薯伴发布策略",
+          actionFn:"openChat('我的发布时间有什么问题')"
+        }
+      },
+      {
+        icon:"💡", color:"#FFF0F2", iconBg:"#FF2442",
+        text:"有一篇带「显瘦」关键词的笔记互动是其他的3倍，这个方向值得多做几篇测试",
+        detail:{
+          title:"「显瘦」方向值得押注吗？",
+          body:"你近12篇里，含「显瘦」关键词的1篇笔记数据：\n点赞：312次（其他篇均值104次）\n收藏：89次（其他篇均值22次）\n评论：43条（其他篇均值8条）\n\n这不是偶然。「显瘦」是穿搭赛道长期高搜索量关键词，用户需求明确，搜索完愿意点进来并互动。\n\n建议：接下来3篇都在标题里加「显瘦」相关词，测试是否可以稳定复现这个结果。如果可以，这就是你的核心内容方向。",
+          action:"去写显瘦穿搭",
+          actionFn:"switchTab('create')"
+        }
+      },
+    ]
+  },
+  { // 变现期
+    weeklyFans:[120,158,98,175,142,190,210],
+    weeklyPosts:[4,5,4,5,5,4,6],
+    weeklyLikes:[1200,1580,980,1720,1450,1890,2100],
+    insights:[
+      {
+        icon:"💰", color:"#E8F5E9", iconBg:"#00C853",
+        text:"本月蒲公英接单3单，到账约1.05万。按你目前的互动率，报价还有30%的提升空间",
+        detail:{
+          title:"我的报价空间还有多少？",
+          body:"你当前蒲公英报价：3,500元/篇\n同量级美妆创作者市场均值：5,000元/篇\n\n你的互动率3.8%，高于同量级均值（约2.5%），这是报价溢价的核心依据。品牌采购时会计算CPE（每次互动成本），你的CPE比均值低，理论上值更高的报价。\n\n分步提价方案：\n本月→4,200元（先小涨，观察接单量变化）\n下月→5,000元（如果接单量没有明显下降就稳住）",
+          suggest:"本月先把报价从3,500调到4,200，在蒲公英后台直接修改。如果接下来2周内接单量没有明显下降，下个月再调到5,000。不要一次跳太多，温水加热，品牌适应你的价格。",
+          action:"问薯伴报价策略",
+          actionFn:"openChat('我的报价策略有什么问题')"
+        }
+      },
+      {
+        icon:"📊", color:"#FFF3E0", iconBg:"#FF6D00",
+        text:"你的涨粉速度本月提速了，但评论互动率比点赞低很多，建议在评论区多引导讨论",
+        detail:{
+          title:"评论少会有什么影响？",
+          body:"你近30天数据：\n点赞率：3.8%（很好）\n收藏率：2.1%（不错）\n评论率：0.15%（明显偏低，均值0.4%）\n\n评论在小红书算法里权重很高——有讨论的笔记会被系统判定为「引发共鸣」，给更多推流。而且品牌在挑创作者时会看评论区的真实性和互动质量。\n\n提升评论率的方法：在正文结尾问一个具体问题，比如「你们觉得哪款更适合夏天？」；在发布后30分钟内主动回复前5条评论，触发更多人参与。",
+          suggest:"下一篇结尾加一句：「你们觉得这两种成分哪个更适合夏天？评论告诉我～」发布后30分钟内主动回复前5条评论。这两步同时做，评论率通常能提升到0.3%以上。",
+          action:"问薯伴怎么提升",
+          actionFn:"openChat('怎么提升互动率')"
+        }
+      },
+      {
+        icon:"🔥", color:"#FFF0F2", iconBg:"#FF2442",
+        text:"「成分党」相关内容本周互动率是普通内容的2.2倍，美妆赛道这个方向现在很火",
+        detail:{
+          title:"成分党方向值不值得做？",
+          body:"你本周含「成分」「烟酰胺」「水杨酸」相关词的2篇笔记：\n平均互动率：5.9%（你的其他内容均值2.7%）\n平均收藏量：312次（其他内容均值89次）\n\n成分党内容的特点：收藏率特别高（用户觉得有用会存起来慢慢看），这类内容长尾效应强，发出去3个月还会持续带来新粉和新互动。\n\n对品牌侧的意义：美妆/护肤品牌特别喜欢找「有专业感」的创作者，成分党标签会带来更多优质品牌主动联系你。",
+          action:"去写成分党内容",
+          actionFn:"switchTab('create')"
+        }
+      },
+    ]
+  }
+];
+
+let curDataInsights = [];
+
+function buildData(idx) {
+  const acc = accounts[idx];
+  const dc = dataConfig[idx];
+  curDataInsights = dc.insights;
+  const body = document.getElementById('data-body');
+
+  // 同步切换器active状态
+  document.querySelectorAll('#data-switcher .switcher-chip').forEach((c,i)=>c.classList.toggle('active',i===idx));
+
+  const days = ['周一','周二','周三','周四','周五','周六','周日'];
+  const maxFans = Math.max(...dc.weeklyFans);
+  const maxLikes = Math.max(...dc.weeklyLikes);
+
+  // 涨粉柱图
+  const fanBars = dc.weeklyFans.map((v,i)=>`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;">
+      <div style="font-size:10px;color:var(--gray3);">${v}</div>
+      <div style="width:100%;background:var(--gray5);border-radius:4px 4px 0 0;height:80px;display:flex;align-items:flex-end;">
+        <div style="width:100%;background:var(--red);border-radius:4px 4px 0 0;transition:height 1s cubic-bezier(0.4,0,0.2,1);" data-h="${Math.round(v/maxFans*76)}"></div>
+      </div>
+      <div style="font-size:10px;color:var(--gray3);">${days[i]}</div>
+    </div>`).join('');
+
+  // 互动折线（SVG）
+  const svgW=320, svgH=80;
+  const pts = dc.weeklyLikes.map((v,i)=>`${Math.round(i*(svgW-20)/6+10)},${Math.round(svgH-10-v/maxLikes*(svgH-20))}`).join(' ');
+  const area = `${10},${svgH-10} ${pts} ${Math.round(6*(svgW-20)/6+10)},${svgH-10}`;
+
+  body.innerHTML = `
+    <div style="padding:16px 16px 0;">
+      <div style="font-size:18px;font-weight:800;color:var(--gray1);">最近7天，你怎么样？</div>
+      <div style="font-size:13px;color:var(--gray3);margin-top:4px;">数据截至今天 · 每日更新</div>
+    </div>
+
+    <!-- KPI卡 -->
+    <div style="display:flex;gap:10px;padding:12px 16px 0;">
+      <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周涨粉</div>
+        <div style="font-size:26px;font-weight:800;color:var(--gray1);">+${dc.weeklyFans.reduce((a,b)=>a+b,0)}</div>
+        <div style="font-size:11px;color:var(--green);margin-top:2px;">↑ 比上周多18</div>
+      </div>
+      <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周发布</div>
+        <div style="font-size:26px;font-weight:800;color:var(--gray1);">${dc.weeklyPosts.reduce((a,b)=>a+b,0)}篇</div>
+        <div style="font-size:11px;color:var(--orange);margin-top:2px;">目标：每周3篇</div>
+      </div>
+      <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周获赞</div>
+        <div style="font-size:26px;font-weight:800;color:var(--gray1);">${dc.weeklyLikes.reduce((a,b)=>a+b,0)}</div>
+        <div style="font-size:11px;color:var(--green);margin-top:2px;">↑ 上升趋势</div>
+      </div>
+    </div>
+
+    <!-- 涨粉柱图 -->
+    <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:12px;">每日涨粉</div>
+      <div style="display:flex;gap:6px;align-items:flex-end;">${fanBars}</div>
+    </div>
+
+    <!-- 互动趋势折线 -->
+    <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:12px;">互动量趋势</div>
+      <svg width="100%" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF2442" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#FF2442" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="${area}" fill="url(#lg)"/>
+        <polyline points="${pts}" fill="none" stroke="#FF2442" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${dc.weeklyLikes.map((v,i)=>`<circle cx="${Math.round(i*(svgW-20)/6+10)}" cy="${Math.round(svgH-10-v/maxLikes*(svgH-20))}" r="3" fill="#FF2442"/>`).join('')}
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        ${days.map(d=>`<div style="font-size:9px;color:var(--gray4);">${d}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- 薯伴洞察 -->
+    <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:12px;">薯伴看到了什么</div>
+      ${dc.insights.map((ins,i)=>`
+        <div id="insight-wrap-${i}" style="margin-bottom:8px;">
+          <div style="display:flex;gap:10px;padding:11px 12px;background:${ins.color};border-radius:12px;cursor:pointer;transition:all 0.15s;align-items:flex-start;"
+            onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''"
+            onclick="toggleInsight(${i})">
+            <div style="width:28px;height:28px;background:${ins.iconBg};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px;">${ins.icon}</div>
+            <div style="flex:1;font-size:13px;color:var(--gray1);line-height:1.55;font-weight:500;">${ins.text}</div>
+            <div id="insight-arrow-${i}" style="font-size:14px;color:var(--gray3);flex-shrink:0;margin-top:2px;transition:transform 0.2s;">›</div>
+          </div>
+          <div id="insight-detail-${i}" style="display:none;background:#FAFAFA;border-radius:0 0 12px 12px;padding:14px 14px 12px;margin-top:-4px;animation:fadeUp 0.2s ease;">
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="height:8px;"></div>
+  `;
+
+  // 柱图动画
+  setTimeout(()=>{
+    body.querySelectorAll('[data-h]').forEach(el=>{
+      el.style.height = el.dataset.h + 'px';
+    });
+  },100);
+}
+
+// ═══ 创作助手页 ═══
+const createTemplates = [
+  { // 新手期
+    topics:["初夏日常穿搭","显瘦穿搭公式","通勤穿搭分享"],
+    results:[
+      {
+        title:"3套初夏穿搭，让我胖了10斤也没人发现",
+        coverImg:"https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#FFE4E8,#FFC2CC)",
+        coverText:"显瘦10斤",
+        body:"姐妹们！换季了又开始发愁穿什么？\n\n今天分享3套我最近反复在穿的初夏搭配，重点是——真的显瘦！\n\n▷ Look 1：奶白色宽松衬衫+直筒牛仔裤\n宽松上衣藏肉，直筒显腿长，任何身材都能驾驭 ✅\n\n▷ Look 2：黑色吊带+薄款西装外套\n内搭收腰，外套拉长比例，职场约会都可以穿 💼\n\n▷ Look 3：碎花半裙+纯色打底\n裙子遮住最在意的地方，清爽又好看 🌸\n\n三套都是我自己穿了反复被问「在哪买的」的组合，大家可以收藏起来慢慢参考～",
+        time:"今晚 20:30",
+        tag:"#初夏穿搭 #显瘦穿搭 #穿搭分享"
+      },
+      {
+        title:"上班穿这个，被问了8次在哪买",
+        coverImg:"https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#E8F4FD,#B3D9F5)", coverText:"8次被问在哪买",
+        body:"真实事件：上周穿这套去开会，被同事问了8次在哪买 😂\n\n分享一下这套通勤搭配 👇\n\n上衣：奶白色泡泡袖衬衫，修饰肩线，显瘦又显气质\n下装：烟灰色直筒西裤，显腿长，百搭不出错\n鞋子：裸色尖头浅口鞋，拉长腿部比例\n\n整体风格是那种「精致不费力」的感觉，既不会太正式也不会太随意，职场通勤绝对合适 ✅\n\n上衣和裤子我都会放在评论区，大家可以看看～",
+        time:"明天 12:30",
+        tag:"#通勤穿搭 #职场穿搭 #好物推荐"
+      },
+      {
+        title:"不会穿衣服？记住这3个公式就够了",
+        coverImg:"https://images.unsplash.com/photo-1445205170230-053b83016050?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#FFF3E0,#FFD180)", coverText:"3个公式",
+        body:"作为一个研究穿搭两年的普通人，给大家总结了3个万能搭配公式，真的用了就不会踩雷 👇\n\n公式1：「宽松上+紧窄下」\n大T恤+紧身裤/短裙，平衡比例，显腰显腿\n\n公式2：「深色内+浅色外」\n黑色打底+米白色外套，有层次感，显高显瘦\n\n公式3：「一件亮色单品」\n其他都穿基本款，只保留一件有颜色的单品，整体不会乱\n\n把这3个公式背下来，基本上不会穿错 😄 收藏备用吧！",
+        time:"后天 20:00",
+        tag:"#穿搭公式 #穿搭技巧 #干货"
+      },
+    ]
+  },
+  { // 成长期
+    topics:["品牌友好型穿搭","显腿长穿搭","秋冬穿搭合集"],
+    results:[
+      {
+        title:"腿不长也能穿出大长腿，我用了这招",
+        coverImg:"https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#E8F5E9,#A5D6A7)", coverText:"显腿长+10cm",
+        body:"腿短星人看过来！这几个小技巧真的有效 👇\n\n技巧1：高腰单品是刚需\n腰线往上提，腿部比例直接拉长，这个没有任何讨论空间 hh\n\n技巧2：裤子选「锥形」或「直筒」\n喇叭裤显腿长也不错，但上身要够宽松来平衡\n\n技巧3：鞋子选「裸色」或「同色系」\n脚踝露出来，颜色不截断，视觉上腿会更长\n\n技巧4：竖条纹加持\n竖条纹的拉长效果是经过时间验证的真理 😂\n\n今天这套就是综合了4个技巧的穿搭，亲测显腿长至少10cm，姐妹们可以试试！",
+        time:"今晚 20:30",
+        tag:"#显腿长 #穿搭技巧 #好物推荐 #显高"
+      },
+      {
+        title:"亲测5件白衬衫，只有这件值得买",
+        coverImg:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#F3E5F5,#CE93D8)", coverText:"亲测推荐",
+        body:"白衬衫研究完毕，给大家一个真实结论 👇\n\n我这个月陆续买了5件不同价位的白衬衫来对比，从59块到599块都有，最后留下来的只有这一件。\n\n留下来的理由：\n✅ 面料：棉麻混纺，不透不闷，夏天穿刚刚好\n✅ 版型：微宽松，藏肉效果好，不挑身材\n✅ 细节：领口不会松垮，洗了10次还是挺括的\n✅ 价格：不到200，性价比拉满\n\n其他几件的问题分别是：太透、太硬、领子塌、洗完变形…\n\n大家买白衬衫之前可以先看看这篇，踩坑记录都在这儿了 😅",
+        time:"明天 20:00",
+        tag:"#亲测 #白衬衫 #好物分享 #穿搭"
+      },
+      {
+        title:"秋冬10套穿搭收藏备用，不然后悔",
+        coverImg:"https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#FFF8E1,#FFD54F)", coverText:"10套收藏",
+        body:"秋冬穿搭合集来了！不废话直接上干货 👇\n\n基础款组合（不出错）\n1. 米白针织+卡其直筒裤+白色小脏鞋\n2. 黑色高领毛衣+牛仔裤+靴子\n3. 格纹衬衫+浅色牛仔外套+直筒裤\n\n显瘦组合（重点！）\n4. 深色毛衣+同色系裤子（显瘦神器）\n5. 宽松大衣+紧身打底裤+踝靴\n6. 竖条纹衬衫+黑色直筒裤\n\n约会/出门逛街\n7. 碎花裙+米白色针织开衫\n8. 红色毛衣+白色半身裙（超好看！）\n9. 皮质外套+浅色牛仔裤\n10. 驼色大衣+黑色内搭+靴子\n\n全部都是我自己穿过的，真实好搭！收藏起来换季翻出来用～",
+        time:"周末 10:00",
+        tag:"#秋冬穿搭 #穿搭合集 #穿搭分享"
+      },
+    ]
+  },
+  { // 变现期
+    topics:["成分党护肤攻略","平价替代大牌","素颜好皮肤秘诀"],
+    results:[
+      {
+        title:"花200块，把皮肤养成朋友眼中「天生好皮」",
+        coverImg:"https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#FCE4EC,#F48FB1)", coverText:"200块的秘密",
+        body:"被问了很多次皮肤是不是天生好，其实不是，是我花了半年摸索出来的护肤顺序 👇\n\n我的日常护肤流程（早晚各5分钟）\n\n早上：洗面奶→烟酰胺水→玻尿酸精华→防晒\n晚上：卸妆→洗脸→水杨酸（周二四）→维A醇（周一三五）→保湿乳\n\n踩了很多坑之后的心得：\n\n① 水杨酸+维A醇不能同一晚用，会过度刺激\n② 防晒是护肤最重要的一步，没有之一\n③ 早上不需要用精华，保湿+防晒就够了\n④ 便宜的玻尿酸效果真的不差，这个没必要买贵的\n\n我现在用的这套加起来不到200块，皮肤状态是我这几年最好的时候。成分党的姐妹可以参考一下！",
+        time:"今晚 20:30",
+        tag:"#护肤 #成分党 #好皮肤 #护肤攻略"
+      },
+      {
+        title:"大牌精华用完了，平替3个月真实结论来了",
+        coverImg:"https://images.unsplash.com/photo-1570194065650-d99fb4ee3b53?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#E3F2FD,#90CAF9)", coverText:"3个月亲测",
+        body:"用了3个月平替，来给大家一个真实结论 👇\n\n背景：之前一直用某大牌精华，一瓶800+，实在心疼，决定找平替。\n\n测试的3款平替（价格都在150以下）：\n\nA款（68元）：质地清爽，吸收快，但效果一般，保湿力不够\nB款（128元）：烟酰胺含量高，美白效果明显，但有点粘腻\nC款（99元）：综合最好，和大牌效果差不多，质地也舒服 ✅\n\n用了3个月皮肤状态对比：\n毛孔：没有明显变化\n肤色：稍微亮了一点\n保湿：全天不干，效果不错\n\n结论：C款值得买，其他两款不推荐。大牌的钱省下来买好的防晒，效果会更好！",
+        time:"明天 20:00",
+        tag:"#平替 #护肤 #成分党 #亲测"
+      },
+      {
+        title:"毛孔粗大？皮肤科医生给我说了3件事",
+        coverImg:"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=300&fit=crop", coverFallback:"linear-gradient(135deg,#E8F5E9,#81C784)", coverText:"医生亲口说",
+        body:"上周去皮肤科，顺便问了医生毛孔的问题，整理给大家 👇\n\n医生说毛孔粗大95%是这3个原因：\n\n① 油脂分泌旺盛\n解决方案：水杨酸清洁毛孔，每周1-2次，不要天天用\n\n② 皮肤缺水导致毛孔扩张\n解决方案：补水是真的有效，玻尿酸每天用\n\n③ 防晒没做好，光老化\n解决方案：这个没得说，SPF50+每天涂\n\n医生说的让我最震惊的一句话：「网上说的缩毛孔产品，大部分只是暂时的视觉收缩，真正有效的就是清洁+保湿+防晒，没有捷径。」\n\n所以大家别被营销骗了，基础做好真的会改善很多！",
+        time:"后天 12:00",
+        tag:"#毛孔 #护肤 #皮肤科 #干货"
+      },
+    ]
+  }
+];
+
+function buildCreate(idx) {
+  const acc = accounts[idx];
+  const ct = createTemplates[idx];
+  const body = document.getElementById('create-body');
+
+  document.querySelectorAll('#create-switcher .switcher-chip').forEach((c,i)=>c.classList.toggle('active',i===idx));
+
+  body.innerHTML = `
+    <div style="padding:16px 16px 0;">
+      <div style="font-size:18px;font-weight:800;color:var(--gray1);">今天发什么？</div>
+      <div style="font-size:13px;color:var(--gray3);margin-top:4px;">薯伴根据你的账号数据，帮你想好了</div>
+    </div>
+
+    <!-- 热门选题 -->
+    <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:4px;">适合你的选题方向</div>
+      <div style="font-size:12px;color:var(--gray3);margin-bottom:12px;">结合你的垂类和近期赛道热点</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${ct.topics.map((t,i)=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--gray5);border-radius:12px;cursor:pointer;transition:all 0.15s;" onclick="showResult(${i})" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''">
+            <div style="width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:800;flex-shrink:0;">${i+1}</div>
+            <div style="flex:1;font-size:14px;font-weight:600;color:var(--gray1);">${t}</div>
+            <div style="font-size:13px;color:var(--red);font-weight:700;">帮我写 ›</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- 结果区 -->
+    <div id="create-result" style="margin:12px 16px 0;display:none;"></div>
+    <div style="height:8px;"></div>
+  `;
+}
+
+let lastResult = null;
+
+// ═══ 洞察展开 ═══
+function toggleInsight(i) {
+  const detail = document.getElementById(`insight-detail-${i}`);
+  const arrow = document.getElementById(`insight-arrow-${i}`);
+  const ins = curDataInsights[i];
+  if(!detail || !ins) return;
+
+  const isOpen = detail.style.display !== 'none';
+  // 收起其他全部
+  curDataInsights.forEach((_,j)=>{
+    const d = document.getElementById(`insight-detail-${j}`);
+    const a = document.getElementById(`insight-arrow-${j}`);
+    if(d && j!==i){ d.style.display='none'; }
+    if(a && j!==i){ a.style.transform=''; }
+  });
+
+  if(isOpen) {
+    detail.style.display='none';
+    arrow.style.transform='';
+  } else {
+    detail.style.display='block';
+    arrow.style.transform='rotate(90deg)';
+    const isChat = ins.detail.actionFn.includes('openChat');
+    const leftLabel = isChat ? '深度解析' : `${ins.detail.action} →`;
+    // 「深度解析」注册当前洞察上下文，进对话后直接给出针对性分析
+    const insightIdx = i;
+    if(isChat) {
+      window._pendingInsight = { title: ins.detail.title, body: ins.detail.body };
+    }
+    const leftFn = isChat
+      ? `openInsightChat(${insightIdx})`
+      : ins.detail.actionFn;
+    const btnHTML = `<div style="display:flex;gap:8px;">
+       <div style="flex:1.2;background:var(--red-pale);border:1.5px solid rgba(255,36,66,0.2);border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:var(--red);cursor:pointer;line-height:1.3;white-space:nowrap;" onclick="${leftFn}">${leftLabel}</div>
+       <div style="flex:1;background:var(--red);border-radius:10px;padding:9px;text-align:center;font-size:12px;font-weight:700;color:white;cursor:pointer;white-space:nowrap;" onclick="openChat('data')">问薯伴</div>
+     </div>`;
+    detail.innerHTML = `
+      <div style="font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:8px;">${ins.detail.title}</div>
+      <div style="font-size:12.5px;color:var(--gray2);line-height:1.75;margin-bottom:12px;">${ins.detail.body.replace(/\n/g,'<br>')}</div>
+      ${btnHTML}`;
+    detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+
+function showResult(topicIdx) {
+  const idx = curAccIdx;
+  const ct = createTemplates[idx];
+  const r = ct.results[topicIdx];
+  lastResult = r;
+  const resultDiv = document.getElementById('create-result');
+  resultDiv.style.display = 'block';
+
+  resultDiv.innerHTML = `
+  <div style="animation:fadeUp 0.3s ease;">
+    <!-- 标签 -->
+    <div style="padding:0 16px 8px;display:flex;align-items:center;gap:6px;">
+      <div style="width:3px;height:14px;background:var(--red);border-radius:2px;"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray1);">薯伴帮你写好了，预览一下</div>
+    </div>
+
+    <!-- 小红书笔记卡片 -->
+    <div style="margin:0 16px;background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+
+      <!-- 封面图 -->
+      <div style="height:220px;position:relative;overflow:hidden;background:#F0F0F0;">
+        <img src="${r.coverImg}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.style.background='${r.coverFallback||'linear-gradient(135deg,#FFE4E8,#FFC2CC)'}'"/>
+        <!-- 渐变遮罩 -->
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.35) 100%);"></div>
+        <!-- 封面文字（左下角，小红书风格）-->
+        <div style="position:absolute;bottom:14px;left:14px;right:50px;">
+          <div style="font-size:18px;font-weight:800;color:white;line-height:1.3;text-shadow:0 1px 6px rgba(0,0,0,0.4);">${r.coverText}</div>
+        </div>
+        <!-- 时间贴纸 -->
+        <div style="position:absolute;top:12px;right:12px;background:var(--red);color:white;font-size:10px;font-weight:700;padding:4px 8px;border-radius:8px;backdrop-filter:blur(4px);">建议发布</div>
+      </div>
+
+      <!-- 笔记内容 -->
+      <div style="padding:14px 14px 0;">
+        <!-- 用户信息行 -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:30px;height:30px;border-radius:50%;background:var(--red-pale);display:flex;align-items:center;justify-content:center;font-size:14px;">${accounts[idx].emoji}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--gray1);">${accounts[idx].name}</div>
+          <div style="margin-left:auto;background:var(--red-pale);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;">+ 关注</div>
+        </div>
+        <!-- 编辑按钮 -->
+        <div id="edit-toggle-bar" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-size:11px;color:var(--gray4);">薯伴生成的内容草稿</div>
+          <div id="edit-toggle-btn" style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--red);background:var(--red-pale);padding:4px 10px;border-radius:10px;cursor:pointer;" onclick="toggleEditMode()">
+            <span>✏️</span><span id="edit-btn-label">编辑</span>
+          </div>
+        </div>
+        <!-- 标题 -->
+        <div id="note-title" contenteditable="false"
+          style="font-size:15px;font-weight:800;color:var(--gray1);line-height:1.5;outline:none;border-radius:8px;padding:4px 6px;margin:-4px -6px 6px;transition:background 0.2s;user-select:none;cursor:default;">${r.title}</div>
+        <!-- 正文 -->
+        <div style="position:relative;margin-bottom:4px;">
+          <div id="note-body" contenteditable="false"
+            style="font-size:13px;color:var(--gray2);line-height:1.8;max-height:130px;overflow:hidden;outline:none;border-radius:8px;padding:4px 6px;margin:-4px -6px;transition:background 0.2s;user-select:none;cursor:default;">${r.body.replace(/\n/g,'<br>')}</div>
+          <div id="note-fade" style="position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,white);pointer-events:none;"></div>
+        </div>
+        <div id="note-expand" style="font-size:12px;color:var(--red);font-weight:600;padding:4px 0 8px;cursor:pointer;" onclick="expandBody()">展开全文 ↓</div>
+        <!-- 标签 -->
+        <div id="note-tag" contenteditable="false"
+          style="font-size:12px;color:var(--blue);margin-bottom:10px;outline:none;border-radius:6px;padding:2px 4px;margin-left:-4px;user-select:none;cursor:default;">${r.tag}</div>
+        <!-- 建议发布时间 -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="font-size:11px;color:var(--gray3);flex-shrink:0;">⏰ 建议发布时间</div>
+          <select style="background:var(--gray5);border:none;border-radius:8px;padding:6px 4px;font-size:12px;font-weight:700;color:#1A1A1A;width:100%;outline:none;">
+            <option${r.time==='今晚 20:30'?' selected':''}>今晚 20:30</option>
+            <option${r.time==='今晚 21:00'?' selected':''}>今晚 21:00</option>
+            <option${r.time==='明天 12:30'?' selected':''}>明天 12:30</option>
+            <option${r.time==='明天 20:30'?' selected':''}>明天 20:30</option>
+            <option${r.time==='后天 20:00'?' selected':''}>后天 20:00</option>
+            <option${r.time==='周末 10:00'?' selected':''}>周末 10:00</option>
+          </select>
+        </div>
+        <!-- 互动栏 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--gray5);">
+          <div style="display:flex;gap:18px;">
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);cursor:pointer;" onclick="this.style.color='var(--red)';this.querySelector('span').textContent='1'">❤️ <span>0</span></div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);cursor:pointer;">⭐ 0</div>
+            <div style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--gray3);">💬 0</div>
+          </div>
+          <div style="font-size:11px;color:var(--gray4);">预览效果</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作区 -->
+    <div style="padding:12px 16px 0;display:flex;gap:8px;">
+      <div style="flex:1;background:var(--gray5);border:1.5px solid var(--gray4);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:var(--gray2);transition:all 0.15s;"
+        onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''"
+        onclick="askShubaAboutNote()">问薯伴细化</div>
+      <div style="flex:1.2;background:var(--red);border-radius:12px;padding:13px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:white;transition:all 0.15s;"
+        onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''"
+        onclick="goPublish()">去发布这篇笔记 →</div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>`;
+
+  resultDiv.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function expandBody() {
+  const b = document.getElementById('note-body');
+  const fade = document.getElementById('note-fade');
+  const btn = document.getElementById('note-expand');
+  if(b) b.style.maxHeight='none';
+  if(fade) fade.style.display='none';
+  if(btn) btn.style.display='none';
+}
+
+let _editMode = false;
+function toggleEditMode() {
+  _editMode = !_editMode;
+  const els = ['note-title','note-body','note-tag'];
+  els.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.contentEditable = _editMode ? 'true' : 'false';
+    el.style.cursor = _editMode ? 'text' : 'default';
+    el.style.userSelect = _editMode ? 'text' : 'none';
+    el.style.background = _editMode ? (_editMode&&id==='note-title'?'#FFF0F2':id==='note-body'?'#F5F5F5':'#EEF6FF') : 'transparent';
+  });
+  if(_editMode) {
+    const b = document.getElementById('note-body');
+    if(b) { b.style.maxHeight='none'; }
+    const fade = document.getElementById('note-fade');
+    if(fade) fade.style.display='none';
+    const exp = document.getElementById('note-expand');
+    if(exp) exp.style.display='none';
+    document.getElementById('note-title')?.focus();
+  }
+  const label = document.getElementById('edit-btn-label');
+  const btn = document.getElementById('edit-toggle-btn');
+  if(label) label.textContent = _editMode ? '完成' : '编辑';
+  if(btn) btn.style.background = _editMode ? '#FF2442' : 'var(--red-pale)';
+  if(btn) btn.style.color = _editMode ? 'white' : 'var(--red)';
+}
+
+function askShubaAboutNote() {
+  if(!lastResult) return;
+  const ctx = `我刚写了一篇笔记，标题是「${lastResult.title}」，正文是这些内容。你帮我看看还有什么可以优化的？`;
+  openChat(ctx, true, 'create');
+}
+
+function goPublish() {
+  showPublishModal();
+}
+
+function showPublishModal() {
+  const r = lastResult;
+  if(!r) return;
+  let overlay = document.getElementById('publish-overlay');
+  if(!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'publish-overlay';
+    overlay.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;animation:fadeUp 0.2s ease;';
+    document.querySelector('.phone-screen').appendChild(overlay);
+  }
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:24px 24px 0 0;width:100%;padding:20px 20px 40px;animation:slideUp 0.3s ease;">
+      <div style="width:36px;height:4px;background:var(--gray4);border-radius:2px;margin:0 auto 16px;"></div>
+      <div style="font-size:17px;font-weight:800;color:var(--gray1);margin-bottom:4px;">准备发布这篇笔记</div>
+      <div style="font-size:13px;color:var(--gray3);margin-bottom:20px;">薯伴帮你安排好了发布计划</div>
+      <div style="background:var(--gray5);border-radius:14px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--gray1);margin-bottom:8px;">${r.title}</div>
+        <div style="display:flex;gap:8px;font-size:12px;color:var(--gray3);">
+          <span>⏰ ${r.time}</span>
+          <span>·</span>
+          <span>${r.tag.split(' ')[0]}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;border:1.5px solid var(--gray4);border-radius:12px;padding:14px;text-align:center;font-size:13px;font-weight:700;color:var(--gray2);cursor:pointer;" onclick="document.getElementById('publish-overlay').style.display='none'">稍后再发</div>
+        <div style="flex:1.5;background:var(--red);border-radius:12px;padding:14px;text-align:center;font-size:13px;font-weight:700;color:white;cursor:pointer;" onclick="confirmPublish()">确认发布 🚀</div>
+      </div>
+    </div>`;
+}
+
+function confirmPublish() {
+  const overlay = document.getElementById('publish-overlay');
+  if(overlay) overlay.innerHTML = `
+    <div style="background:white;border-radius:24px 24px 0 0;width:100%;padding:40px 20px;text-align:center;animation:fadeUp 0.3s ease;">
+      <div style="font-size:52px;margin-bottom:12px;">🎉</div>
+      <div style="font-size:18px;font-weight:800;color:var(--gray1);margin-bottom:8px;">发布成功！</div>
+      <div style="font-size:13px;color:var(--gray3);margin-bottom:24px;">薯伴会在24小时后帮你复盘这篇笔记的数据表现～</div>
+      <div style="background:var(--red);border-radius:12px;padding:14px;font-size:14px;font-weight:700;color:white;cursor:pointer;" onclick="document.getElementById('publish-overlay').style.display='none';switchTab('data')">查看数据表现 →</div>
+    </div>`;
+}
+
+// 从数据洞察「深度解析」进入——带当前洞察context直接注入针对性回答
+function openInsightChat(idx) {
+  const ins = curDataInsights && curDataInsights[idx];
+  openChat(null, false, 'data');
+  if(!ins) return;
+  // 进入对话后直接抛出用户问题+薯伴针对性回答
+  setTimeout(()=>{
+    addUserMsg(`我想深入了解：${ins.detail.title}`);
+    scrollMsgs();
+    showTyping(()=>{
+      // 把洞察的body作为数据块，再给一条行动建议
+      const suggestText = ins.detail.suggest || `基于以上分析，最值得你现在做的一件事是：把这个洞察转化成一次内容实验，下次发布时调整对应变量，2周后对比数据变化。`;
+      addBotMsg(
+        `这个数据背后的逻辑我来帮你拆解一下 👇`,
+        { title:`📊 ${ins.detail.title}`, body: ins.detail.body },
+        { title:'✅ 薯伴建议', body: suggestText }
+      );
+      scrollMsgs();
+    });
+  }, 800);
+}
+
+// openChat支持带笔记上下文和source参数
+function openChat(ctx, fromNote=false, source=null) {
+  if(typeof fromNote === 'string') { source = fromNote; fromNote = false; }
+  buildChat(ctx, fromNote, source);
+  window._prevTab = curTab;
+  slideTo('chat');
+}
+
+// Toast提示
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if(!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:absolute;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:white;padding:8px 18px;border-radius:20px;font-size:13px;z-index:200;white-space:nowrap;pointer-events:none;transition:opacity 0.3s;';
+    document.querySelector('.phone-screen').appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 1800);
+}
+
+// 初始化 - 从账号选择页开始
+// 页面初始状态由HTML class控制（page-growth=out-right, 其余正常）
+</script>
+</body>
+</html>
