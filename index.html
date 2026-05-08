@@ -1333,10 +1333,11 @@ function switchTab(tab) { slideTo(tab); }
 
 // ═══ 数据分析页 ═══
 const dataConfig = [
-  { // 新手期
-    weeklyFans:[8,12,6,15,10,18,22],
-    weeklyPosts:[1,0,1,1,0,1,2],
-    weeklyLikes:[18,25,12,32,20,38,48],
+  { // 新手期：总涨粉34，发了3篇（目标每周3篇，刚好达标）
+    weeklyFans:[3,6,2,8,4,6,5],
+    weeklyPosts:[0,1,0,1,0,1,0],
+    weeklyLikes:[8,15,6,22,12,28,18],
+    fansDelta:'比上周多10', postTarget:3,
     insights:[
       {
         icon:`<svg width="16" height="16" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, color:"#E8F5E9", iconBg:"#00C853",
@@ -1375,6 +1376,7 @@ const dataConfig = [
     weeklyFans:[45,62,38,78,55,89,103],
     weeklyPosts:[3,2,4,3,3,4,3],
     weeklyLikes:[280,340,210,420,310,480,510],
+    fansDelta:'比上周多82', postTarget:3,
     insights:[
       {
         icon:`<svg width="16" height="16" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, color:"#E8F5E9", iconBg:"#00C853",
@@ -1413,6 +1415,7 @@ const dataConfig = [
     weeklyFans:[120,158,98,175,142,190,210],
     weeklyPosts:[4,5,4,5,5,4,6],
     weeklyLikes:[1200,1580,980,1720,1450,1890,2100],
+    fansDelta:'比上周多215', postTarget:4,
     insights:[
       {
         icon:`<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9h4.5a2.5 2.5 0 0 1 0 5H9v2h6"/></svg>`, color:"#E8F5E9", iconBg:"#00C853",
@@ -1491,12 +1494,12 @@ function buildData(idx) {
       <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
         <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周涨粉</div>
         <div style="font-size:26px;font-weight:800;color:var(--gray1);">+${dc.weeklyFans.reduce((a,b)=>a+b,0)}</div>
-        <div style="font-size:11px;color:var(--green);margin-top:2px;">↑ 比上周多18</div>
+        <div style="font-size:11px;color:var(--green);margin-top:2px;">↑ ${dc.fansDelta || '比上周多10'}</div>
       </div>
       <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
         <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周发布</div>
         <div style="font-size:26px;font-weight:800;color:var(--gray1);">${dc.weeklyPosts.reduce((a,b)=>a+b,0)}篇</div>
-        <div style="font-size:11px;color:var(--orange);margin-top:2px;">目标：每周3篇</div>
+        <div style="font-size:11px;color:${dc.weeklyPosts.reduce((a,b)=>a+b,0)>=(dc.postTarget||3)?'var(--green)':'var(--orange)'};margin-top:2px;">${dc.weeklyPosts.reduce((a,b)=>a+b,0)>=(dc.postTarget||3)?'✅ 达成目标':'目标：每周'+(dc.postTarget||3)+'篇'}</div>
       </div>
       <div style="flex:1;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
         <div style="font-size:11px;color:var(--gray3);margin-bottom:4px;">本周获赞</div>
