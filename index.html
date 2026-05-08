@@ -1262,7 +1262,7 @@ function sendMsg() {
   document.getElementById('quick-qs').style.display='none';
   const fallbacks = [
     `好，我给你3条马上能做的建议：\n\n**① 本周把内容全换成穿搭垂类**（不发其他话题）\n系统识别你账号方向需要3-5篇连续垂类内容，现在杂乱是涨粉慢的主因。\n\n**② 封面加文字钩子**\n主图左上角加一句「结果词」，比如「这套配色显白」，字号≥60px加粗。穿搭Top笔记83%有封面文字。\n\n**③ 发布时间改到今晚20:30**\n你目前在上午发，你的目标用户（18-28岁女生）晚上才活跃，错开了黄金窗口。\n\n从哪条开始？`,
-    `好，我给你3条马上能做的事：\n\n**① 今天起所有笔记改到晚上20:30发布**\n你上午发的笔记平均互动82次，晚上发的均值210次，差了2.5倍。只改时间，不用改内容。\n\n**② 下一篇结尾加互动问句**\n结尾加「你们更喜欢哪种风格？」，评论完留评论，30分钟内自己回复前5条，撬动更多互动。\n\n**③ 下一篇标题加「显瘦」关键词**\n你有1篇带显瘦的笔记点赞是其他篇的3倍，这个方向值得多压几篇测试。\n\n先从①开始，今晚20:30准时发一篇。`,
+    `好，我给你3条马上能做的事：\n\n**① 今天起所有笔记改到晚上20:30发布**\n你上午发的2篇平均互动82次，晚上发的1篇互动210次，差了2.5倍。只改时间，不用改内容。\n\n**② 下一篇结尾加互动问句**\n结尾加「你们更喜欢哪种风格？」，发布后30分钟内自己回复前5条评论，撬动更多互动。\n\n**③ 下一篇标题加「显瘦」关键词**\n你有1篇带显瘦的笔记点赞是其他篇的3倍，这个方向值得多压几篇测试。\n\n先从①开始，今晚20:30准时发一篇。`,
     `好，我给你3条高优先级的动作：\n\n**① 本月报价从3500调到4200**\n你的互动率3.8%高于同量级均值，CPE低，品牌其实愿意付更多。直接改蒲公英后台报价，先小涨观察接单量。\n\n**② 主页置顶换成商单展示笔记**\n有置顶商单笔记的创作者品牌主动联系率+47%。截2-3张往期合作截图，打码品牌名，配文「接受蒲公英合作」。\n\n**③ 下一篇做成分党内容**\n你成分类内容互动率5.9% vs 普通内容2.7%，美妆品牌最爱找「有专业感」的创作者，这个方向能带来更优质的商单。`,
   ];
   showTyping(()=>{
@@ -1907,6 +1907,19 @@ function loadCoverFile(input) {
   reader.readAsDataURL(file);
 }
 
+function loadAiCoverFile(input) {
+  if(!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = document.getElementById('ai-cover-img');
+    const wrap = document.getElementById('ai-cover-wrap');
+    if(img) { img.style.display='block'; img.src = e.target.result; }
+    if(wrap) wrap.style.background = '';
+  };
+  reader.readAsDataURL(file);
+}
+
 function refreshCover() {
   _coverSig = Math.floor(Math.random()*9999);
   const kws = ['fashion','beauty','lifestyle'];
@@ -1979,16 +1992,19 @@ function showResult(topicIdx) {
     <div style="margin:0 16px;background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
 
       <!-- 封面图 -->
-      <div style="height:220px;position:relative;overflow:hidden;background:#F0F0F0;">
-        <img src="${r.coverImg}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.style.background='${r.coverFallback||'linear-gradient(135deg,#FFE4E8,#FFC2CC)'}'"/>
+      <div style="height:220px;position:relative;overflow:hidden;background:#F0F0F0;" id="ai-cover-wrap">
+        <img id="ai-cover-img" src="${r.coverImg}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';document.getElementById('ai-cover-wrap').style.background='${r.coverFallback||'linear-gradient(135deg,#FFE4E8,#FFC2CC)'}'"/>
         <!-- 渐变遮罩 -->
-        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.35) 100%);"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.08) 0%,rgba(0,0,0,0.35) 100%);pointer-events:none;"></div>
         <!-- 封面文字（左下角，小红书风格）-->
         <div style="position:absolute;bottom:14px;left:14px;right:50px;">
           <div style="font-size:18px;font-weight:800;color:white;line-height:1.3;text-shadow:0 1px 6px rgba(0,0,0,0.4);">${r.coverText}</div>
         </div>
-        <!-- 时间贴纸 -->
-        <div style="position:absolute;top:12px;right:12px;background:var(--red);color:white;font-size:10px;font-weight:700;padding:4px 8px;border-radius:8px;backdrop-filter:blur(4px);">建议发布</div>
+        <!-- 换封面按钮 -->
+        <label for="ai-cover-file-input" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);color:white;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;backdrop-filter:blur(4px);display:flex;align-items:center;gap:4px;">
+          <svg width="12" height="12" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>换封面
+        </label>
+        <input type="file" id="ai-cover-file-input" accept="image/*" style="display:none;" onchange="loadAiCoverFile(this)"/>
       </div>
 
       <!-- 笔记内容 -->
