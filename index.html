@@ -1191,7 +1191,11 @@ function fireQA(q) {
   if(!ans) return;
   addUserMsg(ans.q || q);
   document.getElementById('quick-qs').style.display='none';
-  showTyping(()=> addBotMsg(ans.ans, ans.data, ans.suggest));
+  showTyping(()=>{
+    addBotMsg(ans.ans, ans.data, ans.suggest);
+    const qqs = document.getElementById('quick-qs');
+    if(qqs) { qqs.style.display=''; scrollMsgs(); }
+  });
 }
 
 function addUserMsg(text) {
@@ -1244,6 +1248,9 @@ function sendMsg() {
   ];
   showTyping(()=>{
     addBotMsg(fallbacks[curAccIdx] || fallbacks[0], null, null);
+    // 回答后恢复快捷问题
+    const qqs = document.getElementById('quick-qs');
+    if(qqs) { qqs.style.display=''; scrollMsgs(); }
   });
 }
 
@@ -1650,6 +1657,18 @@ function buildCreate(idx) {
       </div>
     </div>
 
+    <!-- 自定义选题入口 -->
+    <div style="margin:12px 16px 0;background:var(--white);border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <div style="font-size:14px;font-weight:700;color:var(--gray1);margin-bottom:4px;">我有自己的想法</div>
+      <div style="font-size:12px;color:var(--gray3);margin-bottom:12px;">告诉 Lumi 你想写什么，帮你润色标题 + 内容框架</div>
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <textarea id="custom-topic-input" placeholder="比如：想分享上周买到的超好看夏日穿搭..." 
+          style="flex:1;border:1.5px solid #E8E8E8;border-radius:12px;padding:10px 12px;font-size:13px;color:var(--gray1);resize:none;height:60px;font-family:inherit;outline:none;line-height:1.5;background:#FAFAFA;"
+          onfocus="this.style.borderColor='#FF2442'" onblur="this.style.borderColor='#E8E8E8'"></textarea>
+        <button onclick="lumiPolish()" style="background:var(--red);color:white;border:none;border-radius:12px;padding:0 16px;height:60px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;">Lumi<br>润色</button>
+      </div>
+    </div>
+
     <!-- 结果区 -->
     <div id="create-result" style="margin:12px 16px 0;display:none;"></div>
     <div style="height:8px;"></div>
@@ -1657,6 +1676,90 @@ function buildCreate(idx) {
 }
 
 let lastResult = null;
+
+function lumiPolish() {
+  const input = document.getElementById('custom-topic-input');
+  const topic = input?.value.trim();
+  if(!topic) { input?.focus(); return; }
+
+  const resultDiv = document.getElementById('create-result');
+  if(!resultDiv) return;
+  resultDiv.style.display = 'block';
+
+  const acc = accounts[curAccIdx];
+
+  // 根据账号阶段定制润色结果
+  const polishMap = [
+    // 新手期：重点帮补垂类标签
+    {
+      titleSugs: [
+        `「${topic.slice(0,10)}」→ 试试：**今天这套真的绝了，显白又显瘦**`,
+        `或者：**入手${topic.slice(0,8)}，穿上直接被问链接**`,
+      ],
+      framework: `**封面**：全身出镜，左上角白色加粗文字\n**开头**：一句「结果词」钩住读者（如「上身效果真的出乎意料」）\n**正文**：①单品介绍 ②搭配逻辑 ③真实上身反馈\n**结尾**：「你们觉得哪套更适合日常？」引导评论\n**话题**：#日常穿搭 #显瘦穿搭 #今日穿搭`,
+      tip: '新号前5篇建议都在穿搭垂类，帮助系统快速认识你 👆'
+    },
+    // 成长期：重点帮提互动率
+    {
+      titleSugs: [
+        `「${topic.slice(0,10)}」→ 试试：**${topic.slice(0,8)}，被问了100次终于出教程**`,
+        `或者：**显腿长5cm的${topic.slice(0,6)}找到了，附穿搭公式**`,
+      ],
+      framework: `**封面**：全身出镜+左上角结果词，字号≥60px\n**开头**：「上周这套被问了好多次，今天来出个完整版」\n**正文**：①核心单品 ②3个搭配方案 ③适合什么场景\n**结尾**：「你更喜欢哪个方案？1/2/3告诉我」\n**发布时间**：今晚20:30（别忘了！）`,
+      tip: '结尾问题+30分钟内回复前5条评论，互动率能提升40%+ 🔥'
+    },
+    // 变现期：帮打造专业感+商业吸引力
+    {
+      titleSugs: [
+        `「${topic.slice(0,10)}」→ 试试：**成分党测评 | ${topic.slice(0,8)}，真实用了30天的反馈**`,
+        `或者：**美妆研究所实测：${topic.slice(0,8)}，这几点品牌不会告诉你**`,
+      ],
+      framework: `**封面**：产品平铺/使用场景，左上角「成分党实测」标签\n**开头**：「测了30天才敢说，这个${topic.slice(0,6)}值不值得买」\n**正文**：①成分分析（2-3个关键成分）②实测数据 ③对比同类产品\n**结尾**：「有想了解的成分或产品，评论区告诉我」\n**商业价值**：成分类内容品牌最爱引用，有利于提升报价`,
+      tip: '成分类内容互动率5.9%，比日常内容高2倍，品牌主动找你的概率大幅提升 💰'
+    }
+  ];
+
+  const polish = polishMap[curAccIdx] || polishMap[0];
+
+  resultDiv.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:14px;box-shadow:0 2px 12px rgba(0,0,0,0.06);animation:fadeUp 0.3s ease;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <img src="https://qa-cos-1251524319.cos.ap-shanghai.myqcloud.com/yunxiao/lobi/prod/images/22f70e0c8b6d80884c25eaa3620b8e14.png" style="width:24px;height:24px;border-radius:50%;object-fit:cover;" />
+        <span style="font-size:13px;font-weight:700;color:var(--gray1);">Lumi 润色结果</span>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;">✏️ 标题建议</div>
+        ${polish.titleSugs.map(s=>`<div style="background:#FFF0F3;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px;color:var(--gray1);line-height:1.6;">${s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`).join('')}
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;">📋 内容框架</div>
+        <div style="background:#F8F8F8;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--gray2);line-height:1.8;">${polish.framework.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>
+      </div>
+
+      <div style="background:rgba(255,36,66,0.06);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--red);">
+        💡 ${polish.tip}
+      </div>
+
+      <button onclick="usePolishedResult()" style="width:100%;margin-top:12px;background:var(--red);color:white;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">用这个框架写 ›</button>
+    </div>
+  `;
+
+  lastResult = { topic, polish };
+  resultDiv.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function usePolishedResult() {
+  if(!lastResult) return;
+  // 把结果填入笔记编辑区并进入编辑模式
+  const noteTitle = document.getElementById('note-title');
+  const noteBody  = document.getElementById('note-body');
+  if(noteTitle) noteTitle.textContent = lastResult.topic;
+  if(noteBody)  noteBody.textContent  = lastResult.polish.framework.replace(/\*\*(.*?)\*\*/g,'$1').replace(/\n/g,'\n');
+  toggleEdit();
+  noteTitle?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
 
 // ═══ 洞察展开 ═══
 function toggleInsight(i) {
