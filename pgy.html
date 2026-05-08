@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蒲公英智配 - KOL智能匹配平台</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'PingFang SC',system-ui,sans-serif;background:#fff;color:#1a1a1a;min-height:100vh}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px;border-bottom:1px solid #f0f0f0;background:#fff;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:#FF2442}
+.nav-logo svg{flex-shrink:0}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:14px;color:#333}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF2442,#ff6b6b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600}
+/* TOP TABS */
+.top-tabs{display:flex;align-items:center;gap:0;padding:0 32px;border-bottom:1px solid #f0f0f0;background:#fff}
+.tab-btn{padding:14px 24px;font-size:15px;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;font-family:inherit}
+.tab-btn.active{color:#FF2442;border-bottom-color:#FF2442;font-weight:600}
+.tab-btn:hover:not(.active){color:#333}
+/* MAIN */
+.main{background:#fff;min-height:calc(100vh - 110px)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+/* STEP BAR */
+.step-bar{display:flex;align-items:center;justify-content:center;padding:24px 32px 0;gap:0}
+.step-item{display:flex;align-items:center;gap:8px}
+.step-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;border:2px solid #e0e0e0;color:#aaa;background:#fff;transition:all .3s}
+.step-circle.active{background:#FF2442;border-color:#FF2442;color:#fff}
+.step-circle.done{background:#06D6A0;border-color:#06D6A0;color:#fff}
+.step-label{font-size:13px;color:#aaa;font-weight:500;white-space:nowrap}
+.step-label.active{color:#FF2442;font-weight:600}
+.step-label.done{color:#06D6A0}
+.step-line{width:60px;height:2px;background:#e0e0e0;margin:0 8px}
+.step-line.done{background:#06D6A0}
+/* CONTENT AREA */
+.content{max-width:1100px;margin:0 auto;padding:24px 32px 100px}
+/* BRIEF INPUT MODE */
+.brief-modes{display:flex;gap:8px;margin-bottom:24px}
+.mode-btn{padding:8px 18px;border-radius:24px;border:1.5px solid #e0e0e0;background:#fff;font-size:14px;cursor:pointer;color:#666;transition:all .2s;font-family:inherit}
+.mode-btn.active{background:#FF2442;border-color:#FF2442;color:#fff;font-weight:600}
+.mode-panel{display:none}
+.mode-panel.active{display:block}
+.brief-textarea{width:100%;height:160px;border:1.5px solid #e8e8e8;border-radius:12px;padding:16px;font-size:15px;font-family:inherit;resize:vertical;outline:none;line-height:1.6;color:#1a1a1a;transition:border .2s}
+.brief-textarea:focus{border-color:#FF2442}
+.brief-label{font-size:13px;color:#aaa;margin-bottom:8px}
+.upload-zone{border:2px dashed #e0e0e0;border-radius:16px;padding:48px;text-align:center;cursor:pointer;transition:border .2s}
+.upload-zone:hover{border-color:#FF2442}
+.upload-zone-icon{font-size:40px;margin-bottom:12px}
+.upload-zone-text{font-size:15px;color:#555;margin-bottom:6px}
+.upload-zone-hint{font-size:13px;color:#aaa}
+/* FORM GRID */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:13px;color:#555;font-weight:500}
+.form-input,.form-select,.form-textarea{border:1.5px solid #e8e8e8;border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;outline:none;transition:border .2s;background:#fff;color:#1a1a1a}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#FF2442}
+.form-textarea{height:100px;resize:vertical}
+.tag-options{display:flex;flex-wrap:wrap;gap:8px}
+.tag-opt{padding:6px 14px;border-radius:20px;border:1.5px solid #e0e0e0;font-size:13px;cursor:pointer;transition:all .2s;color:#555;user-select:none}
+.tag-opt.selected{background:#FF2442;border-color:#FF2442;color:#fff}
+/* SUBMIT BTN */
+.submit-btn{display:block;width:100%;padding:16px;background:#FF2442;color:#fff;border:none;border-radius:24px;font-size:16px;font-weight:600;cursor:pointer;margin-top:24px;font-family:inherit;transition:opacity .2s}
+.submit-btn:hover{opacity:.9}
+/* STEP2 - ANALYSIS */
+.analysis-container{display:flex;flex-direction:column;align-items:center;padding:40px 32px}
+.analysis-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.analysis-sub{font-size:14px;color:#999;margin-bottom:32px}
+.analysis-card{background:#fff;border-radius:16px;box-shadow:0 2px 20px rgba(0,0,0,.08);padding:28px;width:100%;max-width:620px}
+.analysis-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.analysis-ai{display:flex;align-items:center;gap:10px}
+.ai-avatar{width:36px;height:36px;border-radius:50%;background:#FF2442;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ai-name{font-size:15px;font-weight:600}
+.status-dot{display:flex;align-items:center;gap:6px;font-size:13px;color:#06D6A0}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:#06D6A0;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.analysis-steps{display:flex;flex-direction:column;gap:16px}
+.a-step{display:flex;flex-direction:column;gap:4px}
+.a-step-row{display:flex;align-items:center;gap:10px}
+.a-step-icon{font-size:18px;min-width:24px}
+.a-step-label{font-size:15px;font-weight:600;color:#1a1a1a}
+.a-step-detail{font-size:13px;color:#888;margin-left:34px;line-height:1.5}
+.progress-wrap{margin-left:34px;margin-top:6px}
+.progress-bar-bg{height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden}
+.progress-bar-fill{height:100%;background:#FF2442;border-radius:4px;width:0%;transition:width .1s linear}
+.analysis-insight{background:#fff;border-left:3px solid #FF2442;padding:12px 16px;border-radius:0 10px 10px 0;margin-top:20px;font-size:14px;color:#555;line-height:1.6}
+.skip-link{margin-top:16px;font-size:13px;color:#aaa;cursor:pointer;text-align:center}
+.skip-link:hover{color:#FF2442}
+/* STEP3 - KOL SELECT */
+.step3-layout{display:flex;gap:20px;align-items:flex-start}
+.kol-list-pane{flex:0 0 60%;min-width:0}
+.kol-detail-pane{flex:0 0 40%;min-width:0;position:sticky;top:80px}
+.recommend-bar{background:#FFF0F2;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:14px;color:#FF2442;font-weight:500}
+.filter-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{padding:5px 12px;border-radius:20px;background:#f5f5f5;font-size:12px;color:#666}
+.kol-card{background:#fff;border-radius:12px;border:1.5px solid #eee;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.kol-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#FF2442;opacity:0;transition:opacity .2s}
+.kol-card.selected{background:#FFF8F9;border-color:#FF2442}
+.kol-card.selected::before{opacity:1}
+.kol-card:hover:not(.selected){border-color:#ddd;background:#fafafa}
+.kol-card-top{display:flex;align-items:flex-start;gap:12px}
+.kol-info{flex:1;min-width:0}
+.kol-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kol-name{font-size:15px;font-weight:600}
+.kol-tag-chip{padding:2px 8px;border-radius:10px;background:#f5f5f5;font-size:11px;color:#888}
+.kol-badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-red{background:#FFF0F2;color:#FF2442}
+.badge-blue{background:#EFF3FF;color:#4361EE}
+.kol-stats{display:flex;gap:16px;margin:6px 0;font-size:13px;color:#888}
+.kol-desc{font-size:13px;color:#aaa;margin-top:4px;line-height:1.4}
+.kol-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.match-score{font-size:18px;font-weight:700;color:#FF2442}
+.match-label{font-size:10px;color:#FF2442;text-align:center}
+.select-circle{width:22px;height:22px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.select-circle.checked{background:#FF2442;border-color:#FF2442;color:#fff;font-size:13px}
+/* STICKY BOTTOM */
+.sticky-bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0f0f0;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;z-index:50;box-shadow:0 -4px 16px rgba(0,0,0,.06)}
+.bottom-info{font-size:15px;color:#555}
+.bottom-info span{font-weight:700;color:#1a1a1a}
+.btn-primary{padding:12px 28px;background:#FF2442;color:#fff;border:none;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.btn-primary:hover{opacity:.9}
+/* DETAIL PANEL */
+.detail-card{background:#fff;border-radius:16px;border:1.5px solid #eee;padding:20px}
+.detail-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.detail-name{font-size:17px;font-weight:700}
+.detail-tag{padding:3px 10px;border-radius:10px;background:#f5f5f5;font-size:12px;color:#888}
+.detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-box{background:#fafafa;border-radius:10px;padding:10px 14px}
+.stat-val{font-size:18px;font-weight:700;color:#1a1a1a}
+.stat-key{font-size:11px;color:#aaa;margin-top:2px}
+.reason-box{border-left:3px solid #FF2442;padding:10px 14px;background:#FFF8F9;border-radius:0 10px 10px 0;font-size:13px;color:#555;line-height:1.6;margin-bottom:14px}
+.risk-box{background:#FFFBF0;border:1px solid #FFE066;border-radius:10px;padding:10px 14px;font-size:13px;color:#996600;margin-bottom:14px}
+.match-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.match-bar-item{display:flex;flex-direction:column;gap:4px}
+.match-bar-label{display:flex;justify-content:space-between;font-size:12px;color:#888}
+.match-bar-track{height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.match-bar-fill{height:100%;border-radius:3px;background:#FF2442;transition:width .5s}
+.note-previews{display:flex;gap:8px}
+.note-thumb{width:70px;height:90px;border-radius:8px;overflow:hidden;cursor:pointer;flex-shrink:0;border:1px solid #eee}
+/* DEFAULT DETAIL */
+.default-detail{text-align:left}
+.combo-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.combo-sub{font-size:13px;color:#888;margin-bottom:16px}
+.mini-kol{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;background:#fafafa;margin-bottom:8px}
+.mini-kol-info{flex:1}
+.mini-kol-name{font-size:14px;font-weight:600}
+.mini-kol-price{font-size:12px;color:#888}
+.combo-total{background:#FFF0F2;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:14px;color:#FF2442;font-weight:600}
+/* STEP4 */
+.step4-card{background:#fff;border-radius:16px;border:1.5px solid #eee;padding:24px;max-width:680px;margin:0 auto}
+.s4-title{font-size:20px;font-weight:700;margin-bottom:20px}
+.s4-kol-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #f5f5f5}
+.s4-kol-row:last-of-type{border-bottom:none}
+.s4-kol-info{flex:1}
+.s4-kol-name{font-size:15px;font-weight:600}
+.s4-kol-form{font-size:13px;color:#888;margin-top:2px}
+.s4-kol-price{font-size:15px;font-weight:700;color:#FF2442}
+.s4-section{margin-top:20px}
+.s4-section-label{font-size:13px;color:#aaa;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.s4-brief{background:#fafafa;border-radius:10px;padding:14px;font-size:14px;color:#555;line-height:1.6}
+.s4-note{width:100%;border:1.5px solid #e8e8e8;border-radius:10px;padding:12px;font-size:14px;font-family:inherit;height:80px;resize:none;outline:none}
+.s4-note:focus{border-color:#FF2442}
+.s4-total{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid #f5f5f5;margin-top:12px}
+.s4-total-label{font-size:14px;color:#888}
+.s4-total-val{font-size:20px;font-weight:700;color:#1a1a1a}
+/* TOAST */
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;color:#fff;padding:16px 28px;border-radius:16px;font-size:16px;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+/* EFFECT TAB */
+.effect-header{margin-bottom:24px}
+.effect-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.effect-sub{font-size:14px;color:#999}
+.effect-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.effect-card{background:#fff;border:1.5px solid #eee;border-radius:16px;padding:20px}
+.effect-campaign{font-size:13px;color:#888;margin-bottom:8px;font-weight:500}
+.effect-name{font-size:16px;font-weight:700;margin-bottom:14px}
+.effect-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.effect-metric-box{background:#fafafa;border-radius:10px;padding:10px}
+.effect-metric-val{font-size:18px;font-weight:700;color:#FF2442}
+.effect-metric-key{font-size:11px;color:#aaa;margin-top:2px}
+.effect-metric-change{font-size:11px;color:#06D6A0;margin-top:2px}
+.goto-juhui{display:inline-block;padding:10px 20px;background:#FF2442;color:#fff;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;text-decoration:none}
+/* COLLAB TAB */
+.collab-empty{text-align:center;padding:80px 32px;color:#aaa}
+.collab-empty .icon{font-size:48px;margin-bottom:12px}
+.collab-empty p{font-size:15px}
+/* MODAL */
+.note-modal-box{background:#fff;border-radius:20px;padding:22px;width:420px;max-width:92vw;max-height:90vh;overflow-y:auto;position:relative}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-img{max-width:90vw;max-height:80vh;border-radius:12px}
+.modal-close{position:absolute;top:20px;right:20px;background:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" style="flex-direction:column;align-items:flex-start;gap:2px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="15" cy="15" r="3" fill="#FF2442"/>
+        <g stroke="#FF2442" stroke-linecap="round">
+          <line x1="15" y1="1.5" x2="15" y2="8" stroke-width="2.5"/>
+          <line x1="15" y1="22" x2="15" y2="28.5" stroke-width="2.5"/>
+          <line x1="1.5" y1="15" x2="8" y2="15" stroke-width="2.5"/>
+          <line x1="22" y1="15" x2="28.5" y2="15" stroke-width="2.5"/>
+          <line x1="5.5" y1="5.5" x2="10.5" y2="10.5" stroke-width="2"/>
+          <line x1="19.5" y1="19.5" x2="24.5" y2="24.5" stroke-width="2"/>
+          <line x1="24.5" y1="5.5" x2="19.5" y2="10.5" stroke-width="2"/>
+          <line x1="10.5" y1="19.5" x2="5.5" y2="24.5" stroke-width="2"/>
+          <line x1="15" y1="1.5" x2="18" y2="6.5" stroke-width="1.3"/>
+          <line x1="15" y1="1.5" x2="12" y2="6.5" stroke-width="1.3"/>
+          <line x1="28.5" y1="15" x2="23.5" y2="12" stroke-width="1.3"/>
+          <line x1="28.5" y1="15" x2="23.5" y2="18" stroke-width="1.3"/>
+        </g>
+      </svg>
+      <span style="font-size:18px;font-weight:700;color:#1a1a1a;letter-spacing:0">小红书蒲公英</span>
+    </div>
+    <div style="font-size:11px;color:#bbb;font-weight:400;padding-left:2px">智能匹配最适合你品牌的博主，从Brief到合作一站搞定</div>
+  </div>
+  <div class="nav-user">
+    <div class="nav-avatar">山</div>
+    <span>山楂饼家</span>
+  </div>
+</nav>
+
+<!-- TOP TABS -->
+<div class="top-tabs">
+  <button class="tab-btn active" onclick="switchTab('kol')">找博主</button>
+  <button class="tab-btn" onclick="switchTab('collab')">合作进度</button>
+  <button class="tab-btn" onclick="switchTab('effect')">数据复盘</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TAB: 智配找KOL -->
+  <div class="tab-panel active" id="tab-kol">
+    <!-- STEP BAR -->
+    <div class="step-bar" id="stepBar">
+      <div class="step-item">
+        <div class="step-circle active" id="sc1">①</div>
+        <div class="step-label active" id="sl1">填写Brief</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-item">
+        <div class="step-circle" id="sc2">②</div>
+        <div class="step-label" id="sl2">蒲蒲分析</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-item">
+        <div class="step-circle" id="sc3">③</div>
+        <div class="step-label" id="sl3">选博主</div>
+      </div>
+      <div class="step-line" id="line3"></div>
+      <div class="step-item">
+        <div class="step-circle" id="sc4">④</div>
+        <div class="step-label" id="sl4">发起合作</div>
+      </div>
+    </div>
+
+    <!-- STEP1 -->
+    <div id="step1" class="content">
+      <div class="brief-modes">
+        <button class="mode-btn active" onclick="switchMode('nl')">自然语言描述</button>
+        <button class="mode-btn" onclick="switchMode('upload')">上传Brief文件</button>
+        <button class="mode-btn" onclick="switchMode('form')">填写表单</button>
+      </div>
+
+      <!-- 自然语言 -->
+      <div class="mode-panel active" id="mode-nl">
+        <div class="brief-label">用自己的话描述这次合作需求</div>
+        <textarea class="brief-textarea" id="nlText" placeholder="用自己的话说说这次想找什么KOL～&#10;例如：我是山楂饼品牌，想趁母亲节做一波种草，目标是18-28岁爱健康零食的女生，预算7万，希望找内容风格治愈温柔、真实不硬广的博主...">我们是山楂饼家，一个做国货山楂零食的新锐品牌，想趁母亲节做一波种草。产品是山楂饼（原味/玫瑰/话梅三款），主打健康低脂。目标是18-28岁爱健康零食的年轻女生，预算5-10万，希望找内容风格治愈温柔、真实不硬广、能把山楂饼自然融入日常场景的博主。</textarea>
+        <button class="submit-btn" onclick="goStep2()">让蒲蒲帮我找 →</button>
+      </div>
+
+      <!-- 上传文件 -->
+      <div class="mode-panel" id="mode-upload">
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-zone-icon">📎</div>
+          <div class="upload-zone-text">拖拽或点击上传 PDF / Word / 图片</div>
+          <div class="upload-zone-hint">支持 .pdf .docx .png .jpg 格式</div>
+          <input type="file" id="fileInput" style="display:none" accept=".pdf,.docx,.png,.jpg,.jpeg">
+        </div>
+        <div style="margin-top:12px;font-size:13px;color:#aaa;text-align:center">蒲蒲会自动解析Brief内容并填写表单</div>
+        <button class="submit-btn" onclick="goStep2()">✨ 让蒲蒲帮我找 →</button>
+      </div>
+
+      <!-- 表单 -->
+      <div class="mode-panel" id="mode-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">产品类目</label>
+            <select class="form-select"><option>食品饮料</option><option>零食</option><option>美妆</option><option>母婴</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">具体产品</label>
+            <input class="form-input" type="text" value="山楂饼（原味/玫瑰/话梅）" placeholder="产品名称">
+          </div>
+          <div class="form-group">
+            <label class="form-label">目标人群</label>
+            <input class="form-input" type="text" value="18-28岁爱健康零食的年轻女生" placeholder="描述你的目标用户">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Campaign目标</label>
+            <select class="form-select"><option>品牌种草</option><option>引流转化</option><option>活动曝光</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">活动时间</label>
+            <input class="form-input" type="text" value="2026年母亲节前后（5月7-14日）" placeholder="如：母亲节前2周">
+          </div>
+          <div class="form-group">
+            <label class="form-label">预算范围</label>
+            <select class="form-select"><option>5-10万</option><option>3-5万</option><option>10-20万</option><option>20万+</option></select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">品牌调性</label>
+            <textarea class="form-textarea" placeholder="描述品牌的风格和调性...">治愈温柔、真实不硬广、国货新锐、健康低脂，希望博主能把山楂饼自然融入日常场景</textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">博主风格标签（多选）</label>
+            <div class="tag-options">
+              <span class="tag-opt selected" onclick="toggleTag(this)">治愈系</span>
+              <span class="tag-opt selected" onclick="toggleTag(this)">生活vlog</span>
+              <span class="tag-opt selected" onclick="toggleTag(this)">美食探店</span>
+              <span class="tag-opt" onclick="toggleTag(this)">健身减脂</span>
+              <span class="tag-opt" onclick="toggleTag(this)">穿搭时尚</span>
+              <span class="tag-opt" onclick="toggleTag(this)">母婴育儿</span>
+              <span class="tag-opt selected" onclick="toggleTag(this)">下午茶</span>
+              <span class="tag-opt" onclick="toggleTag(this)">学习日常</span>
+            </div>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="goStep2()">✨ 让蒲蒲帮我找 →</button>
+      </div>
+    </div>
+
+    <!-- STEP2 -->
+    <div id="step2" class="analysis-container" style="display:none">
+      <button onclick="showStep(1);updateStepBar(1)" style="background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;padding:0 0 12px 0;display:flex;align-items:center;gap:4px;font-family:inherit">← 上一步</button>
+      <div class="analysis-title" id="analysisTitle">蒲蒲正在帮你分析...</div>
+      <div class="analysis-sub" id="analysisSub">通常需要10-20秒</div>
+      <div class="analysis-card">
+        <div class="analysis-header">
+          <div class="analysis-ai">
+            <div class="ai-avatar" style="background:#FF3355;overflow:hidden;padding:0">
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="18" cy="18" r="18" fill="#FF3355"/>
+    <g transform="translate(18,18)">
+      <ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="white" opacity="0.95"/>
+      <ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="white" opacity="0.95" transform="rotate(72)"/>
+      <ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="white" opacity="0.95" transform="rotate(144)"/>
+      <ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="white" opacity="0.95" transform="rotate(216)"/>
+      <ellipse cx="0" cy="-5" rx="2.5" ry="4" fill="white" opacity="0.95" transform="rotate(288)"/>
+      <circle r="2.5" fill="#FFD0DC"/>
+      <circle r="1" fill="#FF3355"/>
+    </g>
+  </svg>
+</div>
+            <div class="ai-name">蒲蒲</div>
+          </div>
+          <div class="status-dot">
+            <div class="pulse-dot"></div>
+            分析中...
+          </div>
+        </div>
+        <div class="analysis-steps">
+          <div class="a-step">
+            <div class="a-step-row">
+              <span class="a-step-icon" style="display:flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4CAF50"/><polyline points="5,12 10,17 19,7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="a-step-label">解析品牌Brief</span>
+            </div>
+            <div class="a-step-detail">识别到：食品·山楂饼 / 18-30岁女生 / 母亲节节点 / 种草目标 / 预算5-10万</div>
+          </div>
+          <div class="a-step">
+            <div class="a-step-row">
+              <span class="a-step-icon" style="display:flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4CAF50"/><polyline points="5,12 10,17 19,7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="a-step-label">理解品牌调性</span>
+            </div>
+            <div class="a-step-detail">治愈系 · 真实感 · 国货 · 健康低脂 · 日常场景融入</div>
+          </div>
+          <div class="a-step">
+            <div class="a-step-row">
+              <span class="a-step-icon" style="display:flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4CAF50"/><polyline points="5,12 10,17 19,7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="a-step-label">扫描蒲公英入驻博主库</span>
+            </div>
+            <div class="a-step-detail">调取 23,847 位博主数据，按人群画像×内容调性×历史合作效果三维筛选</div>
+          </div>
+          <div class="a-step">
+            <div class="a-step-row">
+              <span class="a-step-icon" id="step4Icon" style="display:flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="none" stroke="#ddd" stroke-width="2"/></svg></span>
+              <span class="a-step-label">生成匹配推荐</span>
+            </div>
+            <div class="progress-wrap" id="progressWrap">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+              </div>
+              <div style="font-size:12px;color:#aaa;margin-top:4px" id="progressText">0%</div>
+            </div>
+            <div id="progressDone" style="display:none;margin-left:34px;margin-top:6px;font-size:14px;font-weight:600;color:#06D6A0">完成！找到 5 位最匹配博主 🎉</div>
+          </div>
+        </div>
+        <div class="analysis-insight">
+          蒲蒲发现：母亲节前2周，「送妈妈零食」「母亲节礼物清单」搜索量环比↑218%，现在入场时机正好 🌹
+        </div>
+      </div>
+      <div id="analysisResult" style="display:none; width:100%; max-width:620px; margin-top:20px;">
+        <div style="background:#fff;border:1.5px solid #eee;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#1a1a1a;display:flex;align-items:center"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:6px;flex-shrink:0"><rect x="3" y="4" width="12" height="13" rx="2" fill="#F5DEB3" stroke="#C8A96E" stroke-width="1.2"/><rect x="6" y="2" width="6" height="4" rx="1.5" fill="#D4A96E" stroke="#C8A96E" stroke-width="1"/><line x1="6" y1="9" x2="12" y2="9" stroke="#999" stroke-width="1" stroke-linecap="round"/><line x1="6" y1="12" x2="12" y2="12" stroke="#999" stroke-width="1" stroke-linecap="round"/></svg>蒲蒲的理解摘要</div>
+          <div style="font-size:14px;color:#555;line-height:2;margin-bottom:16px">
+            <div><span style="color:#aaa;font-size:13px">品牌</span>　<strong>山楂饼家 · 国货山楂零食</strong></div>
+            <div><span style="color:#aaa;font-size:13px">目标</span>　母亲节种草，触达18-28岁爱健康零食的女生</div>
+            <div><span style="color:#aaa;font-size:13px">调性</span>　治愈温柔 · 真实不硬广 · 日常场景融入</div>
+            <div><span style="color:#aaa;font-size:13px">预算</span>　5-10万</div>
+          </div>
+          <div style="border-top:1px solid #f0f0f0;padding-top:14px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:#888;margin-bottom:10px">蒲蒲的策略：</div>
+            <div style="font-size:14px;color:#333;line-height:2">
+              <div>→ 主力腰部博主（42万粉+）建立品牌认知</div>
+              <div>→ 高互动尾部博主（10-20万粉）深度种草</div>
+              <div>→ 抓母亲节节点「送妈妈的健康零食」内容方向</div>
+              <div>→ 预计CPE ¥0.21，低于行业均值37%</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button onclick="goStep3()" style="flex:1;padding:13px;background:#06D6A0;color:#fff;border:none;border-radius:24px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">✅ 这个理解没问题，帮我找！</button>
+            <button onclick="showStep(1);updateStepBar(1)" style="padding:13px 18px;background:#fff;color:#888;border:1.5px solid #e0e0e0;border-radius:24px;font-size:14px;cursor:pointer;font-family:inherit">重新描述需求</button>
+          </div>
+        </div>
+      </div>
+      <div class="skip-link" id="skipLink" onclick="showAnalysisResult()">已看完，直接看结果 →</div>
+    </div>
+
+    <!-- STEP3 -->
+    <div id="step3" style="display:none">
+      <button onclick="showStep(2);updateStepBar(2);showAnalysisResult()" style="background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;padding:0 0 12px 0;display:flex;align-items:center;gap:4px;font-family:inherit">← 上一步</button>
+      <div class="content" style="padding-bottom:80px">
+        <div class="step3-layout">
+          <!-- LEFT -->
+          <div class="kol-list-pane">
+            <div class="recommend-bar">蒲蒲为你找到 <strong>5</strong> 位匹配博主，推荐组合：小胖子 + 晚晚 + 营养师 效果最优</div>
+            <div class="filter-chips">
+              <div class="chip">扫描23,847位博主</div>
+              <div class="chip">精选5位</div>
+              <div class="chip">匹配度均≥82分</div>
+              <div class="chip">预计CPE ¥0.21↓行业37%</div>
+            </div>
+
+            <!-- KOL 1 -->
+            <div class="kol-card selected" id="kol-card-0" onclick="showDetail(0)">
+              <div class="kol-card-top">
+                <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+                  <defs><radialGradient id="avbg1"><stop offset="0%" stop-color="#FFD4DC"/><stop offset="100%" stop-color="#FF8FA3"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#avbg1)"/>
+                  <ellipse cx="30" cy="28" rx="14" ry="15" fill="#FDDCB5"/>
+                  <ellipse cx="30" cy="16" rx="15" ry="10" fill="#4A2C0A"/>
+                  <ellipse cx="18" cy="24" rx="5" ry="8" fill="#4A2C0A"/>
+                  <ellipse cx="42" cy="24" rx="5" ry="8" fill="#4A2C0A"/>
+                  <ellipse cx="24" cy="27" rx="3" ry="3.5" fill="#2C1810"/>
+                  <ellipse cx="36" cy="27" rx="3" ry="3.5" fill="#2C1810"/>
+                  <circle cx="25" cy="26" r="1" fill="white"/>
+                  <circle cx="37" cy="26" r="1" fill="white"/>
+                  <ellipse cx="19" cy="32" rx="4" ry="2.5" fill="#FFB3C1" opacity="0.6"/>
+                  <ellipse cx="41" cy="32" rx="4" ry="2.5" fill="#FFB3C1" opacity="0.6"/>
+                  <path d="M25 35 Q30 39 35 35" stroke="#CC6677" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="kol-info">
+                  <div class="kol-name-row">
+                    <span class="kol-name">小胖子爱吃不胖</span>
+                    <span class="kol-tag-chip">腰部达人</span>
+                    <span class="kol-badge badge-red">蒲蒲推荐 ⭐</span>
+                  </div>
+                  <div class="kol-stats">
+                    <span>42.3万粉</span>
+                    <span>6.8% 互动率</span>
+                    <span>¥15,000</span>
+                  </div>
+                  <div class="kol-desc">减脂美食日常分享，真实生活感强，粉丝黏性高</div>
+                </div>
+                <div class="kol-right">
+                  <div>
+                    <div class="match-score">96</div>
+                    <div class="match-label">匹配分</div>
+                  </div>
+                  <div class="select-circle checked" id="circle-0" onclick="event.stopPropagation();toggleKOL(0)" style="cursor:pointer">✓</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KOL 2 -->
+            <div class="kol-card" id="kol-card-1" onclick="showDetail(1)">
+              <div class="kol-card-top">
+                <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+                  <defs><radialGradient id="avbg2"><stop offset="0%" stop-color="#B8E0FF"/><stop offset="100%" stop-color="#5BA8E5"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#avbg2)"/>
+                  <ellipse cx="30" cy="28" rx="13" ry="14" fill="#F5C8A0"/>
+                  <ellipse cx="30" cy="15" rx="14" ry="9" fill="#2D1B00"/>
+                  <path d="M16 20 Q30 10 44 20" fill="#2D1B00"/>
+                  <ellipse cx="24" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+                  <ellipse cx="36" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+                  <circle cx="25" cy="26" r="0.8" fill="white"/>
+                  <circle cx="37" cy="26" r="0.8" fill="white"/>
+                  <ellipse cx="20" cy="31" rx="3.5" ry="2" fill="#F4A0B0" opacity="0.5"/>
+                  <ellipse cx="40" cy="31" rx="3.5" ry="2" fill="#F4A0B0" opacity="0.5"/>
+                  <path d="M26 35 Q30 38 34 35" stroke="#C05070" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="kol-info">
+                  <div class="kol-name-row">
+                    <span class="kol-name">吃草日记Sadie</span>
+                    <span class="kol-tag-chip">精准腰尾</span>
+                  </div>
+                  <div class="kol-stats">
+                    <span>28.7万粉</span>
+                    <span>8.2% 互动率</span>
+                    <span>¥9,800</span>
+                  </div>
+                  <div class="kol-desc">轻食健康日记，内容专业度高，目标人群精准</div>
+                </div>
+                <div class="kol-right">
+                  <div>
+                    <div class="match-score">91</div>
+                    <div class="match-label">匹配分</div>
+                  </div>
+                  <div class="select-circle" id="circle-1" onclick="event.stopPropagation();toggleKOL(1)" style="cursor:pointer"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KOL 3 -->
+            <div class="kol-card selected" id="kol-card-2" onclick="showDetail(2)">
+              <div class="kol-card-top">
+                <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+                  <defs><radialGradient id="avbg3"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="#FFAB76"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#avbg3)"/>
+                  <ellipse cx="30" cy="29" rx="13" ry="14" fill="#FCDBA8"/>
+                  <path d="M16 20 Q22 8 38 10 Q46 14 44 22" fill="#8B4513"/>
+                  <ellipse cx="30" cy="14" rx="15" ry="8" fill="#8B4513"/>
+                  <ellipse cx="24" cy="28" rx="2.5" ry="3" fill="#3D1C00"/>
+                  <ellipse cx="36" cy="28" rx="2.5" ry="3" fill="#3D1C00"/>
+                  <circle cx="25" cy="27" r="0.8" fill="white"/>
+                  <circle cx="37" cy="27" r="0.8" fill="white"/>
+                  <ellipse cx="19" cy="33" rx="4" ry="2" fill="#FFAABB" opacity="0.55"/>
+                  <ellipse cx="41" cy="33" rx="4" ry="2" fill="#FFAABB" opacity="0.55"/>
+                  <path d="M25 36 Q30 40 35 36" stroke="#C06070" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="kol-info">
+                  <div class="kol-name-row">
+                    <span class="kol-name">晚晚的治愈下午茶</span>
+                    <span class="kol-tag-chip">下午茶垂类</span>
+                    <span class="kol-badge badge-blue">高性价比 💎</span>
+                  </div>
+                  <div class="kol-stats">
+                    <span>19.4万粉</span>
+                    <span>11.3% 互动率</span>
+                    <span>¥6,500</span>
+                  </div>
+                  <div class="kol-desc">治愈系下午茶场景，互动率极高，适合种草</div>
+                </div>
+                <div class="kol-right">
+                  <div>
+                    <div class="match-score">88</div>
+                    <div class="match-label">匹配分</div>
+                  </div>
+                  <div class="select-circle checked" id="circle-2" onclick="event.stopPropagation();toggleKOL(2)" style="cursor:pointer">✓</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KOL 4 -->
+            <div class="kol-card selected" id="kol-card-3" onclick="showDetail(3)">
+              <div class="kol-card-top">
+                <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+                  <defs><radialGradient id="avbg4"><stop offset="0%" stop-color="#C8F0D8"/><stop offset="100%" stop-color="#5DC886"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#avbg4)"/>
+                  <ellipse cx="30" cy="28" rx="13" ry="14" fill="#F0C890"/>
+                  <ellipse cx="30" cy="16" rx="14" ry="9" fill="#1A1A1A"/>
+                  <ellipse cx="17" cy="28" rx="4" ry="6" fill="#1A1A1A"/>
+                  <ellipse cx="24" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+                  <ellipse cx="36" cy="27" rx="2.5" ry="3" fill="#1A0A00"/>
+                  <circle cx="25" cy="26" r="0.8" fill="white"/>
+                  <circle cx="37" cy="26" r="0.8" fill="white"/>
+                  <ellipse cx="20" cy="32" rx="3.5" ry="2" fill="#F0A0B0" opacity="0.5"/>
+                  <ellipse cx="40" cy="32" rx="3.5" ry="2" fill="#F0A0B0" opacity="0.5"/>
+                  <path d="M26 35 Q30 39 34 35" stroke="#A05060" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="kol-info">
+                  <div class="kol-name-row">
+                    <span class="kol-name">我不是营养师但我会吃</span>
+                    <span class="kol-tag-chip">健身美食</span>
+                  </div>
+                  <div class="kol-stats">
+                    <span>11.2万粉</span>
+                    <span>9.1% 互动率</span>
+                    <span>¥3,800</span>
+                  </div>
+                  <div class="kol-desc">健康饮食科普，内容专业真实，性价比极高</div>
+                </div>
+                <div class="kol-right">
+                  <div>
+                    <div class="match-score">82</div>
+                    <div class="match-label">匹配分</div>
+                  </div>
+                  <div class="select-circle checked" id="circle-3" onclick="event.stopPropagation();toggleKOL(3)" style="cursor:pointer">✓</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- KOL 5 -->
+            <div class="kol-card" id="kol-card-4" onclick="showDetail(4)">
+              <div class="kol-card-top">
+                <svg width="48" height="48" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0">
+                  <defs><radialGradient id="avbg5"><stop offset="0%" stop-color="#EDD9FF"/><stop offset="100%" stop-color="#B07AE8"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#avbg5)"/>
+                  <ellipse cx="22" cy="14" rx="5" ry="10" fill="#E8D0F8"/>
+                  <ellipse cx="38" cy="14" rx="5" ry="10" fill="#E8D0F8"/>
+                  <ellipse cx="22" cy="14" rx="3" ry="7" fill="#FFB3C8"/>
+                  <ellipse cx="38" cy="14" rx="3" ry="7" fill="#FFB3C8"/>
+                  <ellipse cx="30" cy="32" rx="14" ry="14" fill="#F5E6FF"/>
+                  <ellipse cx="24" cy="30" rx="2.5" ry="3" fill="#5A2D82"/>
+                  <ellipse cx="36" cy="30" rx="2.5" ry="3" fill="#5A2D82"/>
+                  <circle cx="25" cy="29" r="0.8" fill="white"/>
+                  <circle cx="37" cy="29" r="0.8" fill="white"/>
+                  <ellipse cx="30" cy="36" rx="3" ry="2" fill="#FFB3C8"/>
+                  <path d="M26 38 Q30 42 34 38" stroke="#AA6090" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="kol-info">
+                  <div class="kol-name-row">
+                    <span class="kol-name">吃素的小兔子</span>
+                    <span class="kol-tag-chip">素食健康</span>
+                    <span class="kol-badge" style="background:#F0E8FF;color:#7B2FBE">新人爆款潜力 🚀</span>
+                  </div>
+                  <div class="kol-stats">
+                    <span>8.9万粉</span>
+                    <span>12.4% 互动率</span>
+                    <span>¥2,800</span>
+                  </div>
+                  <div class="kol-desc">素食健康博主，互动率极高，适合做爆款内容</div>
+                </div>
+                <div class="kol-right">
+                  <div>
+                    <div class="match-score">80</div>
+                    <div class="match-label">匹配分</div>
+                  </div>
+                  <div class="select-circle" id="circle-4" onclick="event.stopPropagation();toggleKOL(4)" style="cursor:pointer"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT DETAIL PANEL -->
+          <div class="kol-detail-pane">
+            <!-- Default state -->
+            <div class="detail-card" id="defaultDetail">
+              <div class="combo-title">蒲蒲推荐最优组合</div>
+              <div class="combo-sub">三位博主互补，覆盖不同内容场景</div>
+              <div class="mini-kol">
+                <svg width="32" height="32" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%">
+                  <defs><radialGradient id="mg1"><stop offset="0%" stop-color="#FFD4DC"/><stop offset="100%" stop-color="#FF8FA3"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#mg1)"/>
+                </svg>
+                <div class="mini-kol-info">
+                  <div class="mini-kol-name">小胖子爱吃不胖</div>
+                  <div class="mini-kol-price">腰部 · ¥15,000 · 42.3万粉</div>
+                </div>
+              </div>
+              <div class="mini-kol">
+                <svg width="32" height="32" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%">
+                  <defs><radialGradient id="mg3"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="#FFAB76"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#mg3)"/>
+                </svg>
+                <div class="mini-kol-info">
+                  <div class="mini-kol-name">晚晚的治愈下午茶</div>
+                  <div class="mini-kol-price">腰尾 · ¥6,500 · 19.4万粉</div>
+                </div>
+              </div>
+              <div class="mini-kol">
+                <svg width="32" height="32" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%">
+                  <defs><radialGradient id="mg4"><stop offset="0%" stop-color="#C8F0D8"/><stop offset="100%" stop-color="#5DC886"/></radialGradient></defs>
+                  <circle cx="30" cy="30" r="30" fill="url(#mg4)"/>
+                </svg>
+                <div class="mini-kol-info">
+                  <div class="mini-kol-name">我不是营养师但我会吃</div>
+                  <div class="mini-kol-price">尾部 · ¥3,800 · 11.2万粉</div>
+                </div>
+              </div>
+              <div class="combo-total">
+                组合总预算 ¥25,300 · 预计触达 ~73万 UV
+              </div>
+              <div style="margin-top:12px;font-size:13px;color:#aaa">点击左侧博主查看详情 👈</div>
+            </div>
+
+            <!-- KOL detail (hidden by default) -->
+            <div class="detail-card" id="kolDetail" style="display:none">
+              <div style="margin-bottom:12px"><button onclick="document.getElementById('defaultDetail').style.display='block';document.getElementById('kolDetail').style.display='none'" style="background:none;border:none;color:#888;font-size:13px;cursor:pointer;padding:0;font-family:inherit">← 查看推荐组合</button></div>
+              <div class="detail-header" id="detailHeader"></div>
+              <div class="detail-stats" id="detailStats"></div>
+              <div class="reason-box" id="detailReason"></div>
+              <div class="risk-box" id="detailRisk"></div>
+              <div class="match-bars" id="detailBars"></div>
+              <div style="font-size:13px;color:#888;margin-bottom:8px;font-weight:600">近期笔记预览</div>
+              <div class="note-previews" id="detailNotes"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Bottom -->
+      <div class="sticky-bottom">
+        <div class="bottom-info">
+          已选 <span id="selCount">3</span> 位博主 · 总预算 <span id="selBudget">¥25,300</span> · 预计触达 ~<span id="selUV">73</span>万 UV
+        </div>
+        <button class="btn-primary" onclick="goStep4()">下一步：发起合作 →</button>
+      </div>
+    </div>
+
+    <!-- STEP4 -->
+    <div id="step4" class="content" style="display:none">
+      <button onclick="showStep(3);updateStepBar(3)" style="background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;padding:0 0 12px 0;display:flex;align-items:center;gap:4px;font-family:inherit">← 上一步</button>
+      <div class="step4-card">
+        <div class="s4-title">确认合作信息</div>
+        <div id="s4KolList"></div>
+        <div class="s4-total">
+          <span class="s4-total-label">合计预算</span>
+          <span class="s4-total-val" id="s4Total">¥25,300</span>
+        </div>
+        <div class="s4-section">
+          <div class="s4-section-label">Brief摘要</div>
+          <div class="s4-brief">山楂饼家·母亲节种草 / 目标人群18-28岁女生 / 治愈温柔调性 / 预算5-10万 / 希望博主自然融入日常场景</div>
+        </div>
+        <div class="s4-section">
+          <div class="s4-section-label">备注（选填）</div>
+          <textarea class="s4-note" placeholder="如有特殊要求，在此填写..."></textarea>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:20px">
+  <button onclick="showStep(3);updateStepBar(3)" style="flex:0 0 auto;padding:14px 20px;background:#fff;border:1.5px solid #e0e0e0;color:#888;border-radius:24px;font-size:14px;cursor:pointer;font-family:inherit;white-space:nowrap">← 修改选择</button>
+  <button class="submit-btn" onclick="confirmCollab()" style="flex:1;margin:0">确认发出邀约</button>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: 我的合作 -->
+  <div class="tab-panel" id="tab-collab">
+    <div class="content">
+      <div style="font-size:22px;font-weight:700;margin-bottom:4px">我的合作</div>
+      <div style="font-size:14px;color:#999;margin-bottom:24px">管理正在进行中的KOL合作</div>
+      <div id="collabList">
+        <!-- 初始空状态 -->
+        <div class="collab-empty" id="collabEmpty">
+          <div class="icon">🤝</div>
+          <p style="font-size:18px;font-weight:600;color:#333;margin-bottom:8px">暂无合作记录</p>
+          <p>发起第一次KOL合作，开始积累你的合作数据</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: 效果追踪 -->
+  <div class="tab-panel" id="tab-effect">
+    <div class="content">
+      <div class="effect-header">
+        <div class="effect-title">合作效果追踪</div>
+        <div class="effect-sub">蒲蒲帮你跟踪每次合作笔记的真实表现 · 深度投放分析请前往聚光</div>
+      </div>
+      <!-- 待收单空态（初始显示） -->
+      <div id="effectEmpty" style="text-align:center;padding:60px 20px">
+        
+        <div style="font-size:18px;font-weight:600;color:#333;margin-bottom:8px">暂无效果数据</div>
+        <div style="font-size:14px;color:#999">博主确认合作并发布笔记后，效果数据将自动同步到这里</div>
+        <div style="margin-top:20px;padding:14px 20px;background:#FFF8E0;border-radius:12px;display:inline-block;text-align:left;max-width:380px">
+          <div style="font-size:13px;font-weight:600;color:#CC8800;margin-bottom:6px">⏳ 当前进度</div>
+          <div style="font-size:13px;color:#666">等待博主确认中，收单完成后效果追踪自动开启</div>
+        </div>
+      </div>
+      <!-- 有数据态（收单后显示） -->
+      <div id="effectData" style="display:none">
+        <!-- Campaign总览（单次Brief） -->
+        <div id="effectCampaignCard" style="background:#fff;border:1.5px solid #eee;border-radius:16px;padding:20px;margin-bottom:16px"></div>
+        <!-- 博主维度表格 + 各笔记卡（动态） -->
+        <div id="kolEffectList"></div>
+      </div><!-- end effectData -->
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="note-modal-box" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="modalKolAvatar" style="flex-shrink:0"></div>
+        <div>
+          <div id="modalKolName" style="font-size:14px;font-weight:700;color:#1a1a1a"></div>
+          <div id="modalKolFans" style="font-size:12px;color:#999;margin-top:1px"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="padding:4px 12px;background:#FF2442;color:#fff;border-radius:20px;font-size:12px;font-weight:600">已关注</span>
+        <button style="background:none;border:none;font-size:20px;cursor:pointer;color:#888;line-height:1" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div id="modalNoteCover" style="width:100%;height:200px;border-radius:14px;margin-bottom:14px;overflow:hidden"></div>
+    <div id="modalNoteTitle" style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:8px;line-height:1.5"></div>
+    <div id="modalNoteBody" style="font-size:13px;color:#555;line-height:1.7;margin-bottom:14px;padding:10px 12px;background:#fafafa;border-radius:10px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px" id="modalNoteStats"></div>
+    <div style="margin-top:12px;font-size:12px;color:#ccc;text-align:center">数据更新至 2026-05-07</div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const kolData = [
+  {
+    name:'小胖子爱吃不胖', tag:'腰部达人', fans:'42.3万', rate:'6.8%', price:15000, avg:'2.9万',
+    badge:'蒲蒲推荐 ⭐', badgeType:'red',
+    reason:'减脂美食内容高度匹配山楂饼「健康低脂」卖点，粉丝画像与目标人群重叠度达78%，历史合作CPE仅¥0.21，高性价比。',
+    risk:'📋 近期合作频繁，建议与品牌确认排期档期，避免同期广告竞品干扰。',
+    bars:[{label:'人群重叠度',val:92},{label:'调性契合度',val:95},{label:'效果预测',val:88}],
+    uv:35,
+    notes:[
+      {title:'减脂7天，这些零食真的戒不掉🍎', like:'4.2万', collect:'1.3万', comment:892, ctr:'8.3%', bg:'#FFE4EC', body:`减脂第7天，我没有崩，真的没有！
+
+秘诀就是找到了一个「嘴馋替代品」——山楂饼家的山楂薄饼。一片只有28kcal，但嚼起来超级有满足感，酸甜口味还能抑制食欲。
+
+这周我每天下午3点嘴馋的时候吃两片，配上一杯无糖茶，完全不觉得在节食。体重秤昨天显示轻了1.8kg，姐妹们冲！`, cover:0},
+      {title:'山楂饼测评：原味vs玫瑰哪个更好吃？', like:'2.8万', collect:'8.7千', comment:621, ctr:'6.1%', bg:'#FFF0E0', body:`终于做了这个大家一直在催的对比测评！
+
+原味：山楂本身的酸甜，清爽不腻，配茶超好喝，热量控制的情况下每天吃3-4片刚刚好。
+
+玫瑰口：花香混合山楂酸，第一口有点惊喜，但甜度稍高，更适合下午茶当小甜点。
+
+减脂人推荐原味，口味党推荐玫瑰。我个人结论：两种都值得买，轮换着吃不腻！价格也不贵，百元以内能买好几盒。`, cover:1},
+      {title:'一周减脂餐分享🥗低卡高饱足', like:'1.9万', collect:'5.2千', comment:431, ctr:'5.2%', bg:'#E8F5E9', body:`周一到周日减脂餐打卡完成！整整7天，我没有一天偷吃高热量零食。
+
+最大功臣是这个山楂饼——它帮我把「嘴馋时刻」变成了一件不焦虑的事。午饭后2小时来两片，配一壶玫瑰乌龙茶，感觉整个下午都稳了。
+
+7天下来轻了1.5kg，更重要的是没有那种饿到暴饮暴食的反弹感。下周继续打卡，争取再瘦1kg！`, cover:2}
+    ]
+  },
+  {
+    name:'吃草日记Sadie', tag:'精准腰尾', fans:'28.7万', rate:'8.2%', price:9800, avg:'2.4万',
+    badge:'', badgeType:'',
+    reason:'轻食健康定位与山楂饼「低脂」产品高度吻合，粉丝以都市女白领为主，购买力强，种草转化效率高。',
+    risk:'⚠️ 账号近期更新频率较低，建议提前确认合作档期和发布时间。',
+    bars:[{label:'人群重叠度',val:85},{label:'调性契合度',val:88},{label:'效果预测',val:82}],
+    uv:22,
+    notes:[
+      {title:'轻食日记｜这周吃了啥🌿', like:'2.4万', collect:'6.8千', comment:512, ctr:'7.2%', bg:'#E8F5F0', body:`打工人的周三轻食日记来了🌿
+
+今天午餐：自制藜麦沙拉 + 山楂饼家山楂薄饼 + 无糖气泡水。颜值非常能打，拍完发朋友圈被同事们疯狂追问哪里买的。
+
+重点：沙拉加山楂饼真的是绝配！沙拉偏淡，山楂的酸甜感一下把整顿饭的层次都拉高了。而且饱腹感很好，下午四点才开始微微有点饿。
+
+推荐大家试试这个搭配，轻食也可以很幸福！`, cover:3},
+      {title:'国货零食测评｜越吃越瘦的秘密', like:'1.8万', collect:'4.1千', comment:388, ctr:'6.8%', bg:'#FFF0F8', body:`说真的，我以前买零食第一反应是找进口品牌，觉得国货不够精致。直到遇到山楂饼家，彻底改观了。
+
+先说原料：山楂果、糙米、海盐，配料表三行结束，没有一个看不懂的字。再说口感：薄脆酥香，咬下去有清晰的山楂果肉质感，不是那种加了很多香精的人工味道。
+
+对比了一下某进口品牌同类零食，价格贵2倍，热量还高30%。
+
+国货之光，实力说话。`, cover:4},
+      {title:'下午茶合集｜打工人的治愈时光', like:'1.2万', collect:'3.2千', comment:267, ctr:'5.9%', bg:'#F0F0FF', body:`上班第N天，今天下午3点突然感到一种强烈的「活不下去感」。
+
+然后我打开了抽屉里的山楂饼，泡了一壶茉莉花茶，坐在窗边发了5分钟呆。
+
+那一刻，OMG，真的治愈。
+
+山楂的酸能让人瞬间清醒，茉莉的香让人平静，两片饼下去，回头再看那个deadline，也没那么可怕了。
+
+打工人的微型SPA，就是这个。强烈推荐！`, cover:5}
+    ]
+  },
+  {
+    name:'晚晚的治愈下午茶', tag:'下午茶垂类', fans:'19.4万', rate:'11.3%', price:6500, avg:'2.2万',
+    badge:'高性价比 💎', badgeType:'blue',
+    reason:'下午茶场景与山楂饼消费场景高度吻合，互动率11.3%远超行业均值，粉丝活跃度强，适合节点种草内容。',
+    risk:'📌 账号体量相对较小，建议结合大腰部博主联合传播，提升总体曝光量。',
+    bars:[{label:'人群重叠度',val:80},{label:'调性契合度',val:94},{label:'效果预测',val:87}],
+    uv:20,
+    notes:[
+      {title:'下午茶时光｜跟我喝一杯~☕', like:'2.1万', collect:'5.8千', comment:423, ctr:'9.2%', bg:'#FFF8E8', body:`最近的下午茶固定组合：山楂薄饼 + 冷泡白桃乌龙。
+
+喝到第三泡的时候茶味开始变淡，这时候来一片山楂饼，酸甜感把整杯茶的余味都拉起来了，比加糖好喝十倍。
+
+我平时喝茶不配零食的，但这个组合真的上瘾，嘴里一直有事干又不焦虑热量，美好的下午茶就该是这样。
+
+今天阳光很好，就在飘窗边拍了这组照片，春天的氛围感有没有！`, cover:6},
+      {title:'母亲节礼物清单🌹送妈妈最好的', like:'3.2万', collect:'9.1千', comment:687, ctr:'11.1%', bg:'#FFE8F0', body:`母亲节礼物选了两个月，最后选中了山楂饼家的「节气礼盒」作为主礼。
+
+理由：妈妈平时血脂偏高，医生叮嘱少吃高油高糖的东西，所以进口巧克力、饼干都排除了。山楂本身就是传统健胃食材，低卡、无添加，妈妈吃得放心，我送得也安心。
+
+收到的时候妈妈说「这比什么护肤品都贴心」，我当场感动哭了。
+
+推荐给同样在纠结健康类礼物的姐妹，真的不踩雷！`, cover:7},
+      {title:'周末慢生活｜宅家零食大赏', like:'1.6万', collect:'4.2千', comment:312, ctr:'8.4%', bg:'#E8F8F0', body:`上周末做了一件很无聊但超开心的事：买了10款网红低卡零食，逐一打分。
+
+评分维度：口感(30分) / 配料表干净度(25分) / 饱腹感(25分) / 性价比(20分)。
+
+结果：山楂饼家山楂薄饼 → 总分88/100，第一名。
+
+口感：薄脆有咬劲，层次感好，酸甜比例刚好 → 26/30
+配料表：4种原料，全部认识 → 24/25
+饱腹感：两片撑过2小时没问题 → 22/25
+性价比：一盒够吃10天，折算下来真的便宜 → 16/20
+
+有需要参考的姐妹可以直接来问我！`, cover:8}
+    ]
+  },
+  {
+    name:'我不是营养师但我会吃', tag:'健身美食', fans:'11.2万', rate:'9.1%', price:3800, avg:'1.0万',
+    badge:'', badgeType:'',
+    reason:'健身美食专业内容赋予山楂饼「健康零食」背书，粉丝信任度高，CPE低至¥0.38，是高性价比之选。',
+    risk:'📋 内容风格偏专业科普，建议与创作者协同策划更生活化的种草内容。',
+    bars:[{label:'人群重叠度',val:76},{label:'调性契合度',val:80},{label:'效果预测',val:79}],
+    uv:10,
+    notes:[
+      {title:'山楂的营养价值你知道吗🌿', like:'1.3万', collect:'3.8千', comment:298, ctr:'7.4%', bg:'#E8F5E9', body:`今天来认真聊聊山楂这个食材，作为一个营养方向从业者，我不确定的东西不乱说。
+
+山楂的营养事实：膳食纤维 3.1g/100g（帮助消化）、维生素C 53mg/100g（相当于半个柠檬）、热量95kcal/100g（比苹果还低）。
+
+山楂饼家的薄饼我查了一下配料表：山楂果、糙米、海盐，没有添加糖和人工香精。热量经过处理后每片约28kcal，减脂期每天吃3-5片，不会超标。
+
+结论：减脂期可以吃，有科学依据的那种。`, cover:9},
+      {title:'健康零食排行榜｜减脂必备', like:'9.8千', collect:'2.7千', comment:213, ctr:'6.8%', bg:'#F0F8E8', body:`健身2年，踩过很多零食坑，今天分享5款真正经过验证的减脂零食。
+
+①混合坚果（控量）②魔芋条③山楂薄饼④希腊酸奶⑤黑巧克力
+
+重点说山楂薄饼：它的饱腹感来自于山楂果的天然果胶，吃完2-3片胃里真的有感觉，不是那种嚼完就忘的空虚感。
+
+我自己的训练后零食是：蛋白粉 + 两片山楂饼。碳水和蛋白的补充，山楂还帮助消化肉类，配合得刚好。
+
+分享给同样在认真对待身材的你。`, cover:10},
+      {title:'运动后怎么吃？营养师告诉你', like:'8.2千', collect:'2.2千', comment:178, ctr:'5.9%', bg:'#EEF0FF', body:`训练后30分钟的营养补充：优先蛋白质 + 适量碳水，帮助肌肉恢复和糖原补充。
+
+今天练完腿，喝完蛋白粉坐着缓了一会，突然超级馋酸的东西（大量出汗后很正常，身体在找电解质）。
+
+顺手开了一包山楂薄饼，吃了两片，那个酸甜感太及时了，瞬间通体舒畅。
+
+山楂里含有少量有机酸，能促进肠胃蠕动，训练后吃其实对消化还有点帮助。但大家注意：不要空腹吃山楂，胃酸分泌会增加，训练后配着蛋白粉一起最好。`, cover:11}
+    ]
+  },
+  {
+    name:'吃素的小兔子', tag:'素食健康', fans:'8.9万', rate:'12.4%', price:2800, avg:'1.1万',
+    badge:'新人爆款潜力 🚀', badgeType:'purple',
+    reason:'互动率12.4%为5人中最高，素食健康定位与山楂饼「低脂健康」卖点高度共鸣，具备爆款内容潜力。',
+    risk:'⚠️ 账号处于成长期，历史合作案例较少，存在一定不确定性，建议作为补量博主。',
+    bars:[{label:'人群重叠度',val:70},{label:'调性契合度',val:82},{label:'效果预测',val:75}],
+    uv:9,
+    notes:[
+      {title:'素食也可以这么好吃🐰', like:'1.1万', collect:'3.1千', comment:267, ctr:'10.2%', bg:'#F0E8FF', body:`吃素之后最痛苦的事之一：零食选择直接砍半。
+
+饼干里有奶粉、糖果有明胶、很多「健康零食」配料表翻到最后都有动物来源成分。
+
+直到发现山楂饼家——配料表：山楂果、糙米、海盐。三个字，全部植物。
+
+口感也不将就，薄脆酥香，山楂的酸让人很清醒，完全不是那种素食=牺牲口感的感觉。
+
+纯素主义者安全食用，已经囤了三盒！`, cover:12},
+      {title:'健康生活vlog｜吃素的第30天', like:'8.9千', collect:'2.4千', comment:198, ctr:'9.8%', bg:'#E8F0FF', body:`素食第30天打卡！
+
+体重变化：-3.1kg（主要第一周掉的水肿）
+气色变化：朋友说我皮肤看起来比之前亮，可能是蔬果摄入增加了？
+精神状态：午后不再像以前那么困，可能和少吃高脂肉类有关。
+
+这30天最大的日常支撑是什么呢——山楂薄饼。
+
+每天下午固定吃两片，对我来说是一个「小仪式感」，酸甜的口味让我在枯燥的坚持里找到了一点甜。
+
+下个月继续，目标-5kg！`, cover:13},
+      {title:'低卡零食大测评｜吃货的自我修养', like:'7.2千', collect:'1.8千', comment:156, ctr:'8.6%', bg:'#F8E8FF', body:`用了两周时间，把能找到的低卡零食测评了一遍（素食可食用版），整理成这张表分享给大家。
+
+测评标准：①配料表是否纯净 ②口感真实性 ③饱腹感持续时间 ④性价比
+
+最终排名：
+🥇 山楂饼家山楂薄饼（配料干净+口感真实+饱腹感强）
+🥈 某品牌海苔脆（配料OK，但太薄没饱腹感）
+🥉 魔芋丝（饱腹感第一，但口感需要接受）
+
+山楂饼能拿第一，最主要是因为它是唯一一款「吃完之后会想再买」的，口感诚意十足。`, cover:14}
+    ]
+  }
+];
+
+const svgAvatars = [
+  `<svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0"><defs><radialGradient id="d1"><stop offset="0%" stop-color="#FFD4DC"/><stop offset="100%" stop-color="#FF8FA3"/></radialGradient></defs><circle cx="30" cy="30" r="30" fill="url(#d1)"/></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0"><defs><radialGradient id="d2"><stop offset="0%" stop-color="#B8E0FF"/><stop offset="100%" stop-color="#5BA8E5"/></radialGradient></defs><circle cx="30" cy="30" r="30" fill="url(#d2)"/></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0"><defs><radialGradient id="d3"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="#FFAB76"/></radialGradient></defs><circle cx="30" cy="30" r="30" fill="url(#d3)"/></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0"><defs><radialGradient id="d4"><stop offset="0%" stop-color="#C8F0D8"/><stop offset="100%" stop-color="#5DC886"/></radialGradient></defs><circle cx="30" cy="30" r="30" fill="url(#d4)"/></svg>`,
+  `<svg width="40" height="40" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" style="border-radius:50%;flex-shrink:0"><defs><radialGradient id="d5"><stop offset="0%" stop-color="#EDD9FF"/><stop offset="100%" stop-color="#B07AE8"/></radialGradient></defs><circle cx="30" cy="30" r="30" fill="url(#d5)"/></svg>`
+];
+
+const noteCoverSVGs = [
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c0a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE8EE"/><stop offset="100%" stop-color="#FFC5D5"/></linearGradient></defs><rect width="360" height="240" fill="url(#c0a)"/><rect x="100" y="50" width="160" height="120" rx="16" fill="#fff" opacity=".9"/><rect x="120" y="70" width="120" height="80" rx="10" fill="#FFB3C6"/><circle cx="180" cy="110" r="25" fill="#FF2442" opacity=".7"/><text x="180" y="115" text-anchor="middle" fill="#fff" font-size="16" font-weight="700">山楂饼</text><text x="180" y="195" text-anchor="middle" fill="#FF2442" font-size="13" font-weight="600">减脂零食首选</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c1a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF3E0"/><stop offset="100%" stop-color="#FFCCAA"/></linearGradient></defs><rect width="360" height="240" fill="url(#c1a)"/><rect x="30" y="60" width="130" height="100" rx="12" fill="#fff" opacity=".85"/><rect x="200" y="60" width="130" height="100" rx="12" fill="#fff" opacity=".85"/><text x="95" y="115" text-anchor="middle" fill="#FF8C42" font-size="13" font-weight="700">原味</text><text x="265" y="115" text-anchor="middle" fill="#FF2442" font-size="13" font-weight="700">玫瑰味</text><text x="180" y="115" text-anchor="middle" fill="#666" font-size="18" font-weight="700">VS</text><text x="180" y="195" text-anchor="middle" fill="#FF8C42" font-size="13" font-weight="600">口味大PK 你选哪个？</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c2a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8F8F0"/><stop offset="100%" stop-color="#B8EDD8"/></linearGradient></defs><rect width="360" height="240" fill="url(#c2a)"/><rect x="40" y="50" width="280" height="140" rx="16" fill="#fff" opacity=".8"/><text x="180" y="90" text-anchor="middle" fill="#06D6A0" font-size="14" font-weight="700">一周减脂打卡</text><rect x="60" y="105" width="40" height="40" rx="8" fill="#06D6A0" opacity=".8"/><rect x="110" y="105" width="40" height="40" rx="8" fill="#06D6A0" opacity=".8"/><rect x="160" y="105" width="40" height="40" rx="8" fill="#06D6A0" opacity=".8"/><rect x="210" y="105" width="40" height="40" rx="8" fill="#e0e0e0"/><rect x="260" y="105" width="40" height="40" rx="8" fill="#e0e0e0"/><text x="80" y="131" text-anchor="middle" fill="#fff" font-size="18">✓</text><text x="130" y="131" text-anchor="middle" fill="#fff" font-size="18">✓</text><text x="180" y="131" text-anchor="middle" fill="#fff" font-size="18">✓</text><text x="180" y="195" text-anchor="middle" fill="#06D6A0" font-size="13" font-weight="600">-1.5kg 进行中</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c3a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F0FBF4"/><stop offset="100%" stop-color="#C8EDD8"/></linearGradient></defs><rect width="360" height="240" fill="url(#c3a)"/><circle cx="180" cy="110" r="75" fill="#fff" opacity=".85"/><circle cx="180" cy="110" r="60" fill="#E8F5E9" opacity=".7"/><text x="180" y="100" text-anchor="middle" fill="#5DC886" font-size="14" font-weight="600">轻食午餐</text><text x="180" y="120" text-anchor="middle" fill="#888" font-size="12">沙拉 + 山楂饼</text><text x="180" y="200" text-anchor="middle" fill="#5DC886" font-size="13" font-weight="600">同事都来问买哪的</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c4a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF5F5"/><stop offset="100%" stop-color="#FFD5D8"/></linearGradient></defs><rect width="360" height="240" fill="url(#c4a)"/><rect x="80" y="55" width="200" height="110" rx="14" fill="#FF2442" opacity=".9"/><text x="180" y="105" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">国货零食</text><text x="180" y="128" text-anchor="middle" fill="#FFD4D8" font-size="12">越来越强了！</text><text x="180" y="200" text-anchor="middle" fill="#FF2442" font-size="13" font-weight="600">山楂饼 好吃10倍</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c5a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF8F0"/><stop offset="100%" stop-color="#FFE0C0"/></linearGradient></defs><rect width="360" height="240" fill="url(#c5a)"/><rect x="60" y="140" width="240" height="60" rx="8" fill="#D4A077" opacity=".4"/><circle cx="130" cy="130" r="40" fill="#fff" opacity=".8"/><circle cx="130" cy="130" r="28" fill="#C8955A" opacity=".6"/><rect x="185" y="100" width="80" height="60" rx="8" fill="#fff" opacity=".8"/><text x="225" y="133" text-anchor="middle" fill="#CC8844" font-size="11">山楂饼</text><text x="180" y="220" text-anchor="middle" fill="#CC8844" font-size="13" font-weight="600">下午3点的小确幸</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c6a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFFBEC"/><stop offset="100%" stop-color="#FFE88A"/></linearGradient></defs><rect width="360" height="240" fill="url(#c6a)"/><rect x="10" y="10" width="60" height="220" fill="#FFD700" opacity=".15"/><circle cx="280" cy="60" r="50" fill="#FFD700" opacity=".3"/><rect x="100" y="80" width="160" height="100" rx="14" fill="#fff" opacity=".85"/><text x="180" y="125" text-anchor="middle" fill="#FFAA00" font-size="14" font-weight="700">午后阳光</text><text x="180" y="145" text-anchor="middle" fill="#888" font-size="12">山楂饼 x 下午茶</text><text x="180" y="200" text-anchor="middle" fill="#FFAA00" font-size="13" font-weight="600">酸甜解腻 超适合配茶</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c7a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF0F5"/><stop offset="100%" stop-color="#FFD0E8"/></linearGradient></defs><rect width="360" height="240" fill="url(#c7a)"/><rect x="110" y="60" width="140" height="110" rx="16" fill="#FF80AB" opacity=".8"/><rect x="125" y="75" width="110" height="80" rx="10" fill="#fff" opacity=".9"/><text x="180" y="120" text-anchor="middle" fill="#FF2442" font-size="22" font-weight="700">礼</text><text x="180" y="140" text-anchor="middle" fill="#FF2442" font-size="11" font-weight="600">母亲节礼盒</text><text x="180" y="200" text-anchor="middle" fill="#FF2442" font-size="13" font-weight="600">送妈妈最好的礼物</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c8a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F5F0FF"/><stop offset="100%" stop-color="#D8C8FF"/></linearGradient></defs><rect width="360" height="240" fill="url(#c8a)"/><rect x="40" y="55" width="80" height="80" rx="12" fill="#fff" opacity=".85"/><rect x="140" y="55" width="80" height="80" rx="12" fill="#fff" opacity=".85"/><rect x="240" y="55" width="80" height="80" rx="12" fill="#fff" opacity=".85"/><text x="80" y="100" text-anchor="middle" fill="#9370DB" font-size="12">山楂饼</text><text x="180" y="100" text-anchor="middle" fill="#9370DB" font-size="12">坚果棒</text><text x="280" y="100" text-anchor="middle" fill="#9370DB" font-size="12">魔芋片</text><text x="180" y="200" text-anchor="middle" fill="#9370DB" font-size="13" font-weight="600">周末零食大赏 第一名揭晓</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c9a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EEF9F6"/><stop offset="100%" stop-color="#B8EDE0"/></linearGradient></defs><rect width="360" height="240" fill="url(#c9a)"/><rect x="50" y="60" width="260" height="120" rx="14" fill="#fff" opacity=".85"/><text x="180" y="95" text-anchor="middle" fill="#06D6A0" font-size="15" font-weight="700">山楂营养解析</text><rect x="70" y="110" width="80" height="10" rx="5" fill="#06D6A0" opacity=".7"/><rect x="70" y="130" width="120" height="10" rx="5" fill="#4361EE" opacity=".7"/><rect x="70" y="150" width="60" height="10" rx="5" fill="#FF2442" opacity=".7"/><text x="160" y="120" fill="#333" font-size="11">膳食纤维</text><text x="200" y="140" fill="#333" font-size="11">维生素C</text><text x="140" y="160" fill="#333" font-size="11">热量低</text><text x="180" y="205" text-anchor="middle" fill="#06D6A0" font-size="13" font-weight="600">95kcal/100g 减脂友好</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c10a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EEF2FF"/><stop offset="100%" stop-color="#C8D4FF"/></linearGradient></defs><rect width="360" height="240" fill="url(#c10a)"/><rect x="60" y="50" width="240" height="140" rx="14" fill="#fff" opacity=".85"/><text x="180" y="85" text-anchor="middle" fill="#4361EE" font-size="14" font-weight="700">健康零食 TOP5</text><text x="90" y="108" fill="#FFD700" font-size="12" font-weight="700">第1 山楂饼</text><text x="90" y="128" fill="#AAA" font-size="12">第2 坚果棒</text><text x="90" y="148" fill="#AA7744" font-size="12">第3 魔芋片</text><text x="90" y="168" fill="#888" font-size="12">第4 蔓越莓干</text><text x="180" y="220" text-anchor="middle" fill="#4361EE" font-size="13" font-weight="600">营养师推荐 越吃越瘦</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c11a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF3E0"/><stop offset="100%" stop-color="#FFCC88"/></linearGradient></defs><rect width="360" height="240" fill="url(#c11a)"/><circle cx="80" cy="100" r="55" fill="#FF8C42" opacity=".15"/><rect x="110" y="65" width="170" height="100" rx="14" fill="#fff" opacity=".85"/><text x="195" y="105" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700">运动后黄金</text><text x="195" y="125" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700">30分钟</text><text x="195" y="145" text-anchor="middle" fill="#888" font-size="11">吃对了才瘦得好</text><text x="180" y="200" text-anchor="middle" fill="#FF8C42" font-size="13" font-weight="600">营养师实测推荐</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c12a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F5F0FF"/><stop offset="100%" stop-color="#DDD0FF"/></linearGradient></defs><rect width="360" height="240" fill="url(#c12a)"/><ellipse cx="180" cy="100" rx="100" ry="70" fill="#fff" opacity=".8"/><text x="180" y="90" text-anchor="middle" fill="#8855CC" font-size="15" font-weight="700">纯植物配方</text><text x="180" y="112" text-anchor="middle" fill="#8855CC" font-size="13">素食主义者也能吃！</text><text x="180" y="200" text-anchor="middle" fill="#8855CC" font-size="13" font-weight="600">素食友好的山楂饼</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c13a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F0E8FF"/><stop offset="100%" stop-color="#C8E8FF"/></linearGradient></defs><rect width="360" height="240" fill="url(#c13a)"/><rect x="120" y="55" width="120" height="120" rx="60" fill="#fff" opacity=".8"/><text x="180" y="100" text-anchor="middle" fill="#8855CC" font-size="28" font-weight="700">30</text><text x="180" y="122" text-anchor="middle" fill="#8855CC" font-size="12">天素食打卡</text><text x="180" y="142" text-anchor="middle" fill="#5BAE8A" font-size="12">-3kg ✓</text><text x="180" y="205" text-anchor="middle" fill="#8855CC" font-size="13" font-weight="600">气色变好了 每天山楂饼续命</text></svg>`,
+  `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><linearGradient id="c14a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFF0F8"/><stop offset="100%" stop-color="#FFD0EE"/></linearGradient></defs><rect width="360" height="240" fill="url(#c14a)"/><rect x="40" y="50" width="280" height="140" rx="14" fill="#fff" opacity=".85"/><text x="180" y="82" text-anchor="middle" fill="#CC44AA" font-size="14" font-weight="700">低卡零食大测评</text><text x="65" y="108" fill="#333" font-size="11">山楂饼</text><rect x="130" y="98" width="140" height="10" rx="5" fill="#FF2442"/><text x="65" y="130" fill="#333" font-size="11">坚果棒</text><rect x="130" y="120" width="100" height="10" rx="5" fill="#FF8C42"/><text x="65" y="152" fill="#333" font-size="11">魔芋片</text><rect x="130" y="142" width="80" height="10" rx="5" fill="#06D6A0"/><text x="278" y="108" fill="#FF2442" font-size="11" font-weight="700">9.8</text><text x="238" y="130" fill="#FF8C42" font-size="11">8.5</text><text x="218" y="152" fill="#06D6A0" font-size="11">7.9</text><text x="180" y="210" text-anchor="middle" fill="#CC44AA" font-size="13" font-weight="600">10款测评 山楂饼第一名</text></svg>`
+];
+// ==================== STATE ====================
+let selectedKOLs = new Set([0,2,3]);
+let currentStep = 1;
+let progressTimer = null;
+let autoTimer = null;
+
+// ==================== TABS ====================
+function switchTab(tab) {
+  const tabMap = {'kol':0,'collab':1,'effect':2};
+  const panels = document.querySelectorAll('.tab-panel');
+  const btns = document.querySelectorAll('.tab-btn');
+  // 先全部隐藏
+  panels.forEach(p=>{ p.classList.remove('active'); p.style.display='none'; });
+  btns.forEach(b=>b.classList.remove('active'));
+  // 激活目标
+  const targetPanel = document.getElementById('tab-'+tab);
+  if(targetPanel){ targetPanel.classList.add('active'); targetPanel.style.display='block'; }
+  if(typeof tabMap[tab] !== 'undefined' && btns[tabMap[tab]]){
+    btns[tabMap[tab]].classList.add('active');
+  }
+}
+
+// ==================== BRIEF MODES ====================
+function switchMode(mode) {
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('mode-'+mode).classList.add('active');
+}
+
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+
+// ==================== STEPS ====================
+function updateStepBar(step) {
+  for(let i=1;i<=4;i++){
+    const c=document.getElementById('sc'+i);
+    const l=document.getElementById('sl'+i);
+    c.classList.remove('active','done');
+    l.classList.remove('active','done');
+    if(i<step){c.classList.add('done');l.classList.add('done');c.innerHTML='✓';}
+    else if(i===step){c.classList.add('active');l.classList.add('active');}
+    else{c.innerHTML=['①','②','③','④'][i-1];}
+  }
+  for(let i=1;i<=3;i++){
+    const line=document.getElementById('line'+i);
+    if(line){line.classList.toggle('done',i<step);}
+  }
+}
+
+function showStep(n) {
+  ['step1','step2','step3','step4'].forEach((id,idx)=>{
+    document.getElementById(id).style.display = (idx+1===n)?'':'none';
+  });
+  if(n===1) document.getElementById('step1').style.display='block';
+  if(n===3){document.getElementById('step3').style.display='';}
+  currentStep=n;
+  updateStepBar(n);
+}
+
+function goStep2() {
+  showStep(2);
+  startProgress();
+}
+
+function startProgress(){
+  const fill=document.getElementById('progressFill');
+  const txt=document.getElementById('progressText');
+  let pct=0;
+  clearInterval(progressTimer);
+  clearTimeout(autoTimer);
+  fill.style.width='0%';
+  txt.textContent='0%';
+  progressTimer=setInterval(()=>{
+    pct+=Math.random()*4+2;
+    if(pct>=100){pct=100;clearInterval(progressTimer);}
+    fill.style.width=pct+'%';
+    txt.textContent=Math.round(pct)+'%';
+  },100);
+  autoTimer=setTimeout(()=>{showAnalysisResult();},3500);
+}
+
+function showAnalysisResult(){
+  clearTimeout(autoTimer);
+  clearInterval(progressTimer);
+  // 更改进度条最后一步为完成态
+  document.getElementById('step4Icon').innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#4CAF50"/><polyline points="5,12 10,17 19,7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('progressDone').style.display = 'block';
+  // 更新标题和副标题
+  document.getElementById('analysisTitle').textContent = '蒲蒲帮你想清楚了';
+  document.getElementById('analysisSub').textContent = '来确认一下，方向对不对？';
+  // 隐藏skip-link，显示结论卡
+  document.getElementById('skipLink').style.display = 'none';
+  document.getElementById('analysisResult').style.display = 'block';
+  // 更新状态点
+  const sc2 = document.getElementById('sc2');
+  const sl2 = document.getElementById('sl2');
+  sc2.classList.remove('active');
+  sc2.classList.add('done');
+  sc2.innerHTML = '✓';
+  sl2.classList.remove('active');
+  sl2.classList.add('done');
+}
+
+function goStep3(){
+  clearTimeout(autoTimer);
+  clearInterval(progressTimer);
+  showStep(3);
+  updateBottomBar();
+}
+
+function goStep4(){
+  if(selectedKOLs.size===0){showToast('请至少选择一位博主 😊');return;}
+  buildStep4();
+  showStep(4);
+}
+
+// ==================== KOL SELECT ====================
+function toggleKOL(idx){
+  if(selectedKOLs.has(idx)) selectedKOLs.delete(idx);
+  else selectedKOLs.add(idx);
+  const card=document.getElementById('kol-card-'+idx);
+  const circle=document.getElementById('circle-'+idx);
+  if(selectedKOLs.has(idx)){
+    card.classList.add('selected');
+    circle.classList.add('checked');
+    circle.textContent='✓';
+  } else {
+    card.classList.remove('selected');
+    circle.classList.remove('checked');
+    circle.textContent='';
+  }
+  updateBottomBar();
+}
+
+function updateBottomBar(){
+  const count=selectedKOLs.size;
+  let budget=0,uv=0;
+  selectedKOLs.forEach(i=>{budget+=kolData[i].price;uv+=kolData[i].uv;});
+  document.getElementById('selCount').textContent=count;
+  document.getElementById('selBudget').textContent='¥'+budget.toLocaleString();
+  document.getElementById('selUV').textContent=uv;
+}
+
+// ==================== KOL DETAIL ====================
+function showDetail(idx){
+  const k=kolData[idx];
+  document.getElementById('defaultDetail').style.display='none';
+  const det=document.getElementById('kolDetail');
+  det.style.display='block';
+  document.getElementById('detailHeader').innerHTML=`
+    ${svgAvatars[idx]}
+    <div>
+      <div class="detail-name">${k.name}</div>
+      <span class="detail-tag">${k.tag}</span>
+      ${k.badge?`<span class="kol-badge ${k.badgeType==='red'?'badge-red':k.badgeType==='blue'?'badge-blue':''}" style="${k.badgeType==='purple'?'background:#F0E8FF;color:#7B2FBE':''}">${k.badge}</span>`:''}
+    </div>
+  `;
+  document.getElementById('detailStats').innerHTML=`
+    <div class="stat-box"><div class="stat-val">${k.fans}</div><div class="stat-key">粉丝数</div></div>
+    <div class="stat-box"><div class="stat-val">${k.rate}</div><div class="stat-key">互动率</div></div>
+    <div class="stat-box"><div class="stat-val">¥${k.price.toLocaleString()}</div><div class="stat-key">报价</div></div>
+    <div class="stat-box"><div class="stat-val">${k.avg}</div><div class="stat-key">平均互动</div></div>
+  `;
+  document.getElementById('detailReason').innerHTML=`<strong>蒲蒲推荐理由</strong><br>${k.reason}`;
+  document.getElementById('detailRisk').innerHTML=`${k.risk}`;
+  document.getElementById('detailBars').innerHTML=k.bars.map(b=>`
+    <div class="match-bar-item">
+      <div class="match-bar-label"><span>${b.label}</span><span>${b.val}%</span></div>
+      <div class="match-bar-track"><div class="match-bar-fill" style="width:${b.val}%"></div></div>
+    </div>
+  `).join('');
+  document.getElementById('detailNotes').innerHTML=k.notes.map((note,i)=>`
+    <div class="note-thumb" onclick="openModal(${idx},${i})">${noteCoverSVGs[note.cover]||noteCoverSVGs[0]}</div>
+  `).join('');
+}
+
+let currentModalKOL = 0;
+function openModal(kolIdx, noteIdx){
+  currentModalKOL = kolIdx;
+  const kol = kolData[kolIdx];
+  const note = kol.notes[noteIdx];
+  document.getElementById('modalKolAvatar').innerHTML = svgAvatars[kolIdx];
+  document.getElementById('modalKolName').textContent = kol.name;
+  document.getElementById('modalKolFans').textContent = kol.fans + ' 粉丝';
+  document.getElementById('modalNoteCover').innerHTML = noteCoverSVGs[note.cover];
+  document.getElementById('modalNoteTitle').textContent = note.title;
+  document.getElementById('modalNoteBody').innerHTML = note.body.replace(/\n/g, '<br><br>');
+  document.getElementById('modalNoteStats').innerHTML = `
+    <div style="background:#fafafa;border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:700;color:#FF2442">${note.like}</div><div style="font-size:11px;color:#aaa;margin-top:2px">获赞</div></div>
+    <div style="background:#fafafa;border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:700;color:#4361EE">${note.collect}</div><div style="font-size:11px;color:#aaa;margin-top:2px">收藏</div></div>
+    <div style="background:#fafafa;border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:700;color:#06D6A0">${note.comment}</div><div style="font-size:11px;color:#aaa;margin-top:2px">评论</div></div>
+    <div style="background:#fafafa;border-radius:10px;padding:10px;text-align:center"><div style="font-size:16px;font-weight:700;color:#FF8C42">${note.ctr}</div><div style="font-size:11px;color:#aaa;margin-top:2px">CTR</div></div>
+  `;
+  document.getElementById('modal').classList.add('show');
+}
+function confirmCollection(){
+  showToast('收单完成！效果追踪已开启');
+  const sorted = (window._collabIdxList && window._collabIdxList.length) ? window._collabIdxList : [...selectedKOLs].sort((a,b)=>a-b);
+  const total = (window._collabBudget) ? window._collabBudget : sorted.reduce((s,i)=>s+kolData[i].price,0);
+
+  // 博主维度数据mock
+  const kolMock = {
+    0:{exp:'185万',expN:1850000,rate:'6.8%',title:'减脂7天，这些零食真的戒不掉🍎',status:'超出预测 +18%',sc:'#06A870',cv:'1,260',roi:'1:13.1'},
+    1:{exp:'112万',expN:1120000,rate:'7.2%',title:'国货零食测评｜越吃越瘦的秘密',status:'超出预测 +12%',sc:'#06A870',cv:'812',roi:'1:11.8'},
+    2:{exp:'96万', expN:960000, rate:'11.3%',title:'母亲节礼物清单，第一名就是它🌹',status:'超出预测 +24%',sc:'#06A870',cv:'720',roi:'1:14.2'},
+    3:{exp:'54万', expN:540000, rate:'9.1%', title:'山楂的营养价值你知道吗🌿',status:'达到预测',sc:'#888',cv:'392',roi:'1:11.0'},
+    4:{exp:'43万', expN:430000, rate:'12.4%',title:'素食也可以这么好吃🐰',status:'超出预测 +31%',sc:'#06A870',cv:'298',roi:'1:15.6'}
+  };
+
+  // 汇总数据
+  let totalExpN=0, totalCv=0;
+  sorted.forEach(i=>{const m=kolMock[i];if(m){totalExpN+=m.expN;totalCv+=parseInt(m.cv.replace(',',''));}});
+  const totalExp = totalExpN>=10000000?(totalExpN/10000000).toFixed(1)+'千万':(totalExpN/10000).toFixed(0)+'万';
+  const avgRate = (sorted.reduce((s,i)=>s+(parseFloat((kolMock[i]||{rate:'0%'}).rate)),0)/sorted.length).toFixed(1)+'%';
+
+  // Campaign总览卡（单次Brief）
+  document.getElementById('effectCampaignCard').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:12px;color:#aaa;margin-bottom:4px">蒲蒲智配 · 本次合作</div>
+        <div style="font-size:18px;font-weight:700">山楂饼家 · 母亲节种草 campaign</div>
+        <div style="font-size:13px;color:#888;margin-top:4px">2026-05-01 ~ 2026-05-07 · ${sorted.length}位博主</div>
+      </div>
+      <button onclick="window.location.href='juhui-report.html'" style="padding:8px 14px;background:#FF2442;color:#fff;border:none;border-radius:12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit">→ 去聚光查看报告</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <div style="text-align:center;padding:12px;background:#fafafa;border-radius:10px">
+        <div style="font-size:20px;font-weight:700;color:#FF2442">${totalExp}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:4px">总曝光</div>
+        <div style="font-size:11px;color:#06A870;margin-top:2px">↑ 超出整体预测</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#fafafa;border-radius:10px">
+        <div style="font-size:20px;font-weight:700;color:#4361EE">${avgRate}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:4px">平均互动率</div>
+        <div style="font-size:11px;color:#06A870;margin-top:2px">高于行业均值</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#fafafa;border-radius:10px">
+        <div style="font-size:20px;font-weight:700;color:#1a1a1a">¥${total.toLocaleString()}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:4px">总花费</div>
+        <div style="font-size:11px;color:#06A870;margin-top:2px">ROI 1:12.4</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#fafafa;border-radius:10px">
+        <div style="font-size:20px;font-weight:700;color:#06D6A0">${totalCv.toLocaleString()}</div>
+        <div style="font-size:12px;color:#aaa;margin-top:4px">预估转化</div>
+        <div style="font-size:11px;color:#888;margin-top:2px">CVR ~2.8%</div>
+      </div>
+    </div>`;
+
+  // 博主维度表格
+  let html = '<div style="background:#fff;border:1.5px solid #eee;border-radius:16px;padding:20px;margin-bottom:16px">';
+  html += '<div style="font-size:15px;font-weight:700;margin-bottom:14px">博主效果明细</div>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px">';
+  html += '<tr style="color:#aaa;padding-bottom:8px"><td style="padding:6px 0;border-bottom:1px solid #f0f0f0">博主</td><td style="text-align:right;border-bottom:1px solid #f0f0f0">曝光</td><td style="text-align:right;border-bottom:1px solid #f0f0f0">互动率</td><td style="text-align:right;border-bottom:1px solid #f0f0f0">转化</td><td style="text-align:right;border-bottom:1px solid #f0f0f0">状态</td></tr>';
+  sorted.forEach(idx=>{
+    const k=kolData[idx], m=kolMock[idx]||{exp:'--',rate:'--',cv:'--',status:'统计中',sc:'#aaa',roi:'--'};
+    html+=`<tr><td style="padding:12px 0 12px;border-bottom:1px solid #f8f8f8"><div style="font-weight:600;font-size:14px">${k.name}</div><div style="color:#aaa;font-size:11px;margin-top:2px">${m.title}</div></td><td style="text-align:right;font-weight:700;color:#4361EE;border-bottom:1px solid #f8f8f8">${m.exp}</td><td style="text-align:right;color:#FF2442;font-weight:600;border-bottom:1px solid #f8f8f8">${m.rate}</td><td style="text-align:right;color:#888;border-bottom:1px solid #f8f8f8">${m.cv}</td><td style="text-align:right;font-size:12px;font-weight:600;color:${m.sc};border-bottom:1px solid #f8f8f8">${m.status}</td></tr>`;
+  });
+  html += '</table></div>';
+
+  // 各博主笔记卡（选几人出几张）
+  sorted.forEach(idx=>{
+    const k=kolData[idx], m=kolMock[idx]||{}, note=k.notes[1]||k.notes[0];
+    html += `<div style="background:#fff;border:1.5px solid #eee;border-radius:16px;padding:20px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        ${svgAvatars[idx]}
+        <div>
+          <div style="font-weight:700;font-size:14px">${k.name}</div>
+          <div style="font-size:12px;color:#aaa">${k.fans} · ${k.tag}</div>
+        </div>
+        <span style="margin-left:auto;font-size:12px;font-weight:600;color:${m.sc||'#888'};background:${m.sc?'#E8F8F0':'#f5f5f5'};padding:4px 10px;border-radius:10px">${m.status||'统计中'}</span>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:10px">${note.title}</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <div style="text-align:center;padding:10px 6px;background:#fafafa;border-radius:8px"><div style="font-size:15px;font-weight:700;color:#FF2442">${note.like}</div><div style="font-size:11px;color:#aaa;margin-top:2px">获赞</div></div>
+        <div style="text-align:center;padding:10px 6px;background:#fafafa;border-radius:8px"><div style="font-size:15px;font-weight:700;color:#4361EE">${note.collect}</div><div style="font-size:11px;color:#aaa;margin-top:2px">收藏</div></div>
+        <div style="text-align:center;padding:10px 6px;background:#fafafa;border-radius:8px"><div style="font-size:15px;font-weight:700;color:#06D6A0">${note.comment}</div><div style="font-size:11px;color:#aaa;margin-top:2px">评论</div></div>
+        <div style="text-align:center;padding:10px 6px;background:#fafafa;border-radius:8px"><div style="font-size:15px;font-weight:700;color:#FF8C42">${note.ctr}</div><div style="font-size:11px;color:#aaa;margin-top:2px">CTR</div></div>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('kolEffectList').innerHTML = html;
+
+  // 立即切到效果追踪tab
+  switchTab('effect');
+  document.getElementById('effectEmpty').style.display='none';
+  document.getElementById('effectData').style.display='block';
+}
+
+function closeModal(e){
+  if(!e || e.target===document.getElementById('modal')){
+    document.getElementById('modal').classList.remove('show');
+  }
+}
+
+// ==================== STEP4 ====================
+const priceRanges = {
+  0: [14000, 16500],
+  1: [8500, 10500],
+  2: [5800, 7200],
+  3: [3200, 4500],
+  4: [4500, 5800]
+};
+
+function buildStep4(){
+  let html='';
+  let total=0;
+  selectedKOLs.forEach(idx=>{
+    const k=kolData[idx];
+    total+=k.price;
+    html+=`<div class="s4-kol-row">
+      ${svgAvatars[idx]}
+      <div class="s4-kol-info">
+        <div class="s4-kol-name">${k.name}</div>
+        <div class="s4-kol-form">种草笔记 · 1篇图文</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;color:#aaa">¥</span>
+          <input type="number" class="price-input" data-kol="${idx}" value="${k.price}"
+            style="width:80px;border:1.5px solid #e8e8e8;border-radius:8px;padding:4px 8px;font-size:15px;font-weight:700;color:#FF2442;text-align:right;outline:none;font-family:inherit"
+            onchange="updatePrice(${idx}, this.value, ${JSON.stringify(priceRanges[idx]||[0,0])})" onfocus="this.style.borderColor='#FF2442'" onblur="this.style.borderColor='#e8e8e8'"/>
+        </div>
+        <div style="font-size:11px;color:#888">蒲蒲建议：¥${(priceRanges[idx]||[0,0])[0].toLocaleString()} – ¥${(priceRanges[idx]||[0,0])[1].toLocaleString()}</div>
+        <div id="price-hint-${idx}" style="font-size:11px;color:#aaa">可在区间内修改</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('s4KolList').innerHTML=html;
+  document.getElementById('s4Total').textContent='¥'+total.toLocaleString();
+}
+
+function updatePrice(kolIdx, val, range) {
+  const num = parseInt(val) || 0;
+  kolData[kolIdx].price = num;
+  // 区间校验
+  const hint = document.getElementById('price-hint-' + kolIdx);
+  const inp = document.querySelector('.price-input[data-kol="' + kolIdx + '"]');
+  if(hint && range) {
+    const [lo, hi] = range;
+    if(num < lo) {
+      hint.textContent = '低于蒲蒲建议区间，博主可能拒绝';
+      hint.style.color = '#CC8800';
+      if(inp) inp.style.borderColor = '#FFBB00';
+    } else if(num > hi) {
+      hint.textContent = '高于建议区间，可适当压低';
+      hint.style.color = '#888';
+      if(inp) inp.style.borderColor = '#e8e8e8';
+    } else {
+      hint.textContent = '在蒲蒲建议区间内';
+      hint.style.color = '#06A870';
+      if(inp) inp.style.borderColor = '#06D6A0';
+    }
+  }
+  // 重算合计
+  let total = 0;
+  document.querySelectorAll('.price-input').forEach(i => {
+    total += parseInt(i.value) || 0;
+  });
+  document.getElementById('s4Total').textContent = '¥' + total.toLocaleString();
+}
+
+function goToCollabTab(selectedIdxList, totalBudget) {
+  // 保存到全局，供confirmCollection使用
+  window._collabIdxList = [...selectedIdxList].sort((a,b)=>a-b);
+  window._collabBudget = totalBudget;
+  // 切换tab
+  switchTab('collab');
+  // 渲染合作记录
+  document.getElementById('collabEmpty').style.display='none';
+  let kolRows = '';
+  const sortedIdxList = [...selectedIdxList].sort((a,b)=>a-b);
+  const confirmedCount = sortedIdxList.length - 1; // 除第1人外全部确认通过
+  sortedIdxList.forEach((idx, i)=>{
+    const k = kolData[idx];
+    const statusLabel = i === 0 ? '确认中' : '确认通过';
+    const statusStyle = i === 0
+      ? 'background:#FFF8E0;color:#CC8800'
+      : 'background:#E8F8F0;color:#06A870';
+    const confirmIcon = i > 0 ? '<svg width=\'14\' height=\'14\' viewBox=\'0 0 14 14\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><rect width=\'14\' height=\'14\' rx=\'3\' fill=\'#06D6A0\'/><polyline points=\'3,7 6,10.5 11,4.5\' stroke=\'white\' stroke-width=\'1.8\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/></svg> ' : '';
+    kolRows += `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f5">
+      ${svgAvatars[idx]}
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600">${k.name}</div>
+        <div style="font-size:12px;color:#888">种草笔记 · 1篇图文 · ¥${k.price.toLocaleString()}</div>
+      </div>
+      <span style="padding:3px 10px;${statusStyle};border-radius:10px;font-size:12px;font-weight:600">${confirmIcon}${statusLabel}</span>
+    </div>`;
+  });
+  const card = document.createElement('div');
+  card.style.cssText = 'background:#fff;border:1.5px solid #eee;border-radius:16px;padding:20px;margin-bottom:16px';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px">山楂饼家 · 母亲节种草</div>
+        <div style="font-size:13px;color:#888">发起时间：${new Date().toLocaleDateString('zh-CN')} · 合计 ¥${totalBudget.toLocaleString()}</div>
+      </div>
+      <span style="padding:4px 12px;background:#FFF8E0;color:#CC8800;border-radius:12px;font-size:12px;font-weight:600">邀约已发出</span>
+    </div>
+    ${kolRows}
+    <div style="margin-top:16px;padding:12px 14px;background:#FFF8E0;border-radius:12px;font-size:13px;color:#CC8800;margin-bottom:12px">
+      ${confirmedCount}位博主已确认，1位待回复。确认收单后效果追踪自动开启。
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="confirmCollection()" style="flex:1;padding:10px 0;background:#FF2442;color:#fff;border:none;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">确认收单（${confirmedCount}人）</button>
+      <button onclick="showToast('已向小胖子发送提醒消息 📩')" style="padding:10px 16px;background:#fff;border:1.5px solid #e0e0e0;color:#888;border-radius:24px;font-size:13px;cursor:pointer;font-family:inherit">催一下</button>
+    </div>
+  `;
+  document.getElementById('collabList').prepend(card);
+}
+
+function confirmCollab(){
+  showToast('邀约已发出！蒲蒲会持续追踪笔记效果');
+  const selectedList = [...selectedKOLs];
+  const total = selectedList.reduce((sum,i)=>sum+kolData[i].price,0);
+  // 立即标记已邀约博主（灰显），然后跳转
+  selectedList.forEach(idx=>{
+    const card = document.getElementById('kol-card-'+idx);
+    const circle = document.getElementById('circle-'+idx);
+    if(card){
+      card.style.opacity='0.45';
+      card.style.pointerEvents='none';
+      card.style.position='relative';
+      if(!card.querySelector('.invited-tag')){
+        const tag=document.createElement('div');
+        tag.className='invited-tag';
+        tag.textContent='邀约中';
+        tag.style.cssText='position:absolute;top:8px;right:8px;background:#FFF8E0;color:#CC8800;font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;pointer-events:none';
+        card.appendChild(tag);
+      }
+    }
+    if(circle) circle.style.display='none';
+  });
+  selectedKOLs = new Set();
+  document.getElementById('defaultDetail').style.display='block';
+  document.getElementById('kolDetail').style.display='none';
+  // 800ms后跳转（toast可见时间）
+  setTimeout(function(){
+    goToCollabTab(selectedList, total);
+  }, 800);
+}
+
+function resetAll(){
+  selectedKOLs=new Set([0,2,3]);
+  [0,1,2,3,4].forEach(i=>{
+    const card=document.getElementById('kol-card-'+i);
+    const circle=document.getElementById('circle-'+i);
+    if([0,2,3].includes(i)){
+      card.classList.add('selected');
+      circle.classList.add('checked');
+      circle.textContent='✓';
+    } else {
+      card.classList.remove('selected');
+      circle.classList.remove('checked');
+      circle.textContent='';
+    }
+  });
+  document.getElementById('defaultDetail').style.display='block';
+  document.getElementById('kolDetail').style.display='none';
+  showStep(1);
+  updateStepBar(1);
+}
+
+// ==================== TOAST ====================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ==================== INIT ====================
+updateBottomBar();
+</script>
+</body>
+</html>
